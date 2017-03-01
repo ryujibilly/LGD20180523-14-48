@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormConfig.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -52,18 +53,64 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemSettings\ACQ_DB_Setting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\ACQ_DB_Setting.Designer.cs">
+      <DependentUpon>ACQ_DB_Setting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemSettings\AlarmSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\AlarmSetting.Designer.cs">
+      <DependentUpon>AlarmSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemSettings\DBSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\DBSetting.Designer.cs">
+      <DependentUpon>DBSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemSettings\IPAddressSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\IPAddressSetting.Designer.cs">
+      <DependentUpon>IPAddressSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemSettings\WorkingCondition.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\WorkingCondition.Designer.cs">
+      <DependentUpon>WorkingCondition.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SystemSettings\ACQ_DB_Setting.resx">
+      <DependentUpon>ACQ_DB_Setting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettings\AlarmSetting.resx">
+      <DependentUpon>AlarmSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettings\DBSetting.resx">
+      <DependentUpon>DBSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettings\IPAddressSetting.resx">
+      <DependentUpon>IPAddressSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettings\WorkingCondition.resx">
+      <DependentUpon>WorkingCondition.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
@@ -86,6 +133,220 @@
       <Project>{c1b7dd0b-fd23-4c4f-a482-1b186e4da580}</Project>
       <Name>LGD.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="FormConfig.xml" />
+    <None Include="Icons\gtk-paste.png" />
+    <None Include="Icons\editcut.png" />
+    <None Include="Icons\editcopy.png" />
+    <None Include="Icons\gnome-mime-application-x-font-sunos-news.png" />
+    <None Include="Icons\ui-color-picker-default.png" />
+    <None Include="Icons\format-text-underline.png" />
+    <None Include="Icons\format-text-italic.png" />
+    <None Include="Icons\format-text-bold.png" />
+    <None Include="Icons\folder-open.png" />
+    <None Include="Icons\save %282%29.png" />
+    <None Include="Icons\save.png" />
+    <None Include="Icons\book_open.png" />
+    <None Include="Icons\stock_new.png" />
+    <None Include="Icons\New%2520document.png" />
+    <None Include="Icons\gtk-edit.png" />
+    <None Include="Icons\32_275.bmp" />
+    <None Include="Icons\32_274.bmp" />
+    <None Include="Icons\32_273.bmp" />
+    <None Include="Icons\32_272.bmp" />
+    <None Include="Icons\32_271.bmp" />
+    <None Include="Icons\32_270.bmp" />
+    <None Include="Icons\32_269.bmp" />
+    <None Include="Icons\32_267.bmp" />
+    <None Include="Icons\32_266.bmp" />
+    <None Include="Icons\32_265.bmp" />
+    <None Include="Icons\32_264.bmp" />
+    <None Include="Icons\32_263.bmp" />
+    <None Include="Icons\32_262.bmp" />
+    <None Include="Icons\32_261.bmp" />
+    <None Include="Icons\32_260.bmp" />
+    <None Include="Icons\32_259.bmp" />
+    <None Include="Icons\32_258.bmp" />
+    <None Include="Icons\32_257.bmp" />
+    <None Include="Icons\32_256.bmp" />
+    <None Include="Icons\undo.ico" />
+    <None Include="Icons\tux.ico" />
+    <None Include="Icons\trash.ico" />
+    <None Include="Icons\toggle_log.ico" />
+    <None Include="Icons\thumbnail.ico" />
+    <None Include="Icons\tab_new_raised.ico" />
+    <None Include="Icons\tab_new.ico" />
+    <None Include="Icons\revert.ico" />
+    <None Include="Icons\reload.ico" />
+    <None Include="Icons\redo.ico" />
+    <None Include="Icons\rebuild.ico" />
+    <None Include="Icons\playsound.ico" />
+    <None Include="Icons\player-end.ico" />
+    <None Include="Icons\player_volume.ico" />
+    <None Include="Icons\player_play.ico" />
+    <None Include="Icons\openterm.ico" />
+    <None Include="Icons\list.ico" />
+    <None Include="Icons\lin_agt_wrench.ico" />
+    <None Include="Icons\kmixdocked_mute.ico" />
+    <None Include="Icons\kdevelop_down.ico" />
+    <None Include="Icons\info.ico" />
+    <None Include="Icons\identity.ico" />
+    <None Include="Icons\gear.ico" />
+    <None Include="Icons\fonts.ico" />
+    <None Include="Icons\folder_sent_mail.ico" />
+    <None Include="Icons\folder_new.ico" />
+    <None Include="Icons\findf.ico" />
+    <None Include="Icons\exec.ico" />
+    <None Include="Icons\edit_add.ico" />
+    <None Include="Icons\demo.ico" />
+    <None Include="Icons\button_cancel.ico" />
+    <None Include="Icons\build.ico" />
+    <None Include="Icons\bookmarks_list_add.ico" />
+    <None Include="Icons\bookmark_toolbar.ico" />
+    <None Include="Icons\bookmark_folder.ico" />
+    <None Include="Icons\bookmark_add.ico" />
+    <None Include="Icons\refresh.gif" />
+    <None Include="Icons\top.ico" />
+    <None Include="Icons\todo.ico" />
+    <None Include="Icons\terminal.ico" />
+    <None Include="Icons\tab_remove.ico" />
+    <None Include="Icons\tab_duplicate.ico" />
+    <None Include="Icons\tab.ico" />
+    <None Include="Icons\stop.ico" />
+    <None Include="Icons\status_unknown.ico" />
+    <None Include="Icons\start.ico" />
+    <None Include="Icons\spellcheck.ico" />
+    <None Include="Icons\sort_az.ico" />
+    <None Include="Icons\share.ico" />
+    <None Include="Icons\seyon.ico" />
+    <None Include="Icons\server.ico" />
+    <None Include="Icons\search.ico" />
+    <None Include="Icons\save_all.ico" />
+    <None Include="Icons\runprog.ico" />
+    <None Include="Icons\run.ico" />
+    <None Include="Icons\reload_page.ico" />
+    <None Include="Icons\reload_all_tabs.ico" />
+    <None Include="Icons\queue.ico" />
+    <None Include="Icons\project_open.ico" />
+    <None Include="Icons\previous.ico" />
+    <None Include="Icons\power.ico" />
+    <None Include="Icons\playlist.ico" />
+    <None Include="Icons\player_time.ico" />
+    <None Include="Icons\player_stop.ico" />
+    <None Include="Icons\player_start.ico" />
+    <None Include="Icons\player_rew.ico" />
+    <None Include="Icons\player_pause.ico" />
+    <None Include="Icons\player_fwd.ico" />
+    <None Include="Icons\player_end.ico" />
+    <None Include="Icons\player_eject.ico" />
+    <None Include="Icons\outbox.ico" />
+    <None Include="Icons\organizer.ico" />
+    <None Include="Icons\ok.ico" />
+    <None Include="Icons\no.ico" />
+    <None Include="Icons\next.ico" />
+    <None Include="Icons\news_subscribe.ico" />
+    <None Include="Icons\newmessage.ico" />
+    <None Include="Icons\newfont.ico" />
+    <None Include="Icons\new window.ico" />
+    <None Include="Icons\network.ico" />
+    <None Include="Icons\mouse.ico" />
+    <None Include="Icons\month.ico" />
+    <None Include="Icons\money.ico" />
+    <None Include="Icons\misc.ico" />
+    <None Include="Icons\messagebox_warning.ico" />
+    <None Include="Icons\messagebox_info.ico" />
+    <None Include="Icons\messagebox_critical.ico" />
+    <None Include="Icons\mailappt.ico" />
+    <None Include="Icons\mail_send.ico" />
+    <None Include="Icons\mail_replyall.ico" />
+    <None Include="Icons\mail_reply.ico" />
+    <None Include="Icons\mail_replayall.ico" />
+    <None Include="Icons\mail_replay.ico" />
+    <None Include="Icons\mail_post_to.ico" />
+    <None Include="Icons\mail_new.ico" />
+    <None Include="Icons\mail_get.ico" />
+    <None Include="Icons\mail_generic.ico" />
+    <None Include="Icons\mail_foward.ico" />
+    <None Include="Icons\mail_forward.ico" />
+    <None Include="Icons\mail_find.ico" />
+    <None Include="Icons\mail_delete.ico" />
+    <None Include="Icons\loopnone.ico" />
+    <None Include="Icons\lock.ico" />
+    <None Include="Icons\locationbar_erase.ico" />
+    <None Include="Icons\launch.ico" />
+    <None Include="Icons\laptop_power.ico" />
+    <None Include="Icons\laptop_nocharge.ico" />
+    <None Include="Icons\laptop_nobattery.ico" />
+    <None Include="Icons\laptop_charge.ico" />
+    <None Include="Icons\ksysguard.ico" />
+    <None Include="Icons\kopeteaway.ico" />
+    <None Include="Icons\kopeteavailable.ico" />
+    <None Include="Icons\knewstuff.ico" />
+    <None Include="Icons\kmixdocked_error.ico" />
+    <None Include="Icons\kmix.ico" />
+    <None Include="Icons\klipper_doc.ico" />
+    <None Include="Icons\kde.ico" />
+    <None Include="Icons\kalarm_disabled.ico" />
+    <None Include="Icons\kalarm.ico" />
+    <None Include="Icons\irkickoff.ico" />
+    <None Include="Icons\irkickflash.ico" />
+    <None Include="Icons\irkick.ico" />
+    <None Include="Icons\insert_table_row.ico" />
+    <None Include="Icons\insert_table_col.ico" />
+    <None Include="Icons\inbox.ico" />
+    <None Include="Icons\history.ico" />
+    <None Include="Icons\help.ico" />
+    <None Include="Icons\halfencrypted.ico" />
+    <None Include="Icons\groupevent.ico" />
+    <None Include="Icons\grid.ico" />
+    <None Include="Icons\goto.ico" />
+    <None Include="Icons\gohome.ico" />
+    <None Include="Icons\funct.ico" />
+    <None Include="Icons\frameprint.ico" />
+    <None Include="Icons\forward.ico" />
+    <None Include="Icons\folder.ico" />
+    <None Include="Icons\flag.ico" />
+    <None Include="Icons\find.ico" />
+    <None Include="Icons\filter.ico" />
+    <None Include="Icons\filesaveas.ico" />
+    <None Include="Icons\filesave.ico" />
+    <None Include="Icons\filequickprint.ico" />
+    <None Include="Icons\fileprint.ico" />
+    <None Include="Icons\fileopen.ico" />
+    <None Include="Icons\filenew.ico" />
+    <None Include="Icons\fileimport.ico" />
+    <None Include="Icons\filefind.ico" />
+    <None Include="Icons\fileexport.ico" />
+    <None Include="Icons\fileclose.ico" />
+    <None Include="Icons\field.ico" />
+    <None Include="Icons\exit.ico" />
+    <None Include="Icons\endturn.ico" />
+    <None Include="Icons\encrypted.ico" />
+    <None Include="Icons\edittrash.ico" />
+    <None Include="Icons\editpaste.ico" />
+    <None Include="Icons\editdelete.ico" />
+    <None Include="Icons\editcut.ico" />
+    <None Include="Icons\editcopy.ico" />
+    <None Include="Icons\editclear.ico" />
+    <None Include="Icons\edit_user.ico" />
+    <None Include="Icons\edit_remove.ico" />
+    <None Include="Icons\edit_group.ico" />
+    <None Include="Icons\edit.ico" />
+    <None Include="Icons\easymoblog.ico" />
+    <None Include="Icons\down.ico" />
+    <None Include="Icons\documentinfo.ico" />
+    <None Include="Icons\delete_user.ico" />
+    <None Include="Icons\delete_table_row.ico" />
+    <None Include="Icons\delete_table_col.ico" />
+    <None Include="Icons\delete_group.ico" />
+    <None Include="Icons\decrypted.ico" />
+    <None Include="Icons\db_update.ico" />
+    <None Include="Icons\db_status.ico" />
+    <None Include="Icons\db_remove.ico" />
+    <None Include="Icons\db_comit.ico" />
+    <None Include="Icons\button_ok.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

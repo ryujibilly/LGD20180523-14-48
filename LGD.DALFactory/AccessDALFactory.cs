@@ -7,7 +7,7 @@ using LGD.DAL.Access;
 
 namespace LGD.DALFactory
 {
-    public class AccessDALFactory:AbstractDALFactory
-    {
-    }
+    //public class AccessDALFactory:AbstractDALFactory
+    //{
+    //}
 }
