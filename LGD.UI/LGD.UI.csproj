@@ -44,6 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBManager\DatabaseManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DBManager\DatabaseManager.Designer.cs">
+      <DependentUpon>DatabaseManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DBManager\DBLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DBManager\DBLogin.Designer.cs">
+      <DependentUpon>DBLogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormConfig.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -65,11 +77,23 @@
     <Compile Include="SystemSettings\AlarmSetting.Designer.cs">
       <DependentUpon>AlarmSetting.cs</DependentUpon>
     </Compile>
+    <Compile Include="SystemSettings\ChannelSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\ChannelSetting.Designer.cs">
+      <DependentUpon>ChannelSetting.cs</DependentUpon>
+    </Compile>
     <Compile Include="SystemSettings\DBSetting.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SystemSettings\DBSetting.Designer.cs">
       <DependentUpon>DBSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemSettings\InstruSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettings\InstruSetting.Designer.cs">
+      <DependentUpon>InstruSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="SystemSettings\IPAddressSetting.cs">
       <SubType>Form</SubType>
@@ -83,6 +107,12 @@
     <Compile Include="SystemSettings\WorkingCondition.Designer.cs">
       <DependentUpon>WorkingCondition.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DBManager\DatabaseManager.resx">
+      <DependentUpon>DatabaseManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DBManager\DBLogin.resx">
+      <DependentUpon>DBLogin.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -102,8 +132,14 @@
     <EmbeddedResource Include="SystemSettings\AlarmSetting.resx">
       <DependentUpon>AlarmSetting.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettings\ChannelSetting.resx">
+      <DependentUpon>ChannelSetting.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SystemSettings\DBSetting.resx">
       <DependentUpon>DBSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettings\InstruSetting.resx">
+      <DependentUpon>InstruSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SystemSettings\IPAddressSetting.resx">
       <DependentUpon>IPAddressSetting.cs</DependentUpon>
