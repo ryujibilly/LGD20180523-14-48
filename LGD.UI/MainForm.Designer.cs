@@ -95,21 +95,21 @@
             // ToolStripMenuItem_SaveConfig
             // 
             this.ToolStripMenuItem_SaveConfig.Name = "ToolStripMenuItem_SaveConfig";
-            this.ToolStripMenuItem_SaveConfig.Size = new System.Drawing.Size(152, 22);
+            this.ToolStripMenuItem_SaveConfig.Size = new System.Drawing.Size(135, 22);
             this.ToolStripMenuItem_SaveConfig.Text = "保存";
             this.ToolStripMenuItem_SaveConfig.Click += new System.EventHandler(this.ToolStripMenuItem_SaveConfig_Click);
             // 
             // ToolStripMenuItem_IPAdress
             // 
             this.ToolStripMenuItem_IPAdress.Name = "ToolStripMenuItem_IPAdress";
-            this.ToolStripMenuItem_IPAdress.Size = new System.Drawing.Size(152, 22);
+            this.ToolStripMenuItem_IPAdress.Size = new System.Drawing.Size(135, 22);
             this.ToolStripMenuItem_IPAdress.Text = "IP地址设置";
             this.ToolStripMenuItem_IPAdress.Click += new System.EventHandler(this.ToolStripMenuItem_IPAdress_Click);
             // 
             // 退出ToolStripMenuItem
             // 
             this.退出ToolStripMenuItem.Name = "退出ToolStripMenuItem";
-            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.退出ToolStripMenuItem.Text = "退出";
             // 
             // 实时控制ToolStripMenuItem
@@ -162,7 +162,7 @@
             // 
             // button_DBManager
             // 
-            this.button_DBManager.Location = new System.Drawing.Point(124, 3);
+            this.button_DBManager.Location = new System.Drawing.Point(3, 32);
             this.button_DBManager.Name = "button_DBManager";
             this.button_DBManager.Size = new System.Drawing.Size(115, 23);
             this.button_DBManager.TabIndex = 1;
@@ -204,12 +204,12 @@
             this.flowLayoutPanel_Parent.Controls.Add(this.flowLayoutPanel_Child);
             this.flowLayoutPanel_Parent.Location = new System.Drawing.Point(12, 28);
             this.flowLayoutPanel_Parent.Name = "flowLayoutPanel_Parent";
-            this.flowLayoutPanel_Parent.Size = new System.Drawing.Size(251, 618);
+            this.flowLayoutPanel_Parent.Size = new System.Drawing.Size(235, 618);
             this.flowLayoutPanel_Parent.TabIndex = 3;
             // 
             // button_ProjectInfoManager
             // 
-            this.button_ProjectInfoManager.Location = new System.Drawing.Point(3, 32);
+            this.button_ProjectInfoManager.Location = new System.Drawing.Point(3, 61);
             this.button_ProjectInfoManager.Name = "button_ProjectInfoManager";
             this.button_ProjectInfoManager.Size = new System.Drawing.Size(115, 23);
             this.button_ProjectInfoManager.TabIndex = 4;
@@ -219,7 +219,7 @@
             // 
             // button_DataMonitor
             // 
-            this.button_DataMonitor.Location = new System.Drawing.Point(124, 32);
+            this.button_DataMonitor.Location = new System.Drawing.Point(3, 90);
             this.button_DataMonitor.Name = "button_DataMonitor";
             this.button_DataMonitor.Size = new System.Drawing.Size(115, 23);
             this.button_DataMonitor.TabIndex = 6;
@@ -229,7 +229,7 @@
             // 
             // button_WITSManager
             // 
-            this.button_WITSManager.Location = new System.Drawing.Point(3, 61);
+            this.button_WITSManager.Location = new System.Drawing.Point(3, 119);
             this.button_WITSManager.Name = "button_WITSManager";
             this.button_WITSManager.Size = new System.Drawing.Size(115, 23);
             this.button_WITSManager.TabIndex = 7;
@@ -239,7 +239,7 @@
             // 
             // button_ResultRelease
             // 
-            this.button_ResultRelease.Location = new System.Drawing.Point(124, 61);
+            this.button_ResultRelease.Location = new System.Drawing.Point(3, 148);
             this.button_ResultRelease.Name = "button_ResultRelease";
             this.button_ResultRelease.Size = new System.Drawing.Size(115, 23);
             this.button_ResultRelease.TabIndex = 7;
@@ -266,7 +266,7 @@
             this.flowLayoutPanel_Child.Controls.Add(this.button_WITSTransfer);
             this.flowLayoutPanel_Child.Controls.Add(this.button_ResultUpload);
             this.flowLayoutPanel_Child.Controls.Add(this.button_ResultBrowse);
-            this.flowLayoutPanel_Child.Location = new System.Drawing.Point(3, 90);
+            this.flowLayoutPanel_Child.Location = new System.Drawing.Point(3, 177);
             this.flowLayoutPanel_Child.Name = "flowLayoutPanel_Child";
             this.flowLayoutPanel_Child.Size = new System.Drawing.Size(221, 436);
             this.flowLayoutPanel_Child.TabIndex = 8;
@@ -431,6 +431,7 @@
             this.statusStrip1.Size = new System.Drawing.Size(1204, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip1";
+
             // 
             // MainForm
             // 

@@ -39,8 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model.cs" />
+    <Compile Include="Enumeration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealDB\WellInfo.cs" />
+    <Compile Include="RealDB\WitsData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

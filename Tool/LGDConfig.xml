@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+	<DBConfig id="1">
+		<Name>FoldBrowserPath</Name>
+		<Path></Path>
+	</DBConfig>
+	<DBConfig id="2">
+		<Name>StaticDB_PATH</Name>
+		<Path></Path>
+	</DBConfig>
+	<DBConfig id="3">
+		<Name>DBPath_Well</Name>
+		<Path></Path>
+	</DBConfig>
+</Config>

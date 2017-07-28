@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LGD.DALFactory", "LGD.DALFa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LGD.IDAL", "LGD.IDAL\LGD.IDAL.csproj", "{B12BAE3F-63E2-4848-9A44-9708FD60F7DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealTimeDB", "RealTimeDB\RealTimeDB.csproj", "{0F065567-9546-4F07-BAA8-F027475D57B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,7 @@ Global
 		{5343EC38-7DD8-437E-92BE-19097C3A438D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F7B887C5-3280-48D3-88B6-DB75DFBF5AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F7B887C5-3280-48D3-88B6-DB75DFBF5AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7B887C5-3280-48D3-88B6-DB75DFBF5AE0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{F7B887C5-3280-48D3-88B6-DB75DFBF5AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7B887C5-3280-48D3-88B6-DB75DFBF5AE0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1B7DD0B-FD23-4C4F-A482-1B186E4DA580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -57,6 +60,10 @@ Global
 		{B12BAE3F-63E2-4848-9A44-9708FD60F7DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B12BAE3F-63E2-4848-9A44-9708FD60F7DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B12BAE3F-63E2-4848-9A44-9708FD60F7DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F065567-9546-4F07-BAA8-F027475D57B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F065567-9546-4F07-BAA8-F027475D57B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F065567-9546-4F07-BAA8-F027475D57B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F065567-9546-4F07-BAA8-F027475D57B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
