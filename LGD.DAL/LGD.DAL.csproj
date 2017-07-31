@@ -54,11 +54,15 @@
     <Compile Include="Access\ProjectService.cs" />
     <Compile Include="Access\RecordService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLite\RealDB\IRealDBHelper.cs" />
     <Compile Include="SQLite\SQLiteColumn.cs" />
     <Compile Include="SQLite\SQLiteColunmList.cs" />
     <Compile Include="SQLite\SQLiteDBHelpercs.cs" />
     <Compile Include="SQLite\RealDB\RealDBHelper.cs" />
     <Compile Include="SQLite\SQLiteTable.cs" />
+    <Compile Include="SQLite\WitsTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SqlServer\ConfigService.cs" />
     <Compile Include="SqlServer\ProjectService.cs" />
     <Compile Include="SqlServer\RecordService.cs" />

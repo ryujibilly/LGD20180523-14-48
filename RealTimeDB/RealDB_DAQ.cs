@@ -11,6 +11,7 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using System.IO;
 using Tool.TCP;
+using System.Diagnostics;
 
 namespace RealTimeDB
 {
@@ -20,6 +21,7 @@ namespace RealTimeDB
         private List<string> _iplist=new List<string>();
         private int _port = 9999;
         private int maxClient = 5;
+        private AsyncSocketTCPServer _tcpserver;
         /// <summary>
         /// 本地IP地址 列表
         /// </summary>
@@ -59,6 +61,21 @@ namespace RealTimeDB
                 maxClient = value;
             }
         }
+        /// <summary>
+        /// 异步tcp服务端
+        /// </summary>
+        public AsyncSocketTCPServer Tcpserver
+        {
+            get
+            {
+                return _tcpserver;
+            }
+
+            set
+            {
+                _tcpserver = value;
+            }
+        }
 
         public RealDB_DAQ()
         {
@@ -69,6 +86,7 @@ namespace RealTimeDB
         {
             Iplist.AddRange(GetLocalAddresses());
             comboBox_HostIP.Items.AddRange(Iplist.ToArray());
+            comboBox_HostIP.Text = Iplist[0].ToString();
         }
 
         /// <summary>
@@ -88,9 +106,12 @@ namespace RealTimeDB
 
         private void comboBox_HostIP_SelectedIndexChanged(object sender, EventArgs e)
         {
-            HostIp = comboBox_HostIP.SelectedText;
+            HostIp = comboBox_HostIP.SelectedItem.ToString();
         }
-
+        private void textBox_HostPort_TextChanged(object sender, EventArgs e)
+        {
+            Port = int.Parse(textBox_HostPort.Text.Trim());
+        }
         private void textBox_HostPort_Leave(object sender, EventArgs e)
         {
             try
@@ -111,19 +132,35 @@ namespace RealTimeDB
             return Regex.IsMatch(value, pattern);
         }
 
-        private void textBox_HostPort_TextChanged(object sender, EventArgs e)
-        {
-            Port = int.Parse(textBox_HostPort.Text.Trim());
-        }
-
         private void button_Listening_Click(object sender, EventArgs e)
         {
-            AsyncSocketTCPServer _tcpserver = new AsyncSocketTCPServer(IPAddress.Parse(HostIp), Port, MaxClient);
+            try
+            {
+                Tcpserver= new AsyncSocketTCPServer(IPAddress.Parse(HostIp), Port, MaxClient);
+                groupBox1.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                groupBox1.Enabled = true;
+            }
+
         }
 
         private void numericUpDown_MaxClient_ValueChanged(object sender, EventArgs e)
         {
             MaxClient = int.Parse(numericUpDown_MaxClient.Value.ToString());
+        }
+
+        private void button_Close_Click(object sender, EventArgs e)
+        {
+            if (Tcpserver.IsRunning)
+            {
+                Tcpserver.CloseAllClient();
+                groupBox1.Enabled = true;
+            }
+            //foreach (AsyncSocketState s in Tcpserver.Clients)
+            //    Tcpserver.Close(new AsyncSocketState(Tcpserver.Clients[0].ClientSocket));
         }
     }
 }

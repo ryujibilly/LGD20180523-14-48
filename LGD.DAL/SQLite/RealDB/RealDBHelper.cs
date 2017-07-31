@@ -14,7 +14,7 @@ namespace LGD.DAL.SQLite.RealDB
     /// <summary>
     /// RealDB 的数据库访问类-SQLiteHelper
     /// </summary>
-    public class RealDBHelper:SQLiteDBHelper
+    public class RealDBHelper : SQLiteDBHelper, IRealDBHelper
     {
         #region 获取工程信息
 
@@ -23,5 +23,14 @@ namespace LGD.DAL.SQLite.RealDB
         #region 保存wits0记录
 
         #endregion
+        static void implement()
+        {
+            RealDBHelper rtDBHelper = new RealDBHelper();
+            rtDBHelper.MethodToImplement();
+        }
+        public void MethodToImplement()
+        {
+
+        }
     }
 }

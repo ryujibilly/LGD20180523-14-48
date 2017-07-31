@@ -18,17 +18,40 @@ namespace LGD.DAL.SQLite
     public class SQLiteDBHelper
     {
         #region 字段、属性
-        private String dbPath = String.Empty;
         /// <summary>
-        /// 数据库文件路径
+        /// 单例模式对象
+        /// </summary>
+        public static SQLiteDBHelper _sqliteHelper = new SQLiteDBHelper();
+
+        private String targetDBPath = String.Empty;
+        private String dbPath = String.Empty;
+        private String connectionString = String.Empty;
+        private String targetConString= String.Empty;
+        private SQLiteTransaction dbTransaction = null;
+        private bool inTransaction = false;
+        /// <summary>
+        /// 当前数据库文件路径
         /// </summary>
         public String DBPath
         {
             get { return dbPath; }
             set { dbPath = value; }
         }
+        /// <summary>
+        /// 目标数据库文件路径
+        /// </summary>
+        public string TargetDBPath
+        {
+            get
+            {
+                return TargetDBPath;
+            }
 
-        #endregion
+            set
+            {
+                TargetDBPath = value;
+            }
+        }
         /// <summary>
         /// 数据库连接
         /// </summary>
@@ -43,21 +66,27 @@ namespace LGD.DAL.SQLite
                 this.connectionString = value;
             }
         }
-        private String connectionString = null;
-
-        private SQLiteTransaction dbTransaction = null;
-        private bool inTransaction = false;
         /// <summary>
-        /// 单例模式对象
+        /// 目标数据库连接字符串
         /// </summary>
-        public static SQLiteDBHelper _sqliteHelper = new SQLiteDBHelper();
+        public string TargetConString
+        {
+            get
+            {
+                return targetConString;
+            }
 
+            set
+            {
+                targetConString = value;
+            }
+        }
 
         #region 数据库连接必要条件参数
-
         private SQLiteConnection dbConnection = null;
+        private SQLiteConnection targetDBConnection = null;
         /// <summary>
-        /// 数据库连接
+        /// 当前数据库连接
         /// </summary>
         public SQLiteConnection DbConnection
         {
@@ -77,8 +106,9 @@ namespace LGD.DAL.SQLite
             }
         }
         private SQLiteCommand dbCommand = null;
+        private SQLiteCommand targetDBCommand = null;
         /// <summary>
-        /// 命令
+        /// 当前数据库 命令
         /// </summary>
         public SQLiteCommand DbCommand
         {
@@ -93,7 +123,7 @@ namespace LGD.DAL.SQLite
         }
         private SQLiteDataAdapter dbDataAdapter = null;
         /// <summary>
-        /// 数据库适配器
+        /// 当前数据库适配器
         /// </summary>
         public SQLiteDataAdapter DbDataAdapter
         {
@@ -137,6 +167,24 @@ namespace LGD.DAL.SQLite
                 autoOpenClose = value;
             }
         }
+        /// <summary>
+        /// 目标数据库连接
+        /// </summary>
+        public SQLiteConnection TargetDBConnection
+        {
+            get
+            {
+                return targetDBConnection;
+            }
+
+            set
+            {
+                targetDBConnection = value;
+            }
+        }
+
+
+        #endregion
 
         #endregion
 
@@ -232,7 +280,77 @@ namespace LGD.DAL.SQLite
                 SQLiteConnection.CreateFile(DBName+".db");
             }
         }
-
+        /// <summary>
+        /// 拷贝数据库文件
+        /// </summary>
+        /// <param name="sourcepath">源数据库路径</param>
+        /// <param name="destpath">目标数据库路径</param>
+        public void DBCopy(String sourcepath,String destpath)
+        {
+            try
+            {
+                if (!File.Exists(sourcepath))
+                {
+                    DBPath = sourcepath;
+                    // 自动打开
+                    if (this.DbConnection == null)
+                    {
+                        this.AutoOpenClose = true;
+                        this.Open();
+                    }
+                    else if (this.DbConnection.State == ConnectionState.Closed)
+                    {
+                        this.Open();
+                    }
+                    File.Copy(sourcepath, destpath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteDBHelper.cs ->DBCopy()<<<\r\t"+ex.Message);
+            }
+        }
+        /// <summary>
+        /// 写入witsdata
+        /// </summary>
+        /// <param name="tabID">表号</param>
+        /// <param name="wt">表</param>
+        /// <returns>写入记录数量</returns>
+        public int InsertWitsData(String tabID,WitsTable wt)
+        {
+            int sum = 0;
+            SQLiteConnection conn = this.DbConnection;
+            SQLiteTransaction tran= conn.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.Transaction = tran;
+            String index;
+            String value;
+            try
+            {
+                this.Open();
+                //校正后数据
+                while (wt.getNextRow(out index, out value))
+                {
+                    //设置带参数的Transact-SQL语句
+                    cmd.CommandText = "insert into [00_WitsData] values(@TabID,@ItemID, @Data)";
+                    cmd.Parameters.AddRange(new[]
+                    {
+                        new SQLiteParameter("@TabID",tabID),
+                        new SQLiteParameter("@ItemID",index),
+                        new SQLiteParameter("@Data",value)
+                    });
+                    cmd.ExecuteNonQuery();
+                    sum++;
+                }
+                tran.Commit();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->InsertWitsData(String,WitsTable)-->tran事务异常!<<<---- \r\t"+ ex.Message);
+                tran.Rollback();
+            }
+            return sum;
+        }
         /// <summary>
         /// 创建SQLite图版数据库表 
         /// </summary>

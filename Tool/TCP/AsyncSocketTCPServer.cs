@@ -54,13 +54,29 @@ namespace Tool.TCP
         /// <summary>  
         /// 通信使用的编码  
         /// </summary>  
-        public Encoding Encoding { get; set; }  
- 
- 
-        #endregion  
- 
+        public Encoding Encoding { get; set; }
+
+        /// <summary>  
+        /// 客户端会话列表  
+        /// </summary>  
+        public List<AsyncSocketState> Clients
+        {
+            get
+            {
+                return _clients;
+            }
+
+            set
+            {
+                _clients = value;
+            }
+        }
+
+
+        #endregion
+
         #region 构造函数  
-  
+
         /// <summary>  
         /// 异步Socket TCP服务器  
         /// </summary>  
@@ -90,7 +106,7 @@ namespace Tool.TCP
             this.Encoding = Encoding.Default;  
   
             _maxClient = maxClient;  
-            _clients = new List<AsyncSocketState>();  
+            Clients = new List<AsyncSocketState>();  
             _serverSock = new Socket(localIPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);  
         }  
  
@@ -161,9 +177,9 @@ namespace Tool.TCP
                 else  
                 {  
                     AsyncSocketState state = new AsyncSocketState(client);  
-                    lock (_clients)  
+                    lock (Clients)  
                     {  
-                        _clients.Add(state);  
+                        Clients.Add(state);  
                         _clientCount++;  
                         RaiseClientConnected(state); //触发客户端连接事件  
                     }  
@@ -388,7 +404,7 @@ namespace Tool.TCP
                 state.Datagram = null;  
                 state.RecvDataBuffer = null;  
   
-                _clients.Remove(state);  
+                Clients.Remove(state);  
                 _clientCount--;  
                 //TODO 触发关闭事件  
                 state.Close();  
@@ -399,12 +415,12 @@ namespace Tool.TCP
         /// </summary>  
         public void CloseAllClient()  
         {  
-            foreach (AsyncSocketState client in _clients)  
+            foreach (AsyncSocketState client in Clients)  
             {  
                 Close(client);  
             }  
             _clientCount = 0;  
-            _clients.Clear();  
+            Clients.Clear();  
         }  
         #endregion  
  
