@@ -6,8 +6,8 @@ using System.Configuration;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
-using System.ComponentModel;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace LGD.DAL.SQLite
 {
@@ -187,7 +187,6 @@ namespace LGD.DAL.SQLite
         #endregion
 
         #endregion
-
         /// <summary> 
         /// 构造函数 
         /// </summary> 
@@ -232,7 +231,7 @@ namespace LGD.DAL.SQLite
             return this.dbConnection;
         }
 
-        #region 建立本地数据库
+        #region 建立、拷贝本地数据库
 
         /// <summary> 
         /// 创建SQLite数据库文件 
@@ -307,50 +306,10 @@ namespace LGD.DAL.SQLite
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(">>>SQLiteDBHelper.cs ->DBCopy()<<<\r\t"+ex.Message);
+                Debug.WriteLine(">>>SQLiteDBHelper.cs ->DBCopy()数据库拷贝异常！<<<\r\t"+ex.Message);
             }
         }
-        /// <summary>
-        /// 写入witsdata
-        /// </summary>
-        /// <param name="tabID">表号</param>
-        /// <param name="wt">表</param>
-        /// <returns>写入记录数量</returns>
-        public int InsertWitsData(String tabID,WitsTable wt)
-        {
-            int sum = 0;
-            SQLiteConnection conn = this.DbConnection;
-            SQLiteTransaction tran= conn.BeginTransaction();
-            SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.Transaction = tran;
-            String index;
-            String value;
-            try
-            {
-                this.Open();
-                //校正后数据
-                while (wt.getNextRow(out index, out value))
-                {
-                    //设置带参数的Transact-SQL语句
-                    cmd.CommandText = "insert into [00_WitsData] values(@TabID,@ItemID, @Data)";
-                    cmd.Parameters.AddRange(new[]
-                    {
-                        new SQLiteParameter("@TabID",tabID),
-                        new SQLiteParameter("@ItemID",index),
-                        new SQLiteParameter("@Data",value)
-                    });
-                    cmd.ExecuteNonQuery();
-                    sum++;
-                }
-                tran.Commit();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(">>>SQLiteHelper.cs-->InsertWitsData(String,WitsTable)-->tran事务异常!<<<---- \r\t"+ ex.Message);
-                tran.Rollback();
-            }
-            return sum;
-        }
+
         /// <summary>
         /// 创建SQLite图版数据库表 
         /// </summary>
@@ -407,6 +366,109 @@ namespace LGD.DAL.SQLite
             }
         }
 
+        #endregion
+
+        #region 写入数据库
+
+        /// <summary>
+        /// 写入witsdata
+        /// </summary>
+        /// <param name="tabID">表号</param>
+        /// <param name="wt">表</param>
+        /// <returns>写入记录数量 :-1表示异常，》=0表示写入记录数量</returns>
+        public int InsertWitsData(String tabID, WitsTable wt)
+        {
+            int sum = 0;
+            SQLiteConnection conn = this.DbConnection;
+            SQLiteTransaction tran = conn.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.Transaction = tran;
+            String index;
+            String value;
+            try
+            {
+                this.Open();
+                //校正后数据
+                while (wt.getNextRow(out index, out value))
+                {
+                    //设置带参数的Transact-SQL语句
+                    cmd.CommandText = "insert into [00_WitsData] values(@TabID,@ItemID, @Data)";
+                    cmd.Parameters.AddRange(new[]
+                    {
+                        new SQLiteParameter("@TabID",tabID),
+                        new SQLiteParameter("@ItemID",index),
+                        new SQLiteParameter("@Data",value)
+                    });
+                    if (cmd.ExecuteNonQuery() > 0)
+                        sum++;
+                }
+                tran.Commit();
+                return sum;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->InsertWitsData(String,WitsTable)-->tran事务异常!<<<---- \r\t" + ex.Message);
+                tran.Rollback();
+                return -1;
+            }
+
+        }
+        /// <summary>
+        /// wits0记录的入表解析（拆分wits数据，分表入库）
+        /// </summary>
+        /// <returns></returns>
+        public int WitsTabAnalysis(String tabID,WitsTable wt)
+        {
+            int sum = 0;
+            SQLiteConnection conn = this.DbConnection;
+            SQLiteTransaction tran = conn.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.Transaction = tran;
+            String index;
+            String value;
+            try
+            {
+                this.Open();
+                //校正后数据
+                while (wt.getNextRow(out index, out value))
+                {
+                    string tabName = string.Empty;
+                    switch (tabID)
+                    {
+                        case "01": tabName = TabName._tabName.tab01; break;
+                        case "02": tabName = TabName._tabName.tab02; break;
+                        case "07": tabName = TabName._tabName.tab07; break;
+                        case "08": tabName = TabName._tabName.tab08; break;
+                        case "09": tabName = TabName._tabName.tab09; break;
+                        case "11": tabName = TabName._tabName.tab11; break;
+                        case "12": tabName = TabName._tabName.tab12; break;
+                        case "15": tabName = TabName._tabName.tab15; break;
+                        case "19": tabName = TabName._tabName.tab19; break;
+                        case "51": tabName = TabName._tabName.tab51; break;
+                        case "55": tabName = TabName._tabName.tab55; break;
+                        default: break;
+                    }
+                    //设置带参数的Transact-SQL语句
+                    cmd.CommandText = "insert into "+tabName+" values(@TabID,@ItemID, @Data)";
+                    cmd.Parameters.AddRange(new[]
+                    {
+                        new SQLiteParameter("@TabID",tabID),
+                        new SQLiteParameter("@ItemID",index),
+                        new SQLiteParameter("@Data",value)
+                    });
+                    if (cmd.ExecuteNonQuery() > 0)
+                        sum++;
+                }
+                tran.Commit();
+                return sum;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->WitsTabAnalysis(String,WitsTable)-->tran事务异常!<<<---- \r\t" + ex.Message);
+                tran.Rollback();
+                return -1;
+            }
+        }
         #endregion
 
         #region 判断表是否存在

@@ -67,53 +67,26 @@ namespace Tool
 
                 //根节点添加独立子节点
 
-                //1 默认文件夹  id=1
-                XmlElement dbconfig1 = doc.CreateElement("DBConfig");
-                XmlAttribute attrID1 = doc.CreateAttribute("ID");
-                attrID1.Value = "01";
-                dbconfig1.Attributes.Append(attrID1);
-                root.AppendChild(dbconfig1);
+                //1 默认文件夹
+                XmlElement dbconfig = doc.CreateElement("DBConfig");
+                dbconfig.SetAttribute("id", "1");
+                dbconfig.AppendChild(getChildNode(doc, "Name", "FoldBrowserPath"));
+                dbconfig.AppendChild(getChildNode(doc, "Path", Config.CfgInfo.FoldBrowserPath));
+                root.AppendChild(dbconfig);
 
-                //id=1 ,name
-                XmlElement eleName1 = doc.CreateElement("Name");
-                eleName1.InnerText = "FoldBrowserPath";
-                dbconfig1.AppendChild(eleName1);
-                //id=1 ,path
-                XmlElement elePath1 = doc.CreateElement("Path");
-                elePath1.InnerText = Config.CfgInfo.FoldBrowserPath;
-                dbconfig1.AppendChild(elePath1);
+                //静态模板库地址
+                dbconfig = doc.CreateElement("DBConfig");
+                dbconfig.SetAttribute("id", "2");
+                dbconfig.AppendChild(getChildNode(doc, "Name", "StaticDB_PATH"));
+                dbconfig.AppendChild(getChildNode(doc, "Path", Config.CfgInfo.StaticDB_PATH));
+                root.AppendChild(dbconfig);
 
-                //2 静态模板库地址  id=2
-                XmlElement dbconfig2 = doc.CreateElement("DBConfig");
-                XmlAttribute attrID2 = doc.CreateAttribute("ID");
-                attrID2.Value = "02";
-                dbconfig2.Attributes.Append(attrID2);
-                root.AppendChild(dbconfig2);
-
-                //id=2 ,name
-                XmlElement eleName2 = doc.CreateElement("Name");
-                eleName2.InnerText = "StaticDB_PATH";
-                dbconfig2.AppendChild(eleName2);
-                //id=2 ,path
-                XmlElement elePath2 = doc.CreateElement("Path");
-                elePath2.InnerText = Config.CfgInfo.StaticDB_PATH;
-                dbconfig2.AppendChild(elePath2);
-
-                //3 单井数据库地址  id=3
-                XmlElement dbconfig3 = doc.CreateElement("DBConfig");
-                XmlAttribute attrID3 = doc.CreateAttribute("ID");
-                attrID3.Value = "03";
-                dbconfig3.Attributes.Append(attrID3);
-                root.AppendChild(dbconfig3);
-
-                //id=3 ,name
-                XmlElement eleName3 = doc.CreateElement("Name");
-                eleName3.InnerText = "DBPath_Well";
-                dbconfig3.AppendChild(eleName3);
-                //id=3 ,path
-                XmlElement elePath3 = doc.CreateElement("Path");
-                elePath3.InnerText = Config.CfgInfo.DBPath_Well;
-                dbconfig3.AppendChild(elePath3);
+                //单井数据库地址
+                dbconfig = doc.CreateElement("DBConfig");
+                dbconfig.SetAttribute("id", "3");
+                dbconfig.AppendChild(getChildNode(doc, "Name", "DBPath_Well"));
+                dbconfig.AppendChild(getChildNode(doc, "Path", Config.CfgInfo.DBPath_Well));
+                root.AppendChild(dbconfig);
 
                 doc.Save(Config.CfgInfo.XMLpath);
                 Debug.WriteLine("LGDConfig.xml 创建成功！");
@@ -145,13 +118,13 @@ namespace Tool
                     XmlNodeList dbConfigNodes = root.GetElementsByTagName("DBConfig");
                     foreach (XmlNode node in dbConfigNodes)
                     {
-                        string id=((XmlElement)node).GetAttribute("ID");
+                        string id=((XmlElement)node).GetAttribute("id");
                         switch(id){
-                            case "01": //CfgInfo.FoldBrowserPath = ((XmlElement)node)
+                            case "1": CfgInfo.FoldBrowserPath = node.Attributes["Path"].InnerText;
                                 break;
-                            case "02": CfgInfo.StaticDB_PATH = node.Attributes["Path"].InnerText;
+                            case "2": CfgInfo.StaticDB_PATH = node.Attributes["Path"].InnerText;
                                 break;
-                            case "03": CfgInfo.DBPath_Well = node.Attributes["Path"].InnerText;
+                            case "3": CfgInfo.DBPath_Well = node.Attributes["Path"].InnerText;
                                 break;
                             default: break;
                         }

@@ -162,5 +162,10 @@ namespace RealTimeDB
             //foreach (AsyncSocketState s in Tcpserver.Clients)
             //    Tcpserver.Close(new AsyncSocketState(Tcpserver.Clients[0].ClientSocket));
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

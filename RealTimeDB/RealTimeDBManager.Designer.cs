@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RealTimeDBManager));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.工区配置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.退出ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.数据采集ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.实时数据库管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.数据库配置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.数据浏览ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,8 +40,8 @@
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.数据采集ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -50,8 +50,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文件ToolStripMenuItem,
-            this.数据采集ToolStripMenuItem,
             this.实时数据库管理ToolStripMenuItem,
+            this.数据采集ToolStripMenuItem,
             this.基地数据库推送ToolStripMenuItem,
             this.关于ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -64,24 +64,23 @@
             // 文件ToolStripMenuItem
             // 
             this.文件ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.工区配置ToolStripMenuItem,
             this.退出ToolStripMenuItem});
             this.文件ToolStripMenuItem.Name = "文件ToolStripMenuItem";
             this.文件ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.文件ToolStripMenuItem.Text = "文件";
             // 
-            // 工区配置ToolStripMenuItem
-            // 
-            this.工区配置ToolStripMenuItem.Name = "工区配置ToolStripMenuItem";
-            this.工区配置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.工区配置ToolStripMenuItem.Text = "工区配置";
-            this.工区配置ToolStripMenuItem.Click += new System.EventHandler(this.工区配置ToolStripMenuItem_Click);
-            // 
             // 退出ToolStripMenuItem
             // 
             this.退出ToolStripMenuItem.Name = "退出ToolStripMenuItem";
-            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.退出ToolStripMenuItem.Text = "退出";
+            // 
+            // 数据采集ToolStripMenuItem
+            // 
+            this.数据采集ToolStripMenuItem.Name = "数据采集ToolStripMenuItem";
+            this.数据采集ToolStripMenuItem.Size = new System.Drawing.Size(92, 21);
+            this.数据采集ToolStripMenuItem.Text = "实时数据采集";
+            this.数据采集ToolStripMenuItem.Click += new System.EventHandler(this.数据采集ToolStripMenuItem_Click);
             // 
             // 实时数据库管理ToolStripMenuItem
             // 
@@ -95,8 +94,8 @@
             // 数据库配置ToolStripMenuItem
             // 
             this.数据库配置ToolStripMenuItem.Name = "数据库配置ToolStripMenuItem";
-            this.数据库配置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.数据库配置ToolStripMenuItem.Text = "数据库配置";
+            this.数据库配置ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.数据库配置ToolStripMenuItem.Text = "数据库及工区配置";
             this.数据库配置ToolStripMenuItem.Click += new System.EventHandler(this.数据库配置ToolStripMenuItem_Click);
             // 
             // 数据浏览ToolStripMenuItem
@@ -138,23 +137,30 @@
             this.toolStripButton1.Text = "toolStripButton1";
             this.toolStripButton1.ToolTipText = "登录";
             // 
-            // folderBrowserDialog1
+            // textBox1
             // 
-            this.folderBrowserDialog1.Description = "选择工区文件夹";
-            this.folderBrowserDialog1.SelectedPath = global::RealTimeDB.Properties.Settings.Default.FoldBrowserPath;
+            this.textBox1.Location = new System.Drawing.Point(12, 70);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(291, 391);
+            this.textBox1.TabIndex = 3;
             // 
-            // 数据采集ToolStripMenuItem
+            // button1
             // 
-            this.数据采集ToolStripMenuItem.Name = "数据采集ToolStripMenuItem";
-            this.数据采集ToolStripMenuItem.Size = new System.Drawing.Size(92, 21);
-            this.数据采集ToolStripMenuItem.Text = "实时数据采集";
-            this.数据采集ToolStripMenuItem.Click += new System.EventHandler(this.数据采集ToolStripMenuItem_Click);
+            this.button1.Location = new System.Drawing.Point(318, 70);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(93, 41);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "发送";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // RealTimeDBManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1284, 556);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("黑体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -184,10 +190,10 @@
         private System.Windows.Forms.ToolStripMenuItem 关于ToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripMenuItem 工区配置ToolStripMenuItem;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.ToolStripMenuItem 数据库配置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 数据采集ToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -60,21 +60,7 @@ namespace RealTimeDB
 
         private void RealTimeDBManager_Load(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.FoldBrowserPath != null)
-                folderBrowserDialog1.SelectedPath = Properties.Settings.Default.FoldBrowserPath;
-
             Tool.Config.GetConfig();
-            folderBrowserDialog1.SelectedPath = Tool.Config.CfgInfo.FoldBrowserPath;
-        }
-
-        private void 工区配置ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (folderBrowserDialog1.ShowDialog(Owner) == DialogResult.OK)
-            {
-                Properties.Settings.Default.FoldBrowserPath = folderBrowserDialog1.SelectedPath;
-                Tool.Config.CfgInfo.FoldBrowserPath= folderBrowserDialog1.SelectedPath;
-                Tool.Config.SaveConfig();
-            }
         }
 
         private void 数据库配置ToolStripMenuItem_Click(object sender, EventArgs e)

@@ -60,6 +60,7 @@
     <Compile Include="SQLite\SQLiteDBHelpercs.cs" />
     <Compile Include="SQLite\RealDB\RealDBHelper.cs" />
     <Compile Include="SQLite\SQLiteTable.cs" />
+    <Compile Include="SQLite\TabName.cs" />
     <Compile Include="SQLite\WitsTable.cs">
       <SubType>Component</SubType>
     </Compile>
