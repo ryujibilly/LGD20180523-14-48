@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ControlLib">
-      <HintPath>..\ControlLib\bin\Release\ControlLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -171,6 +168,10 @@
     <ProjectReference Include="..\LGD.Model\LGD.Model.csproj">
       <Project>{c1b7dd0b-fd23-4c4f-a482-1b186e4da580}</Project>
       <Name>LGD.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RealTimeDB\RealTimeDB.csproj">
+      <Project>{0f065567-9546-4f07-baa8-f027475d57b3}</Project>
+      <Name>RealTimeDB</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

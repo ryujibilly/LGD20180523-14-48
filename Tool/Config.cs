@@ -11,6 +11,8 @@ namespace Tool
     /// </summary>
     public class ConfigInfo
     {
+
+
         /// <summary>
         /// 默认文件夹路径
         /// </summary>
@@ -37,8 +39,62 @@ namespace Tool
         {
             get { return xmlpath; }
         }
-    }
 
+    }
+    /// <summary>
+    /// XML属性
+    /// </summary>
+    public class XmlAttr
+    {
+        private string xmlName;
+        private string xmlPath;
+        private string id;
+        /// <summary>
+        /// XML 属性名
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return xmlName;
+            }
+
+            set
+            {
+                xmlName = value;
+            }
+        }
+        /// <summary>
+        /// XML 属性路径
+        /// </summary>
+        public string Path
+        {
+            get
+            {
+                return xmlPath;
+            }
+
+            set
+            {
+                xmlPath = value;
+            }
+        }
+        /// <summary>
+        /// 属性ID
+        /// </summary>
+        public string Id
+        {
+            get
+            {
+                return id;
+            }
+
+            set
+            {
+                id = value;
+            }
+        }
+    }
     /// <summary>
     /// 配置类
     /// </summary>
@@ -138,6 +194,7 @@ namespace Tool
             {
                 if (File.Exists(Config.CfgInfo.XMLpath))
                 {
+
                     XmlDocument doc = new XmlDocument();
                     doc.Load(Config.CfgInfo.XMLpath);
                     XmlElement root = doc.DocumentElement;
@@ -145,13 +202,15 @@ namespace Tool
                     XmlNodeList dbConfigNodes = root.GetElementsByTagName("DBConfig");
                     foreach (XmlNode node in dbConfigNodes)
                     {
-                        string id=((XmlElement)node).GetAttribute("ID");
-                        switch(id){
-                            case "01": //CfgInfo.FoldBrowserPath = ((XmlElement)node)
+                        XmlAttr xa = new XmlAttr();
+                        XmlElement xe=(XmlElement)node;
+                        xa.Id = xe.GetAttribute("ID");
+                        switch(xa.Id){
+                            case "01": CfgInfo.FoldBrowserPath = xe.ChildNodes[1].InnerText;
                                 break;
-                            case "02": CfgInfo.StaticDB_PATH = node.Attributes["Path"].InnerText;
+                            case "02": CfgInfo.StaticDB_PATH = xe.ChildNodes[1].InnerText;
                                 break;
-                            case "03": CfgInfo.DBPath_Well = node.Attributes["Path"].InnerText;
+                            case "03": CfgInfo.DBPath_Well = xe.ChildNodes[1].InnerText;
                                 break;
                             default: break;
                         }

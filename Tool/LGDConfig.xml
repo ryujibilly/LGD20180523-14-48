@@ -4,11 +4,11 @@
     <Name>FoldBrowserPath</Name>
     <Path>H:\LGDRealDB\test1</Path>
   </DBConfig>
-  <DBConfig ID="01">
+  <DBConfig ID="02">
     <Name>StaticDB_PATH</Name>
     <Path>H:\LGDRealDBTest\RealDB</Path>
   </DBConfig>
-  <DBConfig ID="01">
+  <DBConfig ID="03">
     <Name>DBPath_Well</Name>
     <Path>H:\LGDRealDBTest\RealDB</Path>
   </DBConfig>

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using LGD.UI.SystemSettings;
+using RealTimeDB;
 
 namespace LGD.UI
 {
@@ -241,7 +242,8 @@ namespace LGD.UI
 
         private void button_DBSetting_Click(object sender, EventArgs e)
         {
-            
+            RealTimeDBManager rtdbMg = new RealTimeDBManager();
+            rtdbMg.Show();
         }
 
         private void button_GlasProjectDataManager_Click(object sender, EventArgs e)

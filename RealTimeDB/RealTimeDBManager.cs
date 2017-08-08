@@ -66,7 +66,6 @@ namespace RealTimeDB
         private void 数据库配置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RealTimeDBLogin rtDBLogin = new RealTimeDBLogin();
-            rtDBLogin.MdiParent = this;
             rtDBLogin.Show();
         }
 
