@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
 using System.Windows.Forms;
 using LGD.DAL.SQLite;
 using Tool;
@@ -14,6 +15,10 @@ namespace RealTimeDB
 {
     public partial class RealTimeDBLogin : Form
     {
+        private static String[] fragSep = new String[] {"!!\r\n","&&\r\n","!!","&&"};
+        private static String[] dataSep = new String[] { "\r\n"};
+        private static ConcurrentQueue<String> idQueue = new ConcurrentQueue<string>();
+        private static ConcurrentQueue<WitsTable> tabQueue = new ConcurrentQueue<WitsTable>();
         List<String> namelist = new List<string>();
         public RealTimeDBLogin()
         {
@@ -159,6 +164,61 @@ namespace RealTimeDB
             if (checkBox1.CheckState == CheckState.Checked)
                 namelist.Add("12");
             else namelist.Remove("12");
+        }
+
+        private void button_Send_Click(object sender, EventArgs e)
+        {
+            SQLiteDBHelper _helper = new SQLiteDBHelper(Config.CfgInfo.DBPath_Well);
+            ConcurrentQueue<String> frags = new ConcurrentQueue<string>();
+            String[] tempFrags;
+            String data;
+            String tabid;
+            WitsTable wt;
+            String frag;
+            data = textBox_SendData.Text.Trim();
+            tempFrags=data.Split(fragSep, StringSplitOptions.RemoveEmptyEntries);
+            foreach (String str in tempFrags)
+                frags.Enqueue(str);
+            while(frags.Count>0)
+            {
+                frags.TryDequeue(out frag);
+                toWitsTable(frag, out tabid);
+                if(tabQueue.Count>0)
+                {
+                    tabQueue.TryDequeue(out wt);
+                    idQueue.TryDequeue(out tabid);
+                    _helper.WitsTabAnalysis(tabid,wt);
+                    _helper.InsertWitsData(tabid, wt);
+                }
+            }
+        }
+        public static void toWitsTable(String str,out String tabid)
+        {
+            WitsTable wt = new WitsTable();
+            DataRow dr;
+            ConcurrentQueue<String> itemIndexs = new ConcurrentQueue<string>();
+            ConcurrentQueue<String> values = new ConcurrentQueue<string>();
+            String[] temp;
+            temp = str.Split(dataSep, StringSplitOptions.RemoveEmptyEntries);
+            tabid=temp[0].Substring(0, 2);
+            foreach (String var in temp)
+            {
+                itemIndexs.Enqueue(var.Substring(2, 2));
+                values.Enqueue(var.Substring(4, var.Length - 4));
+            }
+
+            while(itemIndexs.Count>0&&values.Count>0)
+            {
+                String itemIndex;
+                String value;
+                itemIndexs.TryDequeue(out itemIndex);
+                values.TryDequeue(out value);
+                dr = wt.NewRow();
+                dr.ItemArray = new String[] { itemIndex,value};
+                wt.Rows.Add(dr);
+            }
+            idQueue.Enqueue(tabid);
+            tabQueue.Enqueue(wt);
         }
     }
 }

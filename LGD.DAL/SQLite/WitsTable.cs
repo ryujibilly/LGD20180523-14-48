@@ -8,16 +8,9 @@ namespace LGD.DAL.SQLite
 {
     public class WitsTable:DataTable
     {
+        #region 字段、属性
         private String index;
         private String value;
-        /// <summary>
-        /// 字段索引列
-        /// </summary>
-        private DataColumn columnIndex=new DataColumn("ItemIndex",Type.GetType("System.String"));
-        /// <summary>
-        /// 数据列
-        /// </summary>
-        private DataColumn columnValue= new DataColumn("Value", Type.GetType("System.String"));
         /// <summary>
         /// 字段索引
         /// </summary>
@@ -48,6 +41,16 @@ namespace LGD.DAL.SQLite
                 this.value = value;
             }
         }
+        #endregion
+        /// <summary>
+        /// 字段索引列
+        /// </summary>
+        private DataColumn columnIndex=new DataColumn("ItemIndex",Type.GetType("System.String"));
+        /// <summary>
+        /// 数据列
+        /// </summary>
+        private DataColumn columnValue= new DataColumn("Value", Type.GetType("System.String"));
+
 
         public WitsTable()
         {

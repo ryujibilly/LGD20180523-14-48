@@ -35,6 +35,7 @@
             this.button_OpenModDB = new System.Windows.Forms.Button();
             this.textBox_StaticDBPath = new System.Windows.Forms.TextBox();
             this.tabPage_NewDB = new System.Windows.Forms.TabPage();
+            this.button_NewDBFile = new System.Windows.Forms.Button();
             this.button_NewProject = new System.Windows.Forms.Button();
             this.textBox_new_welltime = new System.Windows.Forms.TextBox();
             this.textBox_new_wellname = new System.Windows.Forms.TextBox();
@@ -53,15 +54,15 @@
             this.label1 = new System.Windows.Forms.Label();
             this.openFileDialog_ModDB = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog_NewProject = new System.Windows.Forms.FolderBrowserDialog();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.openFileDialog_OpenDB = new System.Windows.Forms.OpenFileDialog();
-            this.button_NewDBFile = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.textBox_SendData = new System.Windows.Forms.TextBox();
+            this.button_Send = new System.Windows.Forms.Button();
             this.tabControl_OpenorCreate.SuspendLayout();
             this.tabPage_ModDB.SuspendLayout();
             this.tabPage_NewDB.SuspendLayout();
@@ -150,6 +151,16 @@
             this.tabPage_NewDB.TabIndex = 1;
             this.tabPage_NewDB.Text = "新建工区";
             this.tabPage_NewDB.UseVisualStyleBackColor = true;
+            // 
+            // button_NewDBFile
+            // 
+            this.button_NewDBFile.Location = new System.Drawing.Point(229, 206);
+            this.button_NewDBFile.Name = "button_NewDBFile";
+            this.button_NewDBFile.Size = new System.Drawing.Size(178, 29);
+            this.button_NewDBFile.TabIndex = 18;
+            this.button_NewDBFile.Text = "新建工区(新建)";
+            this.button_NewDBFile.UseVisualStyleBackColor = true;
+            this.button_NewDBFile.Click += new System.EventHandler(this.button_NewDBFile_Click);
             // 
             // button_NewProject
             // 
@@ -308,14 +319,6 @@
             // 
             this.folderBrowserDialog_NewProject.Description = "选择新工区的根目录，用于创建模板数据库的拷贝";
             // 
-            // treeView1
-            // 
-            this.treeView1.CheckBoxes = true;
-            this.treeView1.Location = new System.Drawing.Point(603, 13);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(85, 313);
-            this.treeView1.TabIndex = 4;
-            // 
             // openFileDialog_OpenDB
             // 
             this.openFileDialog_OpenDB.DefaultExt = "*.db";
@@ -323,16 +326,6 @@
             this.openFileDialog_OpenDB.Filter = "数据库文件(*.db)|*.db|SQLite2(*.db2)|*.db2|SQLite3(*.db3)|*.db3|所有文件(*.*)|*.*";
             this.openFileDialog_OpenDB.RestoreDirectory = true;
             this.openFileDialog_OpenDB.Title = "选择实时数据库SQLite文件";
-            // 
-            // button_NewDBFile
-            // 
-            this.button_NewDBFile.Location = new System.Drawing.Point(229, 206);
-            this.button_NewDBFile.Name = "button_NewDBFile";
-            this.button_NewDBFile.Size = new System.Drawing.Size(178, 29);
-            this.button_NewDBFile.TabIndex = 18;
-            this.button_NewDBFile.Text = "新建工区(新建)";
-            this.button_NewDBFile.UseVisualStyleBackColor = true;
-            this.button_NewDBFile.Click += new System.EventHandler(this.button_NewDBFile_Click);
             // 
             // checkBox1
             // 
@@ -400,18 +393,37 @@
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
             // 
+            // textBox_SendData
+            // 
+            this.textBox_SendData.Location = new System.Drawing.Point(534, 12);
+            this.textBox_SendData.Multiline = true;
+            this.textBox_SendData.Name = "textBox_SendData";
+            this.textBox_SendData.Size = new System.Drawing.Size(260, 270);
+            this.textBox_SendData.TabIndex = 11;
+            // 
+            // button_Send
+            // 
+            this.button_Send.Location = new System.Drawing.Point(627, 288);
+            this.button_Send.Name = "button_Send";
+            this.button_Send.Size = new System.Drawing.Size(81, 33);
+            this.button_Send.TabIndex = 12;
+            this.button_Send.Text = "发送";
+            this.button_Send.UseVisualStyleBackColor = true;
+            this.button_Send.Click += new System.EventHandler(this.button_Send_Click);
+            // 
             // RealTimeDBLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(700, 333);
+            this.ClientSize = new System.Drawing.Size(843, 333);
+            this.Controls.Add(this.button_Send);
+            this.Controls.Add(this.textBox_SendData);
             this.Controls.Add(this.checkBox5);
             this.Controls.Add(this.checkBox6);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.checkBox4);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.treeView1);
             this.Controls.Add(this.tabControl_OpenorCreate);
             this.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(5);
@@ -457,7 +469,6 @@
         private System.Windows.Forms.Button button_NewProjectFolder;
         private System.Windows.Forms.TextBox textBox_NewDBPath;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog_NewProject;
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button button_NewProject;
         private System.Windows.Forms.Button button_NewDBFile;
         private System.Windows.Forms.CheckBox checkBox1;
@@ -466,5 +477,7 @@
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.TextBox textBox_SendData;
+        private System.Windows.Forms.Button button_Send;
     }
 }

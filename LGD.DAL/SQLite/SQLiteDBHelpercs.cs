@@ -364,12 +364,12 @@ namespace LGD.DAL.SQLite
                 foreach(String tabname in namelist)
                 {
                     //01~55 wits0标准表
-                    cmd.CommandText = "CREATE TABLE ["+tabname+"] (ID INTEGER PRIMARY KEY ASC AUTOINCREMENT NOT NULL UNIQUE,ItemIndex VARCHAR NOT NULL,Value VARCHAR NOT NULL); ";
+                    cmd.CommandText = "CREATE TABLE ["+tabname+ "] (ID INTEGER NOT NULL,ItemIndex VARCHAR NOT NULL,Value VARCHAR NOT NULL ); ";
                     cmd.ExecuteNonQuery();
                     sum++;
                 }
                 //00 WitsData临时表
-                cmd.CommandText = "CREATE TABLE [00] ( ID INTEGER PRIMARY KEY ASC AUTOINCREMENT NOT NULL, TabID  VARCHAR NOT NULL, ItemID VARCHAR NOT NULL, Value  VARCHAR NOT NULL DEFAULT (-999.25) ); ";
+                cmd.CommandText = "CREATE TABLE [00] (ID INTEGER NOT NULL,TabID  VARCHAR NOT NULL,ItemID VARCHAR NOT  NULL,Value  VARCHAR NOT NULL DEFAULT(-999.25)); ";
                 cmd.ExecuteNonQuery();
                 tran.Commit();
                 return sum;
@@ -481,6 +481,7 @@ namespace LGD.DAL.SQLite
         /// <returns>写入记录数量 :-1表示异常，》=0表示写入记录数量</returns>
         public int InsertWitsData(String tabID, WitsTable wt)
         {
+            WitsTable wtCopy = (WitsTable)wt.Copy();
             int sum = 0;
             SQLiteConnection conn = this.DbConnection;
             SQLiteTransaction tran = conn.BeginTransaction();
@@ -492,12 +493,13 @@ namespace LGD.DAL.SQLite
             {
                 this.Open();
                 //校正后数据
-                while (wt.getNextRow(out index, out value))
+                while (wtCopy.getNextRow(out index, out value))
                 {
                     //设置带参数的Transact-SQL语句
-                    cmd.CommandText = "insert into [00_WitsData] values(@TabID,@ItemID, @Value)";
+                    cmd.CommandText = "insert into [00] values(@ID,@TabID,@ItemID, @Value)";
                     cmd.Parameters.AddRange(new[]
                     {
+                        new SQLiteParameter("@ID",System.DateTime.Now.ToLongTimeString()),
                         new SQLiteParameter("@TabID",tabID),
                         new SQLiteParameter("@ItemID",index),
                         new SQLiteParameter("@Value",value)
@@ -522,6 +524,7 @@ namespace LGD.DAL.SQLite
         /// <returns></returns>
         public int WitsTabAnalysis(String tabID,WitsTable wt)
         {
+            WitsTable wtCopy = (WitsTable)wt.Copy();
             int sum = 0;
             SQLiteConnection conn = this.DbConnection;
             SQLiteTransaction tran = conn.BeginTransaction();
@@ -533,12 +536,13 @@ namespace LGD.DAL.SQLite
             {
                 this.Open();
                 //校正后数据
-                while (wt.getNextRow(out index, out value))
+                while (wtCopy.getNextRow(out index, out value))
                 {
                     //设置带参数的Transact-SQL语句
-                    cmd.CommandText = "insert into ["+tabID+"] values(@ItemIndex, @Value)";
+                    cmd.CommandText = "insert into [" + tabID + "] values(@ID,@ItemIndex, @Value)";
                     cmd.Parameters.AddRange(new[]
                     {
+                        new SQLiteParameter("@ID",index),
                         new SQLiteParameter("@ItemIndex",index),
                         new SQLiteParameter("@Value",value)
                     });
