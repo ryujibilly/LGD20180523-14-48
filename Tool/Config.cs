@@ -217,7 +217,6 @@ namespace Tool
                     }
                 }
                 bIsGet = true;
-               
             }
             catch (Exception ex)
             {
