@@ -11,8 +11,6 @@ namespace Tool
     /// </summary>
     public class ConfigInfo
     {
-
-
         /// <summary>
         /// 默认文件夹路径
         /// </summary>
