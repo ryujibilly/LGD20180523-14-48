@@ -21,7 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RegisterForComInterop>true</RegisterForComInterop>
+    <RegisterForComInterop>false</RegisterForComInterop>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DocumentationFile>
     </DocumentationFile>
@@ -57,10 +57,14 @@
     <Compile Include="SQLite\RealDB\IRealDBHelper.cs" />
     <Compile Include="SQLite\SQLiteColumn.cs" />
     <Compile Include="SQLite\SQLiteColunmList.cs" />
-    <Compile Include="SQLite\SQLiteDBHelpercs.cs" />
     <Compile Include="SQLite\RealDB\RealDBHelper.cs" />
+    <Compile Include="SQLite\SQLiteDBHelper.cs" />
+    <Compile Include="SQLite\SQLiteDBHelper.Designer.cs">
+      <DependentUpon>SQLiteDBHelper.cs</DependentUpon>
+    </Compile>
     <Compile Include="SQLite\SQLiteTable.cs" />
     <Compile Include="SQLite\TabName.cs" />
+    <Compile Include="SQLite\WitsConfig.cs" />
     <Compile Include="SQLite\WitsTable.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -84,6 +88,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Oracle\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SQLite\SQLiteDBHelper.resx">
+      <DependentUpon>SQLiteDBHelper.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

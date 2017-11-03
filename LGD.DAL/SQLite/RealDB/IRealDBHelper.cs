@@ -5,9 +5,11 @@ using System.Text;
 
 namespace LGD.DAL.SQLite.RealDB
 {
+    /// <summary>
+    /// RealDB SQLite数据库操作接口
+    /// </summary>
     interface IRealDBHelper
     {
-        // 接口成员
-        void MethodToImplement();
+
     }
 }

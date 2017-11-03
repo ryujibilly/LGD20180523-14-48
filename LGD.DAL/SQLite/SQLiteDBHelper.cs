@@ -6,34 +6,107 @@ using System.Configuration;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
-using System.ComponentModel;
 using System.Diagnostics;
+using System.Collections.Concurrent;
+using LGD.DAL.SQLite.RealDB;
 
 namespace LGD.DAL.SQLite
 {
     /// <summary> 
     /// 说明：这是一个针对System.Data.SQLite的数据库常规操作封装的通用类。 
-    /// huangjie add 2014-10-31
+    ///  2017-7-27
     /// </summary>    
-    public sealed partial class SQLiteDBHelper : Component
+    public partial class SQLiteDBHelper:RealDBHelper
     {
-        /// <summary>
-        /// 数据库文件路径
-        /// </summary>
-        private String dbPath { get; set; }
-        private String dbPath1 { get; set; }
-        private String dbPath2 { get; set; }
+        #region 字段、属性
         /// <summary>
         /// 单例模式对象
         /// </summary>
         public static SQLiteDBHelper _sqliteHelper = new SQLiteDBHelper();
 
+        private String targetDBPath = String.Empty;
+        private String dbPath = String.Empty;
+        private String connectionString = String.Empty;
+        //private String targetConString= String.Empty;
+        private SQLiteTransaction dbTransaction = null;
+        private bool inTransaction = false;
+        private List<string> tablist = new List<string>();
+        private String _lastDateTimeValue = null;
+        private String _firstDateTimeValue = null;
+        /// <summary>
+        /// 初始值
+        /// </summary>
+        public String _FirstDateTimeValue
+        {
+            get { return _firstDateTimeValue; }
+            set { _firstDateTimeValue = value; }
+        }
+        /// <summary>
+        /// 上一次传的Value
+        /// </summary>
+        public String _LastDateTimeValue
+        {
+            get { return _lastDateTimeValue; }
+            set { _lastDateTimeValue = value; }
+        }
+        /// <summary>
+        /// 当前数据库文件路径
+        /// </summary>
+        public String DBPath
+        {
+            get { return dbPath; }
+            set { dbPath = value; }
+        }
+        ///// <summary>
+        ///// 目标数据库文件路径
+        ///// </summary>
+        //public string TargetDBPath
+        //{
+        //    get
+        //    {
+        //        return TargetDBPath;
+        //    }
 
-        #region 数据库连接必要条件参数
-
-        private SQLiteConnection dbConnection = null;
+        //    set
+        //    {
+        //        TargetDBPath = value;
+        //    }
+        //}
         /// <summary>
         /// 数据库连接
+        /// </summary>
+        public string ConnectionString
+        {
+            get
+            {
+                return this.connectionString;
+            }
+            set
+            {
+                this.connectionString = value;
+            }
+        }
+        ///// <summary>
+        ///// 目标数据库连接字符串
+        ///// </summary>
+        //public string TargetConString
+        //{
+        //    get
+        //    {
+        //        return targetConString;
+        //    }
+
+        //    set
+        //    {
+        //        targetConString = value;
+        //    }
+        //}
+
+        #region 数据库连接必要条件参数
+        private SQLiteConnection dbConnection = null;
+        //private SQLiteConnection targetDBConnection = null;
+        /// <summary>
+        /// 当前数据库连接
         /// </summary>
         public SQLiteConnection DbConnection
         {
@@ -53,8 +126,9 @@ namespace LGD.DAL.SQLite
             }
         }
         private SQLiteCommand dbCommand = null;
+        //private SQLiteCommand targetDBCommand = null;
         /// <summary>
-        /// 命令
+        /// 当前数据库 命令
         /// </summary>
         public SQLiteCommand DbCommand
         {
@@ -69,7 +143,7 @@ namespace LGD.DAL.SQLite
         }
         private SQLiteDataAdapter dbDataAdapter = null;
         /// <summary>
-        /// 数据库适配器
+        /// 当前数据库适配器
         /// </summary>
         public SQLiteDataAdapter DbDataAdapter
         {
@@ -83,24 +157,7 @@ namespace LGD.DAL.SQLite
             }
         }
 
-        /// <summary>
-        /// 数据库连接
-        /// </summary>
-        public string ConnectionString
-        {
-            get
-            {
-                return this.connectionString;
-            }
-            set
-            {
-                this.connectionString = value;
-            }
-        }
-        private String connectionString = null;
 
-        private SQLiteTransaction dbTransaction = null;
-        private bool inTransaction = false;
         /// <summary>
         /// 是否已采用事务
         /// </summary>
@@ -130,32 +187,54 @@ namespace LGD.DAL.SQLite
                 autoOpenClose = value;
             }
         }
+        ///// <summary>
+        ///// 目标数据库连接
+        ///// </summary>
+        //public SQLiteConnection TargetDBConnection
+        //{
+        //    get
+        //    {
+        //        return targetDBConnection;
+        //    }
+
+        //    set
+        //    {
+        //        targetDBConnection = value;
+        //    }
+        //}
+        /// <summary>
+        /// RealData实时库数据表集合：表名"01"，"02"... ...
+        /// </summary>
+        public List<string> Tablist
+        {
+            get
+            {
+                return tablist;
+            }
+
+            set
+            {
+                tablist = value;
+            }
+        }
+
 
         #endregion
 
+        #endregion
         /// <summary> 
         /// 构造函数 
         /// </summary> 
         public SQLiteDBHelper()
         {
-            InitializeComponent();
             connectionString = string.Empty;
-            dbPath = DataStruct.DB_PATH;
             connectionString = "Data Source=" + dbPath;
         }
 
         public SQLiteDBHelper(String path)
         {
-            InitializeComponent();
-            connectionString = "Data Source=" + path;
-        }
-
-        public SQLiteDBHelper(IContainer container)
-        {
-            container.Add(this);
-            InitializeComponent();
-            dbPath = DataStruct.DB_PATH;
             connectionString = string.Empty;
+            connectionString = "Data Source=" + path;
         }
 
         /// <summary>
@@ -187,10 +266,10 @@ namespace LGD.DAL.SQLite
             return this.dbConnection;
         }
 
-        #region 建立本地数据库
+        #region 建立、拷贝本地数据库
 
         /// <summary> 
-        /// 创建SQLite数据库文件 
+        /// 创建空SQLite数据库文件
         /// </summary> 
         /// <param name="dbPath">要创建的SQLite数据库文件路径</param> 
         public void CreateDB()
@@ -214,13 +293,157 @@ namespace LGD.DAL.SQLite
                 this.dbCommand.ExecuteNonQuery();
             }
         }
+        /// <summary> 
+        /// 创建SQLite数据库文件 
+        /// </summary> 
+        /// <param name="dbPath">要创建的SQLite数据库文件路径</param> 
+        public bool CreateDB(String DBName)
+        {
+            try
+            {
+                if (!File.Exists(dbPath))
+                {
+                    // 自动打开
+                    if (this.DbConnection == null)
+                    {
+                        this.AutoOpenClose = true;
+                        this.Open();
+                    }
+                    else if (this.DbConnection.State == ConnectionState.Closed)
+                    {
+                        this.Open();
+                    }
+                    SQLiteConnection.CreateFile(DBName);
+                    return true;
+                }
+                else return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteDBHelper.cs ->CreateDB(String DBName)数据库创建异常！<<<\r\t" + ex.Message);
+                return false;
+            }
 
+        }
+        /// <summary>
+        /// 创建带表的SQLite数据库文件
+        /// </summary>
+        /// <param name="path">要创建的SQLite数据库文件路径</param>
+        /// <param name="instru">仪器</param>
+        /// <param name="tabid">表ID</param>
+        /// <param name="shotname">短助记符列表</param>
+        /// <returns>创建成功与否</returns>
+
+        public bool CreateDB(String path,String instru,String tabid,List<String> shotname)
+        {
+            if (!File.Exists(path))
+            {
+                // 自动打开
+                if (this.DbConnection == null)
+                {
+                    this.AutoOpenClose = true;
+                    this.Open();
+                }
+                else if (this.DbConnection.State == ConnectionState.Closed)
+                {
+                    this.Open();
+                }
+                SQLiteConnection.CreateFile(path);
+                ///
+                SQLiteDBHelper _sqlitehelper = new SQLiteDBHelper(path);
+                try
+                {
+                    if (_sqlitehelper.CreateTabs(instru,tabid,shotname) > 0)
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(">>>SQLiteDBHelper.cs ->CreateDB(path,instru,tabid,shotname)数据库创建异常！<<<\r\t" + ex.Message);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 在当前RealData数据库创建指定 wits集（namelist）的数据表
+        /// </summary>
+        /// <param name="con">当前数据库SQLiteConnection</param>
+        /// <param name="namelist">表号List</param>
+        /// <returns>创建表的个数</returns>
+        public int CreateTabs(String instru,String tabid,List<String> shotname)
+        {
+            int sum = 0;
+            SQLiteConnection con = this.DbConnection;
+            SQLiteTransaction tran = con.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(con);
+            cmd.Transaction = tran;
+            try
+            {
+                // 自动打开
+                if (con == null)
+                {
+                    con.Open();
+                }
+                else if (con.State == ConnectionState.Closed)
+                {
+                    con.Open();
+                }
+                String cmdtext ="CREATE TABLE [" + tabid + "-" + instru + "] (WID VARCHAR,";
+                for (int i = 1; i <shotname.Count - 1; i++)
+                    cmdtext += shotname[i] + " VARCHAR,";
+                cmdtext += shotname[shotname.Count-1] + " VARCHAR,PRIMARY KEY (DATE,TIME));";
+                cmd.CommandText = cmdtext;
+                cmd.ExecuteNonQuery();
+                sum++;
+                tran.Commit();
+                return sum;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteDBHelper.cs-->CreateTabs() 创建RealData数据表异常！<<<\r\t"+ex.Message);
+                tran.Rollback();
+                return -1;
+            }
+        }
+        /// <summary>
+        /// 拷贝数据库文件
+        /// </summary>
+        /// <param name="sourcepath">源数据库路径</param>
+        /// <param name="destpath">目标数据库路径</param>
+        public bool DBCopy(String sourcepath, String destpath)
+        {
+            try
+            {
+                if (File.Exists(sourcepath))
+                {
+                    // 自动打开
+                    if (this.DbConnection == null)
+                    {
+                        this.AutoOpenClose = true;
+                        this.Open();
+                    }
+                    else if (this.DbConnection.State == ConnectionState.Closed)
+                    {
+                        this.Open();
+                    }
+                    File.Copy(sourcepath, destpath);
+                    return true;
+                }
+                else return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteDBHelper.cs ->DBCopy()数据库拷贝异常！<<<\r\t" + ex.Message);
+                return false;
+            }
+        }
         /// <summary>
         /// 创建SQLite图版数据库表 
         /// </summary>
         /// <param name="con">数据库连接</param>
         /// <param name="tableName">表名</param>
-        public void Create_ChartTable(SQLiteConnection con,String tableName)
+        public void Create_ChartTable(SQLiteConnection con, String tableName)
         {
             try
             {
@@ -239,16 +462,16 @@ namespace LGD.DAL.SQLite
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message+ "创建SQLite图版数据库表异常！");
+                Debug.WriteLine(ex.Message + "创建SQLite数据表异常！");
             }
 
         }
         /// <summary>
-        /// 创建SQLite校后数据库表 
+        /// 创建SQLite数据库表 
         /// </summary>
         /// <param name="con">数据库连接</param>
         /// <param name="tableName">表名</param>
-        public void Create_WellTable(SQLiteConnection con,String tableName)
+        public void Create_WellTable(SQLiteConnection con, String tableName)
         {
             try
             {
@@ -267,10 +490,245 @@ namespace LGD.DAL.SQLite
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message+ "创建SQLite校后数据库表异常！");
+                Debug.WriteLine(ex.Message + "创建SQLite数据表异常！");
             }
         }
 
+        #endregion
+
+        #region 写库\查询
+        /// <summary>
+        /// 填写单井信息
+        /// </summary>
+        /// <param name="wellName">井名</param>
+        /// <param name="logName">井次</param>
+        /// <param name="regionName">工区名</param>
+        /// <param name="wellId">井号</param>
+        /// <param name="logId">井次号</param>
+        /// <param name="regionId">工区号</param>
+        /// <param name="DBPath">数据库文件所在地址</param>
+        public bool InsertWellInfo(String wellName,String logName,String regionName, String wellId, String logId, String regionId, String DBPath)
+        {
+            SQLiteConnection conn = this.DbConnection;
+            SQLiteTransaction tran = conn.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.Transaction = tran;
+            try
+            {
+                this.Open();
+                cmd.CommandText = "insert into [WellInfo] values(@LogName,@WellName,@RegionName,@LogId, @WellId,@RegionId,@DBPath)";
+                cmd.Parameters.AddRange(new[]{
+                        new SQLiteParameter("@LogName",logName),
+                        new SQLiteParameter("@WellName",wellName),
+                        new SQLiteParameter("@RegionName",regionName),
+                        new SQLiteParameter("@LogId",logId),
+                        new SQLiteParameter("@WellId",wellId),
+                        new SQLiteParameter("@RegionId",regionId),
+                        new SQLiteParameter("@DBPath",DBPath)
+                    });
+                cmd.ExecuteNonQuery();
+                tran.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->InsertWellInfo(,,)-->填写井信息事务异常!<<<---- \r\t" + ex.Message);
+                tran.Rollback();
+                return false;
+            }
+        }
+        /// <summary>
+        /// 获取井信息数据记录
+        /// </summary>
+        /// <param name="logName">井次</param>
+        /// <returns>一条记录的List《String》</returns>
+        public List<String> getWellInfo(String logname)
+        {
+            List<String> wellInfo = new List<string>();
+            SQLiteConnection conn = DbConnection;
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            int i = 0;
+            try
+            {
+                Open();
+                cmd.CommandText = "select * from [WellInfo] where LogName="+ logname;
+                SQLiteDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                while(dr.Read())
+                {
+                    wellInfo.Add(dr[i++].ToString());
+                }
+                return wellInfo;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getWellInfo(String logname)-->获取井信息查询异常!<<<---- \r\t" + ex.Message);
+                return null;
+            }
+        }
+        public String GetFirstRec(String tabname)
+        {
+            try
+            {
+                String firstrec = null;
+                String date = null;
+                String time = null;
+                SQLiteConnection conn = DbConnection;
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                Open();
+                cmd.CommandText = "select [DATE],[TIME] from [" + tabname + "] limit 0,1";
+                SQLiteDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                while (dr.Read())
+                {
+                    date = dr["DATE"].ToString();
+                    time = dr["TIME"].ToString();
+                }
+                firstrec = date + time;
+                return firstrec;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->GetFirstRec(String tabname)-->获取井信息查询异常!<<<---- \r\t" + ex.Message);
+                return null;
+            }
+        }
+
+        public String GetLastRec(String tabname)
+        {
+            try
+            {
+                String lastrec = null;
+                String date = null;
+                String time = null;
+                SQLiteConnection conn = DbConnection;
+                SQLiteCommand cmd = new SQLiteCommand(conn);
+                Open();
+                cmd.CommandText = "select [DATE],[TIME] from [" + tabname + "] order by rowid desc limit 0,1";
+                SQLiteDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                while (dr.Read())
+                {
+                    date = dr["DATE"].ToString();
+                    time = dr["TIME"].ToString();
+                }
+                lastrec = date + time;
+                return lastrec;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->GetLastRec(String tabname)-->获取井信息查询异常!<<<---- \r\t" + ex.Message);
+                return null;
+            }
+        }
+        /// <summary>
+        /// 将动态WitTable对象的数据写入数据库表中
+        /// </summary>
+        /// <param name="Instru">仪器</param>
+        /// <param name="tabID">表号</param>
+        /// <param name="wt">动态witstable表</param>
+        /// <returns>写入记录数量 :-1表示异常，》=0表示写入记录数量</returns>
+        public int InsertWitsData(String Instru,String tabID, WitsTable wt)
+        {
+            _FirstDateTimeValue = GetFirstRec(tabID + "-" + Instru);
+            _LastDateTimeValue = GetLastRec(tabID + "-" + Instru);
+            WitsTable wtCopy = (WitsTable)wt.Copy();
+            List<String> colnames = new List<string>();
+            String cmdtext = "";
+            int sum = 0;
+            SQLiteConnection conn = this.DbConnection;
+            SQLiteTransaction tran = conn.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.Transaction = tran;
+            List<String> value;
+            try
+            {
+                //获取列名（短助记符集合）
+                foreach (DataColumn col in wt.Columns)
+                    colnames.Add(col.ColumnName);
+                Open();
+                //校正后数据
+                while (wtCopy.getNextRow(out value))
+                {
+                    String datetime = value[4]+value[5];
+                    cmdtext = "insert into[" + tabID + "-" + Instru + "] values(";
+                    for (int i = 0; i <=wt.Columns.Count - 2; i++)
+                    {
+                        cmdtext += "@" + wt.Columns[i].ColumnName + ",";
+                        if (((i == 4) || (i == 5)) && _FirstDateTimeValue.Length > 0)
+                        {
+                            if ((i == 4) && ((datetime == _LastDateTimeValue) || (datetime == _FirstDateTimeValue)))
+                            {
+                                value[4] = DateTime.Now.ToString("yyyyMMdd");
+                                cmd.Parameters.AddWithValue("@" + wt.Columns[4].ColumnName, value[4]);
+                            }
+                            if ((i == 5) && ((datetime == _LastDateTimeValue) || (datetime == _FirstDateTimeValue)))
+                            {
+                                value[5] = DateTime.Now.ToString("HHmmss");
+                                cmd.Parameters.AddWithValue("@" + wt.Columns[5].ColumnName, value[5]);
+                            }
+                        }
+                        else
+                            cmd.Parameters.AddWithValue("@" + wt.Columns[i].ColumnName, value[i].ToString());
+                    }
+                    cmdtext += "@" + wt.Columns[wt.Columns.Count - 1].ColumnName + ")";
+                    cmd.Parameters.AddWithValue("@"+ wt.Columns[wt.Columns.Count - 1].ColumnName,
+                        value[value.Count-1].ToString());
+                    //设置带参数的Transact-SQL语句 "insert into ["+tabID+"-"+Instru+"] values(@...)";
+                    cmd.CommandText = cmdtext;
+                    cmd.ExecuteNonQuery();
+                    sum++;
+                }
+                tran.Commit();
+                return sum;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->InsertWitsData(String,WitsTable)-->tran事务异常!<<<---- \r\t" + ex.Message);
+                tran.Rollback();
+                return -1;
+            }
+        }
+        public void getWitsData(String date,String time)
+        {
+
+        }
+
+        /// <summary>
+        /// wits0记录的入表解析（拆分wits数据，分表入库）
+        /// </summary>
+        /// <returns></returns>
+        public int WitsTabAnalysis(String tabID,WitsTable wt)
+        {
+            WitsTable wtCopy = (WitsTable)wt.Copy();
+            int sum = 0;
+            SQLiteConnection conn = this.DbConnection;
+            SQLiteTransaction tran = conn.BeginTransaction();
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.Transaction = tran;
+            List<String> value;
+            try
+            {
+                this.Open();
+                //校正后数据
+                while (wtCopy.getNextRow(out value))
+                {
+                    //设置带参数的Transact-SQL语句
+                    cmd.CommandText = "insert into [" + tabID + "] values(@ID,@ItemIndex, @Value)";
+                    cmd.Parameters.AddRange(new[]
+                    {
+                        new SQLiteParameter("@Value",value)
+                    });
+                    cmd.ExecuteNonQuery();
+                    sum++;
+                }
+                tran.Commit();
+                return sum;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->WitsTabAnalysis(String,WitsTable)-->tran事务异常!<<<---- \r\t" + ex.Message);
+                tran.Rollback();
+                return -1;
+            }
+        }
         #endregion
 
         #region 判断表是否存在
@@ -582,7 +1040,7 @@ namespace LGD.DAL.SQLite
         /// <summary>
         /// 内存回收
         /// </summary>
-        public new void  Dispose()
+        public void Dispose()
         {
             if (this.dbCommand != null)
             {
@@ -595,7 +1053,5 @@ namespace LGD.DAL.SQLite
             this.dbConnection = null;
         }
         #endregion
-
     }
-
 }

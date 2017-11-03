@@ -50,9 +50,13 @@
     <StartupObject>RealTimeDB.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Tool\NewtonJson\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,6 +70,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pusher.cs" />
+    <Compile Include="RealDBPusher.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RealDBPusher.Designer.cs">
+      <DependentUpon>RealDBPusher.cs</DependentUpon>
+    </Compile>
     <Compile Include="RealDB_DAQ.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +107,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RealDBPusher.resx">
+      <DependentUpon>RealDBPusher.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RealDB_DAQ.resx">
       <DependentUpon>RealDB_DAQ.cs</DependentUpon>
     </EmbeddedResource>
@@ -125,6 +139,10 @@
       <Project>{f7b887c5-3280-48d3-88b6-db75dfbf5ae0}</Project>
       <Name>Tool</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebService\WebService.csproj">
+      <Project>{66e7ed81-d1b0-46bc-aff0-6135e3ae18d7}</Project>
+      <Name>WebService</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -142,6 +160,9 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

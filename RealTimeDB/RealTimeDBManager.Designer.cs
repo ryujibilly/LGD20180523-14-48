@@ -37,6 +37,7 @@
             this.数据浏览ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.数据采集ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.基地数据库推送ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -49,8 +50,10 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文件ToolStripMenuItem,
             this.实时数据库管理ToolStripMenuItem,
+            this.数据浏览ToolStripMenuItem,
             this.数据采集ToolStripMenuItem,
             this.基地数据库推送ToolStripMenuItem,
+            this.查询ToolStripMenuItem,
             this.关于ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -76,23 +79,22 @@
             // 实时数据库管理ToolStripMenuItem
             // 
             this.实时数据库管理ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.数据库配置ToolStripMenuItem,
-            this.数据浏览ToolStripMenuItem});
+            this.数据库配置ToolStripMenuItem});
             this.实时数据库管理ToolStripMenuItem.Name = "实时数据库管理ToolStripMenuItem";
-            this.实时数据库管理ToolStripMenuItem.Size = new System.Drawing.Size(104, 21);
-            this.实时数据库管理ToolStripMenuItem.Text = "实时数据库管理";
+            this.实时数据库管理ToolStripMenuItem.Size = new System.Drawing.Size(80, 21);
+            this.实时数据库管理ToolStripMenuItem.Text = "实时库管理";
             // 
             // 数据库配置ToolStripMenuItem
             // 
             this.数据库配置ToolStripMenuItem.Name = "数据库配置ToolStripMenuItem";
-            this.数据库配置ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.数据库配置ToolStripMenuItem.Text = "数据库及工区配置";
+            this.数据库配置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.数据库配置ToolStripMenuItem.Text = "数据库配置";
             this.数据库配置ToolStripMenuItem.Click += new System.EventHandler(this.数据库配置ToolStripMenuItem_Click);
             // 
             // 数据浏览ToolStripMenuItem
             // 
             this.数据浏览ToolStripMenuItem.Name = "数据浏览ToolStripMenuItem";
-            this.数据浏览ToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.数据浏览ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
             this.数据浏览ToolStripMenuItem.Text = "数据浏览";
             // 
             // 数据采集ToolStripMenuItem
@@ -107,6 +109,13 @@
             this.基地数据库推送ToolStripMenuItem.Name = "基地数据库推送ToolStripMenuItem";
             this.基地数据库推送ToolStripMenuItem.Size = new System.Drawing.Size(104, 21);
             this.基地数据库推送ToolStripMenuItem.Text = "基地数据库推送";
+            this.基地数据库推送ToolStripMenuItem.Click += new System.EventHandler(this.基地数据库推送ToolStripMenuItem_Click);
+            // 
+            // 查询ToolStripMenuItem
+            // 
+            this.查询ToolStripMenuItem.Name = "查询ToolStripMenuItem";
+            this.查询ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.查询ToolStripMenuItem.Text = "查询";
             // 
             // 关于ToolStripMenuItem
             // 
@@ -163,13 +172,14 @@
         private System.Windows.Forms.ToolStripMenuItem 文件ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 退出ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 实时数据库管理ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 数据浏览ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 基地数据库推送ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 关于ToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem 数据库配置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 数据采集ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 数据浏览ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 查询ToolStripMenuItem;
     }
 }
 

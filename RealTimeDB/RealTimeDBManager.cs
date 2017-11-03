@@ -72,8 +72,13 @@ namespace RealTimeDB
         private void 数据采集ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RealDB_DAQ rtdaq = new RealDB_DAQ();
-            rtdaq.MdiParent = this;
             rtdaq.Show();
+        }
+
+        private void 基地数据库推送ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RealDBPusher rtpusher = new RealDBPusher();
+            rtpusher.Show();
         }
     }
 }

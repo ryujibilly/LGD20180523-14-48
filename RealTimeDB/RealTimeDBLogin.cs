@@ -9,17 +9,18 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Windows.Forms;
 using LGD.DAL.SQLite;
+using LGD.DAL.SQLite.RealDB;
 using Tool;
 
 namespace RealTimeDB
 {
     public partial class RealTimeDBLogin : Form
     {
-        private static String[] fragSep = new String[] {"!!\r\n","&&\r\n","!!","&&"};
-        private static String[] dataSep = new String[] { "\r\n"};
+        private static string[] fragSep = new string[] {"!!\r\n","&&\r\n","!!","&&"};
+        private static string[] dataSep = new string[] { "\r\n"};
         private static ConcurrentQueue<String> idQueue = new ConcurrentQueue<string>();
         private static ConcurrentQueue<WitsTable> tabQueue = new ConcurrentQueue<WitsTable>();
-        List<String> namelist = new List<string>();
+        List<string> namelist = new List<string>();
         public RealTimeDBLogin()
         {
             InitializeComponent();
@@ -51,6 +52,7 @@ namespace RealTimeDB
             textBox_StaticDBPath.Text = Config.CfgInfo.StaticDB_PATH;
             textBox_NewDBPath.Text = Config.CfgInfo.FoldBrowserPath;
             folderBrowserDialog_NewProject.SelectedPath = Config.CfgInfo.FoldBrowserPath;
+            
         }
         /// <summary>
         /// 指定模板库路径
@@ -113,15 +115,46 @@ namespace RealTimeDB
 
                 throw;
             }
-    
+
         }
 
         private void button_NewDBFile_Click(object sender, EventArgs e)
         {
             SQLiteDBHelper _helper = new SQLiteDBHelper(Config.CfgInfo.StaticDB_PATH);
             string path = Config.CfgInfo.FoldBrowserPath+"\\" + textBox_new_wellname.Text.Trim() + "_" + textBox_new_wellid.Text.Trim() + "_" + textBox_new_welltime.Text.Trim() + ".db3";
-            _helper.CreateDB(path, namelist);
+            _helper.CreateDB(path,"2","07",getXMLConfig());
+            WitsTable wt = new WitsTable("APS", "07", getXMLConfig());
+        }
 
+        private List<String> getXMLConfig()
+        {
+            List<String> shotname = new List<string>();
+            shotname.Add("WID");
+            shotname.Add("RID");
+            shotname.Add("SQID");
+            shotname.Add("DATE");
+            shotname.Add("TIME");
+            shotname.Add("ACTC");
+            shotname.Add("DEPTH");
+            shotname.Add("VDSVV");
+            shotname.Add("PASS");
+            shotname.Add("DMEA");
+            shotname.Add("STYP");
+            shotname.Add("SINC");
+            shotname.Add("SAZU");
+            shotname.Add("SAZC");
+            shotname.Add("SMTF");
+            shotname.Add("SGTF");
+            shotname.Add("SNS");
+            shotname.Add("SEW");
+            shotname.Add("SDLS");
+            shotname.Add("SWLK");
+            shotname.Add("SPR1");
+            shotname.Add("SPR2");
+            shotname.Add("SPR3");
+            shotname.Add("SPR4");
+            shotname.Add("SPR5");
+            return shotname;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -188,7 +221,7 @@ namespace RealTimeDB
                     tabQueue.TryDequeue(out wt);
                     idQueue.TryDequeue(out tabid);
                     _helper.WitsTabAnalysis(tabid,wt);
-                    _helper.InsertWitsData(tabid, wt);
+                    _helper.InsertWitsData("2",tabid, wt);
                 }
             }
         }

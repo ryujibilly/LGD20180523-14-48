@@ -37,7 +37,6 @@ namespace Tool
         {
             get { return xmlpath; }
         }
-
     }
     /// <summary>
     /// XML属性
