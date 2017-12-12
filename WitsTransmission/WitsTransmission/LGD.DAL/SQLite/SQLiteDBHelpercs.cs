@@ -16,17 +16,18 @@ namespace LGD.DAL.SQLite
     /// 说明：这是一个针对System.Data.SQLite的数据库常规操作封装的通用类。 
     ///  2017-7-27
     /// </summary>    
-    public partial class SQLiteDBHelper:RealDBHelper
+    public class SQLiteDBHelper:RealDBHelper
     {
         #region 字段、属性
         /// <summary>
         /// 单例模式对象
         /// </summary>
         public static SQLiteDBHelper _sqliteHelper = new SQLiteDBHelper();
-        private String dataSource = String.Empty;
+
         private String targetDBPath = String.Empty;
         private String dbPath = String.Empty;
         private String connectionString = String.Empty;
+        //private String targetConString= String.Empty;
         private SQLiteTransaction dbTransaction = null;
         private bool inTransaction = false;
         private List<string> tablist = new List<string>();
@@ -56,6 +57,21 @@ namespace LGD.DAL.SQLite
             get { return dbPath; }
             set { dbPath = value; }
         }
+        ///// <summary>
+        ///// 目标数据库文件路径
+        ///// </summary>
+        //public string TargetDBPath
+        //{
+        //    get
+        //    {
+        //        return TargetDBPath;
+        //    }
+
+        //    set
+        //    {
+        //        TargetDBPath = value;
+        //    }
+        //}
         /// <summary>
         /// 数据库连接
         /// </summary>
@@ -70,6 +86,22 @@ namespace LGD.DAL.SQLite
                 this.connectionString = value;
             }
         }
+        ///// <summary>
+        ///// 目标数据库连接字符串
+        ///// </summary>
+        //public string TargetConString
+        //{
+        //    get
+        //    {
+        //        return targetConString;
+        //    }
+
+        //    set
+        //    {
+        //        targetConString = value;
+        //    }
+        //}
+
         #region 数据库连接必要条件参数
         private SQLiteConnection dbConnection = null;
         //private SQLiteConnection targetDBConnection = null;
@@ -94,6 +126,7 @@ namespace LGD.DAL.SQLite
             }
         }
         private SQLiteCommand dbCommand = null;
+        //private SQLiteCommand targetDBCommand = null;
         /// <summary>
         /// 当前数据库 命令
         /// </summary>
@@ -154,6 +187,21 @@ namespace LGD.DAL.SQLite
                 autoOpenClose = value;
             }
         }
+        ///// <summary>
+        ///// 目标数据库连接
+        ///// </summary>
+        //public SQLiteConnection TargetDBConnection
+        //{
+        //    get
+        //    {
+        //        return targetDBConnection;
+        //    }
+
+        //    set
+        //    {
+        //        targetDBConnection = value;
+        //    }
+        //}
         /// <summary>
         /// RealData实时库数据表集合：表名"01"，"02"... ...
         /// </summary>
@@ -179,14 +227,14 @@ namespace LGD.DAL.SQLite
         /// </summary> 
         public SQLiteDBHelper()
         {
-            this.ConnectionString = string.Empty;
-            this.ConnectionString = "Data Source=" + dbPath;
+            connectionString = string.Empty;
+            connectionString = "Data Source=" + dbPath;
         }
 
         public SQLiteDBHelper(String path)
         {
-            this.ConnectionString = string.Empty;
-            this.ConnectionString = "Data Source=" + path;
+            connectionString = string.Empty;
+            connectionString = "Data Source=" + path;
         }
 
         /// <summary>
@@ -683,55 +731,6 @@ namespace LGD.DAL.SQLite
         }
         #endregion
 
-        #region 数据推送
-
-        /// <summary>
-        /// 获取推送的数据DataTable
-        /// </summary>
-        /// <param name="instru">仪器序号</param>
-        /// <param name="tabid">表号集合</param>
-        /// <param name="startDate">起始日期</param>
-        /// <param name="startTime">起始时间</param>
-        /// <param name="endDate">截止日期</param>
-        /// <param name="endTime">截至时间</param>
-        /// <returns></returns>
-        public DataTable getPushingData( String instru,String tabid,String startDate,String startTime,String endDate,String endTime)
-        {
-            // 自动打开
-            if (this.DbConnection == null)
-            {
-                this.AutoOpenClose = true;
-                this.Open();
-            }
-            else if (this.DbConnection.State == ConnectionState.Closed)
-            {
-                this.Open();
-            }
-            SQLiteConnection conn = this.dbConnection;
-            this.DbCommand = this.DbConnection.CreateCommand();
-            try
-            {
-                string strSQL = string.Format(@"SELECT * FROM [" + tabid + "-" + instru + "] WHERE [DATE]>" + startDate + " AND [TIME]>"
-                    + startTime + " AND [DATE]<" + endDate + " AND [TIME]<" + endTime, tabid+"-"+instru);
-                //this.DbCommand.CommandText = @"SELECT * FROM [" + tabid + "-" + instru + "] WHERE [DATE]>" + startDate + " AND [TIME]>"
-                //    + startTime + " AND [DATE]<" + endDate + " AND [TIME]<" + endTime;
-                this.DbCommand.CommandText = strSQL;
-                dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
-                DataSet ds = new DataSet();
-                DataTable dt = new DataTable();
-                dbDataAdapter.Fill(ds);
-                dt = ds.Tables[0];
-                dt.TableName = tabid + "-" + instru;
-                return dt;
-            }
-            catch (Exception ex) 
-            {
-                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData()-->tran事务异常!<<<---- \r\t" + ex.Message);
-                return null;
-            }
-        }
-        #endregion
-
         #region 判断表是否存在
 
         /// <summary>
@@ -909,6 +908,7 @@ namespace LGD.DAL.SQLite
             }
             return data;
         }
+
         #endregion
 
         #region ExecuteScalar
@@ -972,23 +972,6 @@ namespace LGD.DAL.SQLite
             return returnValue;
         }
 
-        #endregion
-
-        #region GetSchema 查询数据库中的所有数据类型信息 
-        public DataTable GetSchema()
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
-                DataTable data = connection.GetSchema("TABLES");
-                connection.Close();
-                //foreach (DataColumn column in data.Columns) 
-                //{ 
-                //  Console.WriteLine(column.ColumnName); 
-                //} 
-                return data;
-            }
-        }
         #endregion
 
         #region public IDbTransaction BeginTransaction() 事务开始

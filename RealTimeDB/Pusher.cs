@@ -1,32 +1,45 @@
 ﻿using System;
+using System.Net;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Data;
+using System.Web.Services.Protocols;
 using WebService;
 using WebService.realdbws;
 using Tool;
 using Tool.Json;
-using System.Web.Services.Protocols;
-using System.Net;
 using Newtonsoft;
 using Newtonsoft.Json;
-using System.Diagnostics;
-using System.Collections;
-using System.Data;
+using System.Threading;
+using System.Collections.Concurrent;
+using LGD.DAL.SQLite;
+using System.Data.SQLite;
 
 namespace RealTimeDB
 {
     /// <summary>
-    /// 数据推送，业务逻辑类
+    /// 仪器类型枚举
+    /// </summary>
+    public enum InstType { Log, MudLog, Drill };//测井，录井，钻井
+    /// <summary>
+    /// 数据推送--业务逻辑类
     /// </summary>
     public class Pusher
     {
+        #region 字段属性
         public realdbservices _realdbws = new realdbservices();
         public realdbservices.UserNameHeader name = new realdbservices.UserNameHeader();
         public realdbservices.UserPassWordHeader password = new realdbservices.UserPassWordHeader();
         public NetworkCredential nc = new NetworkCredential();
         public Hashtable ht = new Hashtable();  //Hashtable 为webservice所需要的参数集
-        public String strJson = String.Empty;
+        public String strJsonSend = String.Empty;
+        public String strJsonReceive = String.Empty;
         public List<String> colName = new List<string>();
         public List<List<String>> colData = new List<List<string>>();
+        private ConcurrentQueue<DataTable> pushingDataTabQueue = new ConcurrentQueue<DataTable>();
+
+        public Thread GetPushingData;
 
         private String username;
         private String userpassword;
@@ -57,6 +70,26 @@ namespace RealTimeDB
             }
         }
 
+        /// <summary>
+        /// 存放用于推送的查询返回的DataTable
+        /// </summary>
+        public ConcurrentQueue<DataTable> PushingDataTabQueue
+        {
+            get
+            {
+                return pushingDataTabQueue;
+            }
+
+            set
+            {
+                pushingDataTabQueue = value;
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// 构造方法
+        /// </summary>
         public Pusher()
         {
             this.Username = "yuwenmao";
@@ -64,9 +97,9 @@ namespace RealTimeDB
             nc.UserName = "yuwenmao";
             nc.Password = "123";
             _realdbws.Credentials = nc;
+            GetPushingData= new Thread(new ThreadStart(StartPushing));
             InitHashTable();
-
-            strJson = JsonHepler.HashtableToJson(ht, 0);
+            //strJson = JsonHepler.HashtableToJson(ht, 0);
         }
         /// <summary>
         /// 使用用户名密码构造方法
@@ -80,11 +113,15 @@ namespace RealTimeDB
             nc.UserName = username;
             nc.Password = password;
             _realdbws.Credentials = nc;
+            GetPushingData = new Thread(new ThreadStart(StartPushing));
             InitHashTable(username, password);
 
-            strJson = JsonHepler.HashtableToJson(ht, 0);
+            //strJson = JsonHepler.HashtableToJson(ht, 0);
         }
-
+        /// <summary>
+        /// 空哈希表初始化方法
+        /// </summary>
+        /// <returns>哈希表</returns>
         public Hashtable InitHashTable()
         {
             ht.Clear();
@@ -97,7 +134,12 @@ namespace RealTimeDB
             ht.Add("data", "");
             return ht;
         }
-
+        /// <summary>
+        /// 用户名密码的哈希表构造方法
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns>哈希表</returns>
         public Hashtable InitHashTable(String username,String password)
         {
             ht.Clear();
@@ -111,6 +153,28 @@ namespace RealTimeDB
             return ht;
         }
         /// <summary>
+        /// 初始化没有header的哈希表
+        /// </summary>
+        /// <param name="hasHeader">是否包含Header</param>
+        /// <param name="_title"></param>
+        /// <param name="_data"></param>
+        /// <returns></returns>
+        public Hashtable InitHashTable(bool hasHeader,String _title,String _data)
+        {
+            if (!hasHeader)
+            {
+                ht.Clear();
+                ht.Add("user", "yuwenmao");
+                ht.Add("password", "123");
+                ht.Add("size", "1");
+                ht.Add("msg", "");
+                ht.Add("return", "");
+                ht.Add("title", _title);
+                ht.Add("data", _data);
+            }
+            return ht;
+        }
+        /// <summary>
         /// 连接测试
         /// </summary>
         /// <returns>是否连接异常</returns>
@@ -121,7 +185,9 @@ namespace RealTimeDB
                 String jstring;
                 colName.Clear();
                 colData.Clear();
-                jstring = _realdbws.GetAllRegions(strJson);
+                InitHashTable();
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+                jstring = _realdbws.GetAllRegions(strJsonSend);
                 Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
                 //获取列名
                 colName = JsonHepler.getJsonCol(tempHT, "title");
@@ -132,7 +198,7 @@ namespace RealTimeDB
             }
             catch (System.Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message+"\r\t=========="+ "pusher.ConnectTest()");
                 return false;
             }
         }
@@ -150,7 +216,9 @@ namespace RealTimeDB
 
                 colData.Clear();
 
-                jstring = _realdbws.GetAllRegions(strJson);
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+
+                jstring = _realdbws.GetAllRegions(strJsonSend);
 
                 Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
 
@@ -161,9 +229,11 @@ namespace RealTimeDB
 
                 return JsonHepler.List2DataTable(colData, colName);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                throw;
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllRegions()");
+                jstring = String.Empty;
+                return null;
             }
 
         }
@@ -180,7 +250,9 @@ namespace RealTimeDB
 
                 colData.Clear();
 
-                jstring = _realdbws.GetAllInstName(strJson);
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+
+                jstring = _realdbws.GetAllInstName(strJsonSend);
 
                 Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
 
@@ -194,6 +266,201 @@ namespace RealTimeDB
             catch (System.Exception)
             {
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// 通过仪器名获得仪器信息
+        /// </summary>
+        /// <param name="instName">仪器名称</param>
+        /// <param name="jstring">输出JsonString</param>
+        /// <returns>Jstring转换成DataTable</returns>
+        public DataTable GetInstInfoByName(String instName,out String jstring)
+        {
+            try
+            {
+                colName.Clear();
+
+                colData.Clear();
+
+                ht.Add("instname", instName);
+
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+
+                jstring = _realdbws.GetInstInfoByName(strJsonSend);
+
+                Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
+
+                //获取列名
+                colName = JsonHepler.getJsonCol(tempHT, "title");
+                //获取数据
+                colData = JsonHepler.getJsonData(tempHT, "data", colName.Count);
+
+                return JsonHepler.List2DataTable(colData, colName);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetInstInfoByName()");
+                jstring = String.Empty;
+                return null;
+            }
+        }
+        /// <summary>
+        /// 通过工区ID获取井信息
+        /// </summary>
+        /// <param name="regionid"></param>
+        /// <param name="jstring"></param>
+        /// <returns></returns>
+        public DataTable GetAllWellsByRegionId(String regionid,out String jstring)
+        {
+            try
+            {
+                InitHashTable();
+                colName.Clear();
+
+                colData.Clear();
+
+                ht.Add("regionid", regionid);
+
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+
+                jstring = _realdbws.GetAllWellsByRegionId(strJsonSend);
+
+                Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
+
+                //获取列名
+                colName = JsonHepler.getJsonCol(tempHT, "title");
+                //获取数据
+                colData = JsonHepler.getJsonData(tempHT, "data", colName.Count);
+
+                return JsonHepler.List2DataTable(colData, colName);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllWellsByRegionId()");
+                jstring = String.Empty;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 通过井ID获取井次信息
+        /// </summary>
+        /// <param name="regionid"></param>
+        /// <param name="jstring"></param>
+        /// <returns></returns>
+        public DataTable GetAllLogsByWellId(String wellid, out String jstring)
+        {
+            try
+            {
+                InitHashTable();
+                colName.Clear();
+
+                colData.Clear();
+
+                ht.Add("wellid", wellid);
+
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+
+                jstring = _realdbws.GetAllLogsByWellId(strJsonSend);
+
+                Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
+
+                //获取列名
+                colName = JsonHepler.getJsonCol(tempHT, "title");
+                //获取数据
+                colData = JsonHepler.getJsonData(tempHT, "data", colName.Count);
+
+                return JsonHepler.List2DataTable(colData, colName);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllLogsByWellId()");
+                jstring = String.Empty;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 添加工区
+        /// </summary>
+        /// <param name="regionName">工区名称</param>
+        /// <returns>是否成功</returns>
+        public DataTable AddRegion(String title,String regionName,out String jstring)
+        {
+            try
+            {
+                InitHashTable(false,title,regionName);
+                colName.Clear();
+                colData.Clear();
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+                jstring = _realdbws.AddRegion(strJsonSend);
+                Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
+                //获取列名
+                colName = JsonHepler.getJsonCol(tempHT, "title");
+                //获取数据
+                colData = JsonHepler.getJsonData(tempHT, "data", colName.Count);
+                return JsonHepler.List2DataTable(colData, colName);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllLogsByWellId()");
+                jstring = String.Empty;
+                return null;
+            }
+        }
+
+
+        /// <summary>
+        /// 写曲线
+        /// </summary>
+        /// <returns>写的记录条数</returns>
+        public int WriteCurveData()
+        {
+            int sum = 0;
+            return sum;
+        }
+        /// <summary>
+        /// 推送数据
+        /// </summary>
+        void StartPushing()
+        {
+            while(true)
+            {
+                if(PushingDataTabQueue.Count>0)
+                {
+                    String receivedStr = "";
+                    String sendStr=CreatePushingDataBag();
+                    receivedStr= _realdbws.WriteCurveData(sendStr);
+
+                }
+            }
+        }
+        /// <summary>
+        /// 创建推送数据Json包
+        /// </summary>
+        /// <returns></returns>
+        private String CreatePushingDataBag()
+        {
+            String jsonStr="";
+            return jsonStr;
+        }
+
+        /// <summary>
+        /// 获取即将推送的数据
+        /// </summary>
+        public void getData(SQLiteDBHelper helper,List<String> selecttablist,String instru,String beginDate,String beginTime,String endDate,String endTime)
+        {
+            try
+            {
+                foreach (String tabname in selecttablist)
+                {
+                    PushingDataTabQueue.Enqueue(helper.getPushingData(instru, tabname, beginDate, beginTime, endDate, endTime));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData()");
             }
         }
     }

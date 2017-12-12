@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0F065567-9546-4F07-BAA8-F027475D57B3}</ProjectGuid>
+    <ProjectGuid>{257D9E9B-5DE7-49B5-BD8D-00E8628658F3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RealTimeDB</RootNamespace>
-    <AssemblyName>RealTimeDB</AssemblyName>
+    <RootNamespace>WitsTransmission</RootNamespace>
+    <AssemblyName>WitsTransmission</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>发布\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -36,6 +36,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,18 +47,36 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>RealTimeDB.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Tool\NewtonJson\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=AMD64" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>WriteDBLib\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,62 +85,58 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TreeDataGridView">
-      <HintPath>.\TreeDataGridView.dll</HintPath>
+    <Reference Include="Tool, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>WriteDBLib\Tool.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddItem.cs">
+    <Compile Include="Main_Form.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddItem.Designer.cs">
-      <DependentUpon>AddItem.cs</DependentUpon>
+    <Compile Include="Main_Form.Designer.cs">
+      <DependentUpon>Main_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedOption.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdvancedOption.Designer.cs">
-      <DependentUpon>AdvancedOption.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pusher.cs" />
-    <Compile Include="RealDBPusher.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RealDBPusher.Designer.cs">
-      <DependentUpon>RealDBPusher.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RealDB_DAQ.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RealDB_DAQ.Designer.cs">
-      <DependentUpon>RealDB_DAQ.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RealTimeDBLogin.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RealTimeDBLogin.Designer.cs">
-      <DependentUpon>RealTimeDBLogin.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RealTimeDBManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RealTimeDBManager.Designer.cs">
-      <DependentUpon>RealTimeDBManager.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Model\WitsTableDictionary.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteWell.cs">
+    <Compile Include="Settings.cs" />
+    <Compile Include="TCPUtil\AsynchronousTCPClient.cs" />
+    <Compile Include="TCPUtil\AsynchronousTCPServer.cs" />
+    <Compile Include="TCPUtil\StateObject.cs" />
+    <Compile Include="WellConfig\WellConfig_Form.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RemoteWell.Designer.cs">
-      <DependentUpon>RemoteWell.cs</DependentUpon>
+    <Compile Include="WellConfig\WellConfig_Form.Designer.cs">
+      <DependentUpon>WellConfig_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Settings.cs" />
-    <EmbeddedResource Include="AddItem.resx">
-      <DependentUpon>AddItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AdvancedOption.resx">
-      <DependentUpon>AdvancedOption.cs</DependentUpon>
+    <Compile Include="WitsReceive\RecConfig_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WitsReceive\RecConfig_Form.Designer.cs">
+      <DependentUpon>RecConfig_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WitsSend\SendConfig_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WitsSend\SendConfig_Form.Designer.cs">
+      <DependentUpon>SendConfig_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WitsSend\TcpClientConfig_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WitsSend\TcpClientConfig_Form.Designer.cs">
+      <DependentUpon>TcpClientConfig_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WitsSend\TcpServerConfig_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WitsSend\TcpServerConfig_Form.Designer.cs">
+      <DependentUpon>TcpServerConfig_Form.cs</DependentUpon>
+    </Compile>
+    <Compile Include="XMLUtil\XMLUtil.cs" />
+    <EmbeddedResource Include="Main_Form.resx">
+      <DependentUpon>Main_Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -132,20 +147,20 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="RealDBPusher.resx">
-      <DependentUpon>RealDBPusher.cs</DependentUpon>
+    <EmbeddedResource Include="WellConfig\WellConfig_Form.resx">
+      <DependentUpon>WellConfig_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RealDB_DAQ.resx">
-      <DependentUpon>RealDB_DAQ.cs</DependentUpon>
+    <EmbeddedResource Include="WitsReceive\RecConfig_Form.resx">
+      <DependentUpon>RecConfig_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RealTimeDBLogin.resx">
-      <DependentUpon>RealTimeDBLogin.cs</DependentUpon>
+    <EmbeddedResource Include="WitsSend\SendConfig_Form.resx">
+      <DependentUpon>SendConfig_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RealTimeDBManager.resx">
-      <DependentUpon>RealTimeDBManager.cs</DependentUpon>
+    <EmbeddedResource Include="WitsSend\TcpClientConfig_Form.resx">
+      <DependentUpon>TcpClientConfig_Form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RemoteWell.resx">
-      <DependentUpon>RemoteWell.cs</DependentUpon>
+    <EmbeddedResource Include="WitsSend\TcpServerConfig_Form.resx">
+      <DependentUpon>TcpServerConfig_Form.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
@@ -159,28 +174,29 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LGD.DAL\LGD.DAL.csproj">
-      <Project>{5cedde9c-82b2-4ec7-999b-95a764d7dc2b}</Project>
-      <Name>LGD.DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tool\Tool.csproj">
-      <Project>{f7b887c5-3280-48d3-88b6-db75dfbf5ae0}</Project>
-      <Name>Tool</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebService\WebService.csproj">
-      <Project>{66e7ed81-d1b0-46bc-aff0-6135e3ae18d7}</Project>
-      <Name>WebService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WitsTransmission\WitsTransmission\WitsTransmission.csproj">
-      <Project>{257d9e9b-5de7-49b5-bd8d-00e8628658f3}</Project>
-      <Name>WitsTransmission</Name>
-    </ProjectReference>
+    <Content Include="ConfigFile\Path.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ConfigFile\ToolInfo.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ConfigFile\Well.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ConfigFile\WITS.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 %28x86 和 x64%29</ProductName>
       <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
@@ -194,10 +210,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ConfigFile\Path.xml" />
-    <Content Include="ConfigFile\ToolInfo.xml" />
-    <Content Include="ConfigFile\Well.xml" />
-    <Content Include="ConfigFile\WITS.xml" />
+    <ProjectReference Include="LGD.DAL\LGD.DAL.csproj">
+      <Project>{5cedde9c-82b2-4ec7-999b-95a764d7dc2b}</Project>
+      <Name>LGD.DAL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

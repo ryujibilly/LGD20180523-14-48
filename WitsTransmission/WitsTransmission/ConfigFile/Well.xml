@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<well_workspace>
+  <workspace name="青海油田">
+    <well name="青测试1">
+      <wellcount name="青测试1-1">
+      </wellcount>
+      <wellcount name="青测试1-2">
+      </wellcount>
+    </well>
+    <well name="青测试2">
+      <wellcount name="青测试2-1">
+      </wellcount>
+    </well>
+    <well name="青测试3">
+      <wellcount name="青测试3-1" />
+      <wellcount name="青测试3-2" />
+      <wellcount name="青测试3-3" />
+      <wellcount name="青测试3-4" />
+    </well>
+    <well name="青测试4">
+      <wellcount name="青测试4-1" />
+    </well>
+    <well name="青测试5">
+      <wellcount name="青测试5-1" />
+      <wellcount name="青测试5-2" />
+    </well>
+    <well name="青测试6">
+      <wellcount name="青测试6-1" />
+    </well>
+    <well name="青测试7">
+      <wellcount name="青测试7-1" />
+    </well>
+  </workspace>
+  <workspace name="长庆油田">
+    <well name="长测试3">
+      <wellcount name="长测试3-1">
+      </wellcount>
+      <wellcount name="长测试3-4">
+      </wellcount>
+    </well>
+    <well name="长测试4">
+      <wellcount name="长测试4-1" />
+    </well>
+  </workspace>
+  <workspace name="塔里木油田">
+    <well name="塔测试1">
+      <wellcount name="塔测试1-1" />
+    </well>
+  </workspace>
+  <workspace name="吉林油田">
+    <well name="吉测试1" />
+  </workspace>
+</well_workspace>
