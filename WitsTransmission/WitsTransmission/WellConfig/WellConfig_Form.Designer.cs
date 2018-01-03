@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.wellConfig_groupBox = new System.Windows.Forms.GroupBox();
+            this.currentPath_textBox = new System.Windows.Forms.TextBox();
             this.currentPath_label = new System.Windows.Forms.Label();
             this.wellConfig_treeView = new System.Windows.Forms.TreeView();
             this.getWellMessage_button = new System.Windows.Forms.Button();
             this.finishConfig_button = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.currentPath_textBox = new System.Windows.Forms.TextBox();
             this.wellConfig_groupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,6 +48,15 @@
             this.wellConfig_groupBox.Size = new System.Drawing.Size(496, 308);
             this.wellConfig_groupBox.TabIndex = 0;
             this.wellConfig_groupBox.TabStop = false;
+            // 
+            // currentPath_textBox
+            // 
+            this.currentPath_textBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::WitsTransmission.Properties.Settings.Default, "m_strWellcountPath", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.currentPath_textBox.Location = new System.Drawing.Point(92, 20);
+            this.currentPath_textBox.Name = "currentPath_textBox";
+            this.currentPath_textBox.Size = new System.Drawing.Size(381, 21);
+            this.currentPath_textBox.TabIndex = 2;
+            this.currentPath_textBox.Text = global::WitsTransmission.Properties.Settings.Default.m_strWellcountPath;
             // 
             // currentPath_label
             // 
@@ -87,15 +96,6 @@
             this.finishConfig_button.UseVisualStyleBackColor = true;
             this.finishConfig_button.Click += new System.EventHandler(this.finishConfig_button_Click);
             // 
-            // currentPath_textBox
-            // 
-            this.currentPath_textBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::WitsTransmission.Properties.Settings.Default, "m_strWellcountPath", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.currentPath_textBox.Location = new System.Drawing.Point(92, 20);
-            this.currentPath_textBox.Name = "currentPath_textBox";
-            this.currentPath_textBox.Size = new System.Drawing.Size(381, 21);
-            this.currentPath_textBox.TabIndex = 2;
-            this.currentPath_textBox.Text = global::WitsTransmission.Properties.Settings.Default.m_strWellcountPath;
-            // 
             // WellConfig_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -105,7 +105,7 @@
             this.Controls.Add(this.getWellMessage_button);
             this.Controls.Add(this.wellConfig_groupBox);
             this.Name = "WellConfig_Form";
-            this.Text = "配置井信息";
+            this.Text = "本 地 井 次";
             this.Load += new System.EventHandler(this.WellConfig_Form_Load);
             this.wellConfig_groupBox.ResumeLayout(false);
             this.wellConfig_groupBox.PerformLayout();

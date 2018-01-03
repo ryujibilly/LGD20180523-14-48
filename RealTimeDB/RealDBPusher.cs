@@ -55,11 +55,11 @@ namespace RealTimeDB
 
 
         //AdvancedOption
-        private int interval;
-        private int repeat;
-        private int fps;
-        private bool isHold;
-        private bool isCover;
+        private int interval=30;
+        private int repeat=3;
+        private int fps=100;
+        private bool isHold=true;
+        private bool isCover=true;
 
         //for test
         //WebService1 ws1 = new WebService1();
@@ -803,11 +803,24 @@ namespace RealTimeDB
 
 
 
-        private void button_Push_Click(object sender, EventArgs e)
+        private void button_Push_Click(object sender, EventArgs e)  
         {
-            pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
-            pusher.GetPushingData.Start();
-            dataGridView2.DataSource = pusher.PushingDataTabQueue.ElementAt(0);
+            try
+            {
+                timer_Push.Interval = Interval;
+                timer_Push.Enabled = true;
+                timer_Push.Start();
+                pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
+                pusher.PushingThread.Start();
+                dataGridView2.DataSource = pusher.PushingDataTabQueue.ElementAt(0);
+                button_Push.Enabled = false;
+                button_StopPush.Enabled = true;
+            }
+            catch (System.Exception)
+            {
+                button_Push.Enabled = true;
+                button_StopPush.Enabled = false;
+            }
         }
 
         private void button_OpenRemoteLog_Click(object sender, EventArgs e)
@@ -818,6 +831,16 @@ namespace RealTimeDB
             {
                 textBox_RemoteLog.Text = @"//10.242.0.186//" + rw.RegionName + "/" + rw.WellName + "/" + rw.SelectedLogName;
             }
+        }
+
+        private void timer_Push_Tick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_StopPush_Click(object sender, EventArgs e)
+        {
+            pusher.PushingThread.Abort();
         }
     }
 }

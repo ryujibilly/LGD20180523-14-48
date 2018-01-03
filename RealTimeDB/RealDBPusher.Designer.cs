@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button_getAllRegions = new System.Windows.Forms.Button();
             this.textBox_UserName = new System.Windows.Forms.TextBox();
             this.textBox_PassWord = new System.Windows.Forms.TextBox();
@@ -75,6 +76,7 @@
             this.button_AdvancedOption = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.timer_Push = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -504,6 +506,7 @@
             this.button_StopPush.TabIndex = 3;
             this.button_StopPush.Text = "停止";
             this.button_StopPush.UseVisualStyleBackColor = true;
+            this.button_StopPush.Click += new System.EventHandler(this.button_StopPush_Click);
             // 
             // button_StartPush_Test
             // 
@@ -554,6 +557,11 @@
             this.dataGridView2.RowTemplate.Height = 23;
             this.dataGridView2.Size = new System.Drawing.Size(567, 306);
             this.dataGridView2.TabIndex = 0;
+            // 
+            // timer_Push
+            // 
+            this.timer_Push.Interval = 30000;
+            this.timer_Push.Tick += new System.EventHandler(this.timer_Push_Tick);
             // 
             // RealDBPusher
             // 
@@ -633,5 +641,6 @@
         private System.Windows.Forms.Button button_Push;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.Timer timer_Push;
     }
 }

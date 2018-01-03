@@ -747,5 +747,31 @@ namespace Tool.Json
             }
             return tb;
         }
+        public static String List2JsonAarry(List<String> list)
+        {
+            String jstring = "";
+            jstring += "["+"\"";
+            for (int i = 0; i < list.Count - 1;i++)
+                jstring += list[i]+",";
+            jstring += list[list.Count - 1];
+            jstring += "\""+"]";
+            return jstring;
+        }
+
+        public static String AddData(List<String> data)
+        {
+            String jstring="";
+            return jstring;
+        }
+        public static String AddTitle(List<String> title)
+        {
+            String jstring = "";
+            return jstring;
+        }
+        public static String SetSize(List<String> data)
+        {
+            String jsting = "";
+            return jsting;
+        }
     }
 }

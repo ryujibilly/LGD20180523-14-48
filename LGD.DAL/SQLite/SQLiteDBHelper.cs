@@ -730,6 +730,50 @@ namespace LGD.DAL.SQLite
                 return null;
             }
         }
+
+        /// <summary>
+        /// 获取推送的数据DataTable
+        /// </summary>
+        /// <param name="instru">仪器序号</param>
+        /// <param name="tabid">表号集合</param>
+        /// <param name="startDate">起始日期</param>
+        /// <param name="startTime">起始时间</param>
+        /// <param name="startindex">记录起始索引位置</param>
+        /// <param name="fps">每帧推送记录数</param>
+        /// <returns>指定DataTable</returns>
+        public DataTable getPushingData(String instru, String tabid, String startDate, String startTime,int startindex,int fps)
+        {
+            // 自动打开
+            if (this.DbConnection == null)
+            {
+                this.AutoOpenClose = true;
+                this.Open();
+            }
+            else if (this.DbConnection.State == ConnectionState.Closed)
+            {
+                this.Open();
+            }
+            SQLiteConnection conn = this.dbConnection;
+            this.DbCommand = this.DbConnection.CreateCommand();
+            try
+            {
+                string strSQL = string.Format(@"SELECT * FROM [" + tabid + "-" + instru + "] WHERE [DATE]>" + startDate + " AND [TIME]>"
+                    + startTime+" limit "+startindex+","+fps, tabid + "-" + instru);
+                this.DbCommand.CommandText = strSQL;
+                dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
+                DataSet ds = new DataSet();
+                DataTable dt = new DataTable();
+                dbDataAdapter.Fill(ds);
+                dt = ds.Tables[0];
+                dt.TableName = tabid + "-" + instru;
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData()-->tran事务异常!<<<---- \r\t" + ex.Message);
+                return null;
+            }
+        }
         #endregion
 
         #region 判断表是否存在
