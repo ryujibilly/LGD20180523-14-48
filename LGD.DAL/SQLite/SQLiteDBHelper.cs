@@ -32,6 +32,8 @@ namespace LGD.DAL.SQLite
         private List<string> tablist = new List<string>();
         private String _lastDateTimeValue = null;
         private String _firstDateTimeValue = null;
+        private int startindex = 0;
+
         /// <summary>
         /// 初始值
         /// </summary>
@@ -167,6 +169,21 @@ namespace LGD.DAL.SQLite
             set
             {
                 tablist = value;
+            }
+        }
+        /// <summary>
+        /// 推送数据起始索引值
+        /// </summary>
+        public int Startindex
+        {
+            get
+            {
+                return startindex;
+            }
+
+            set
+            {
+                startindex = value;
             }
         }
 
@@ -681,6 +698,46 @@ namespace LGD.DAL.SQLite
                 return -1;
             }
         }
+        /// <summary>
+        /// 获取当前Date Time 对应的 rowid索引值
+        /// </summary>
+        /// <param name="instru">仪器名</param>
+        /// <param name="tabid">表号</param>
+        /// <param name="_date">日期</param>
+        /// <param name="_time">时间</param>
+        /// <returns>返回rowid</returns>
+        public int getCurrentIndex(String tabname, String _date,String _time)
+        {
+            // 自动打开
+            if (this.DbConnection == null)
+            {
+                this.AutoOpenClose = true;
+                this.Open();
+            }
+            else if (this.DbConnection.State == ConnectionState.Closed)
+            {
+                this.Open();
+            }
+            SQLiteConnection conn = this.dbConnection;
+            this.DbCommand = this.DbConnection.CreateCommand();
+            try
+            {
+                string strSQL = "select [rowid] from [" + tabname + "] where [DATE]>=" + _date + " AND [TIME]>=" + _time + " limit 0,1";
+                this.DbCommand.CommandText = strSQL;
+                dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
+                DataSet ds = new DataSet();
+                DataTable dt = new DataTable();
+                dbDataAdapter.Fill(ds);
+                dt = ds.Tables[0];
+                int rowid = int.Parse(dt.Rows[0].ItemArray[0].ToString());
+                return rowid;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getCurrentIndex()-->tran事务异常!<<<---- \r\t" + ex.Message);
+                return -1;
+            }
+        }
         #endregion
 
         #region 数据推送
@@ -740,9 +797,12 @@ namespace LGD.DAL.SQLite
         /// <param name="startTime">起始时间</param>
         /// <param name="startindex">记录起始索引位置</param>
         /// <param name="fps">每帧推送记录数</param>
+        /// <param name="rowidstart">起始rowid</param>
+        /// <param name="rowidend">截至rowid</param>
         /// <returns>指定DataTable</returns>
-        public DataTable getPushingData(String instru, String tabid, String startDate, String startTime,int startindex,int fps)
+        public DataTable getPushingData(String instru, String tabid,int startindex,int fps,out int rowidstart,out int rowidend)
         {
+            
             // 自动打开
             if (this.DbConnection == null)
             {
@@ -757,8 +817,7 @@ namespace LGD.DAL.SQLite
             this.DbCommand = this.DbConnection.CreateCommand();
             try
             {
-                string strSQL = string.Format(@"SELECT * FROM [" + tabid + "-" + instru + "] WHERE [DATE]>" + startDate + " AND [TIME]>"
-                    + startTime+" limit "+startindex+","+fps, tabid + "-" + instru);
+                string strSQL = string.Format(@"SELECT rowid,* FROM [" + tabid + "-" + instru + "] "+" limit "+startindex+","+fps, tabid + "-" + instru);
                 this.DbCommand.CommandText = strSQL;
                 dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
                 DataSet ds = new DataSet();
@@ -766,13 +825,60 @@ namespace LGD.DAL.SQLite
                 dbDataAdapter.Fill(ds);
                 dt = ds.Tables[0];
                 dt.TableName = tabid + "-" + instru;
+
+                rowidstart = int.Parse(dt.Rows[0].ItemArray[0].ToString());
+                rowidend = int.Parse(dt.Rows[dt.Rows.Count - 1].ItemArray[0].ToString());
                 return dt;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData()-->tran事务异常!<<<---- \r\t" + ex.Message);
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData()异常!<<<---- \r\t" + ex.Message);
+                rowidstart = -1;
+                rowidend = -1;
                 return null;
             }
+        }
+        public List<String> getTitleList(String tabname)
+        {
+            List<String> sqllist = new List<string>();
+            // 自动打开
+            if (this.DbConnection == null)
+            {
+                this.AutoOpenClose = true;
+                this.Open();
+            }
+            else if (this.DbConnection.State == ConnectionState.Closed)
+            {
+                this.Open();
+            }
+            SQLiteConnection conn = this.dbConnection;
+            this.DbCommand = this.DbConnection.CreateCommand();
+            try
+            {
+                string strSQL = string.Format(@"pragma table_info(["+tabname+"])");
+                this.DbCommand.CommandText = strSQL;
+                dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
+                DataSet ds = new DataSet();
+                DataTable dt = new DataTable();
+                dbDataAdapter.Fill(ds);
+                dt = ds.Tables[0];
+                for (int i = 0; i < dt.Rows.Count; i++)
+                    sqllist.Add(dt.Rows[i].ItemArray[1].ToString());
+                return sqllist;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        private void convertDDL2List(String str)
+        {
+            String[] sep = { "[", "]" };
+            
+            String[] substr =str.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+
         }
         #endregion
 

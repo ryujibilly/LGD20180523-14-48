@@ -515,7 +515,6 @@ namespace Tool.Json
                 }
                 catch { }
             }
-            //  json = MyString.ClearEndChar(json);  
             json = json + "}";
             return json;
         }
@@ -647,10 +646,6 @@ namespace Tool.Json
                     if (de.Key.ToString() == key)
                     {
                         str = de.Value.ToString();
-                        //str = str.Replace('\r', ' ');
-                        //str = str.Replace('\n', ' ');
-                        //str = str.Replace('\\', ' ');
-                        //str = str.Replace('"', ' ');
                         tempRecord = new List<string>(str.Split(seperator, StringSplitOptions.RemoveEmptyEntries));
                         int rowNumber = tempRecord.Count/colNumber;
                         for (int i = 0; i < colNumber; i++)//2
@@ -772,6 +767,12 @@ namespace Tool.Json
         {
             String jsting = "";
             return jsting;
+        }
+        public static String SetCurveData(String logid,String recordno,String instname,String title,String data,int size)
+        {
+            String curveJson = "";
+            //curveJson+= "msg" : ""+","+ "user" : "yuwenmao""password" : "123"
+            return curveJson;
         }
     }
 }

@@ -53,7 +53,7 @@ namespace RealTimeDB
         //保存Client选的的仪器及对应选择的表
         Dictionary<String, List<String>> m_selectClientToolDictionary = new Dictionary<string, List<string>>();
 
-
+        private List<List<String>> titleList = new List<List<string>>();
         //AdvancedOption
         private int interval=30;
         private int repeat=3;
@@ -327,6 +327,21 @@ namespace RealTimeDB
                 instru = value;
             }
         }
+        /// <summary>
+        /// 每张表的字段名列表
+        /// </summary>
+        public List<List<string>> TitleList
+        {
+            get
+            {
+                return titleList;
+            }
+
+            set
+            {
+                titleList = value;
+            }
+        }
         #endregion
 
         public RealDBPusher()
@@ -377,6 +392,9 @@ namespace RealTimeDB
 
             pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
             pusher.ConnectTest();
+            this.Interval = int.Parse(Properties.Settings.Default.Interval.ToString());
+            this.Repeat = int.Parse(Properties.Settings.Default.Repeat.ToString());
+            this.Fps = int.Parse(Properties.Settings.Default.FPS.ToString());
         }
 
         private void button_GetAllInstInfo_Click(object sender, EventArgs e)
@@ -426,6 +444,7 @@ namespace RealTimeDB
             m_selectedTableList.Clear();//清空上次选择仪器所对应的所选的表
             String strSelected = comboBox_Inst.Items[index].ToString();
             Instru = strSelected;
+            pusher.Instname = Instru;
             //根据ComboBox选择，从WITS.xml中读取相应仪器的record信息，加载到WitsTable_treeView第一级节点
             List<List<String>> recordList = new List<List<String>>();
             recordList = m_xmlUtil.getSubChildNodes(m_xmlUtil.getChildNodes(m_xmlUtil.getRoot(m_xmlUtil.getDocument("WITS.xml"))), m_recordAttributesList, strSelected);
@@ -809,10 +828,12 @@ namespace RealTimeDB
             {
                 timer_Push.Interval = Interval;
                 timer_Push.Enabled = true;
+                pusher.IsPushing = true;
                 timer_Push.Start();
-                pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
+                //获取字段名
+                this.getTitleList();
                 pusher.PushingThread.Start();
-                dataGridView2.DataSource = pusher.PushingDataTabQueue.ElementAt(0);
+                dataGridView2.DataSource = pusher.IndexTable;
                 button_Push.Enabled = false;
                 button_StopPush.Enabled = true;
             }
@@ -822,6 +843,20 @@ namespace RealTimeDB
                 button_StopPush.Enabled = false;
             }
         }
+        /// <summary>
+        /// 获取每个表的字段名
+        /// </summary>
+        private void getTitleList()
+        {
+            foreach(String tabname in m_selectedTableList)
+            {
+                List<String> tempList = new List<string>();
+                tempList= RealDBHelper.getTitleList(tabname + "-" + Instru);
+                TitleList.Add(tempList);
+                pusher.TitleDict.Add(tabname + "-" + Instru, tempList);
+            }
+            pusher.TitleList = TitleList;
+        }
 
         private void button_OpenRemoteLog_Click(object sender, EventArgs e)
         {
@@ -829,18 +864,36 @@ namespace RealTimeDB
             rw.ShowDialog();
             if(rw.DialogResult==DialogResult.OK)
             {
+                pusher.Logid = rw.LogId;
                 textBox_RemoteLog.Text = @"//10.242.0.186//" + rw.RegionName + "/" + rw.WellName + "/" + rw.SelectedLogName;
             }
         }
 
         private void timer_Push_Tick(object sender, EventArgs e)
         {
+            if (!checkBox_DateToBottom.Checked)
+                pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
+            else if (pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
+            {
+                timer_Push.Stop();
+            }
 
         }
 
         private void button_StopPush_Click(object sender, EventArgs e)
         {
-            pusher.PushingThread.Abort();
+            try
+            {
+                pusher.IsPushing = false;
+                pusher.PushingThread.Abort();
+                button_StopPush.Enabled = false;
+                button_Push.Enabled = true;
+            }
+            catch (System.Exception)
+            {
+                button_StopPush.Enabled = true; 
+                button_Push.Enabled = true;
+            }
         }
     }
 }

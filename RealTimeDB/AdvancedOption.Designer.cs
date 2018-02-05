@@ -31,15 +31,15 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDown_Interval = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_Repeat = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_Fps = new System.Windows.Forms.NumericUpDown();
             this.checkBox_hold = new System.Windows.Forms.CheckBox();
             this.button_ok = new System.Windows.Forms.Button();
             this.button_cancel = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Interval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Repeat)).BeginInit();
+            this.numericUpDown_Fps = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_Repeat = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_Interval = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Fps)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Repeat)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Interval)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -69,73 +69,11 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "每次推送帧数:";
             // 
-            // numericUpDown_Interval
-            // 
-            this.numericUpDown_Interval.Location = new System.Drawing.Point(129, 22);
-            this.numericUpDown_Interval.Maximum = new decimal(new int[] {
-            600,
-            0,
-            0,
-            0});
-            this.numericUpDown_Interval.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_Interval.Name = "numericUpDown_Interval";
-            this.numericUpDown_Interval.Size = new System.Drawing.Size(95, 21);
-            this.numericUpDown_Interval.TabIndex = 3;
-            this.numericUpDown_Interval.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.numericUpDown_Interval.ValueChanged += new System.EventHandler(this.numericUpDown_Interval_ValueChanged);
-            // 
-            // numericUpDown_Repeat
-            // 
-            this.numericUpDown_Repeat.Location = new System.Drawing.Point(129, 60);
-            this.numericUpDown_Repeat.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDown_Repeat.Name = "numericUpDown_Repeat";
-            this.numericUpDown_Repeat.Size = new System.Drawing.Size(95, 21);
-            this.numericUpDown_Repeat.TabIndex = 4;
-            this.numericUpDown_Repeat.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numericUpDown_Repeat.ValueChanged += new System.EventHandler(this.numericUpDown_Repeat_ValueChanged);
-            // 
-            // numericUpDown_Fps
-            // 
-            this.numericUpDown_Fps.Location = new System.Drawing.Point(129, 98);
-            this.numericUpDown_Fps.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.numericUpDown_Fps.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numericUpDown_Fps.Name = "numericUpDown_Fps";
-            this.numericUpDown_Fps.Size = new System.Drawing.Size(95, 21);
-            this.numericUpDown_Fps.TabIndex = 5;
-            this.numericUpDown_Fps.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numericUpDown_Fps.ValueChanged += new System.EventHandler(this.numericUpDown_Fps_ValueChanged);
-            // 
             // checkBox_hold
             // 
             this.checkBox_hold.AutoSize = true;
+            this.checkBox_hold.Checked = global::RealTimeDB.Properties.Settings.Default.HoldOn;
+            this.checkBox_hold.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::RealTimeDB.Properties.Settings.Default, "HoldOn", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBox_hold.Location = new System.Drawing.Point(240, 63);
             this.checkBox_hold.Name = "checkBox_hold";
             this.checkBox_hold.Size = new System.Drawing.Size(72, 16);
@@ -164,6 +102,61 @@
             this.button_cancel.UseVisualStyleBackColor = true;
             this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
             // 
+            // numericUpDown_Fps
+            // 
+            this.numericUpDown_Fps.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::RealTimeDB.Properties.Settings.Default, "FPS", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown_Fps.Location = new System.Drawing.Point(129, 98);
+            this.numericUpDown_Fps.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDown_Fps.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericUpDown_Fps.Name = "numericUpDown_Fps";
+            this.numericUpDown_Fps.Size = new System.Drawing.Size(95, 21);
+            this.numericUpDown_Fps.TabIndex = 5;
+            this.numericUpDown_Fps.Value = global::RealTimeDB.Properties.Settings.Default.FPS;
+            this.numericUpDown_Fps.ValueChanged += new System.EventHandler(this.numericUpDown_Fps_ValueChanged);
+            // 
+            // numericUpDown_Repeat
+            // 
+            this.numericUpDown_Repeat.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::RealTimeDB.Properties.Settings.Default, "Repeat", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown_Repeat.Location = new System.Drawing.Point(129, 60);
+            this.numericUpDown_Repeat.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDown_Repeat.Name = "numericUpDown_Repeat";
+            this.numericUpDown_Repeat.Size = new System.Drawing.Size(95, 21);
+            this.numericUpDown_Repeat.TabIndex = 4;
+            this.numericUpDown_Repeat.Value = global::RealTimeDB.Properties.Settings.Default.Repeat;
+            this.numericUpDown_Repeat.ValueChanged += new System.EventHandler(this.numericUpDown_Repeat_ValueChanged);
+            // 
+            // numericUpDown_Interval
+            // 
+            this.numericUpDown_Interval.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::RealTimeDB.Properties.Settings.Default, "Interval", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown_Interval.Location = new System.Drawing.Point(129, 22);
+            this.numericUpDown_Interval.Maximum = new decimal(new int[] {
+            600,
+            0,
+            0,
+            0});
+            this.numericUpDown_Interval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown_Interval.Name = "numericUpDown_Interval";
+            this.numericUpDown_Interval.Size = new System.Drawing.Size(95, 21);
+            this.numericUpDown_Interval.TabIndex = 3;
+            this.numericUpDown_Interval.Value = global::RealTimeDB.Properties.Settings.Default.Interval;
+            this.numericUpDown_Interval.ValueChanged += new System.EventHandler(this.numericUpDown_Interval_ValueChanged);
+            // 
             // AdvancedOption
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -181,9 +174,9 @@
             this.Name = "AdvancedOption";
             this.Text = "推送设置";
             this.Load += new System.EventHandler(this.AdvancedOption_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Interval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Repeat)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Fps)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Repeat)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Interval)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

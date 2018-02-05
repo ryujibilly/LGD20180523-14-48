@@ -84,7 +84,9 @@ namespace RealTimeDB
 
         private void AdvancedOption_Load(object sender, EventArgs e)
         {
-
+            this.numericUpDown_Interval.Value = Properties.Settings.Default.Interval;
+            this.numericUpDown_Repeat.Value = Properties.Settings.Default.Repeat;
+            this.numericUpDown_Fps.Value = Properties.Settings.Default.FPS;
         }
 
         private void numericUpDown_Interval_ValueChanged(object sender, EventArgs e)
@@ -105,6 +107,9 @@ namespace RealTimeDB
         private void button_ok_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
+            Interval = (int)numericUpDown_Interval.Value;
+            Repeat = (int)numericUpDown_Repeat.Value;
+            Fps = (int)numericUpDown_Fps.Value;
             this.Close();
         }
 

@@ -39,7 +39,13 @@ namespace RealTimeDB
         public List<List<String>> colData = new List<List<string>>();
         private ConcurrentQueue<DataTable> pushingDataTabQueue = new ConcurrentQueue<DataTable>();
         private DataTable indexTable = new DataTable();
-
+        private List<int> startlabs = new List<int>();
+        private String logid = "";
+        private String instname = "";
+        private List<List<String>> titleList = new List<List<String>>();
+        private Dictionary<String, List<String>> titleDict = new Dictionary<string, List<string>>();
+        private List<List<String>> dataList = new List<List<string>>();
+        private Boolean isPushing = false;
         public Thread PushingThread;
 
         private String username;
@@ -101,6 +107,111 @@ namespace RealTimeDB
                 indexTable = value;
             }
         }
+        /// <summary>
+        /// 索引起始位
+        /// </summary>
+        public List<int> Startlabs
+        {
+            get
+            {
+                return startlabs;
+            }
+
+            set
+            {
+                startlabs = value;
+            }
+        }
+        /// <summary>
+        /// 井ID
+        /// </summary>
+        public string Logid
+        {
+            get
+            {
+                return logid;
+            }
+
+            set
+            {
+                logid = value;
+            }
+        }
+        /// <summary>
+        /// 仪器名
+        /// </summary>
+        public string Instname
+        {
+            get
+            {
+                return instname;
+            }
+
+            set
+            {
+                instname = value;
+            }
+        }
+        /// <summary>
+        /// 哈希表的Title列表
+        /// </summary>
+        public List<List<String>> TitleList
+        {
+            get
+            {
+                return titleList;
+            }
+
+            set
+            {
+                titleList = value;
+            }
+        }
+        /// <summary>
+        /// Title链表字典
+        /// </summary>
+        public Dictionary<string, List<string>> TitleDict
+        {
+            get
+            {
+                return titleDict;
+            }
+
+            set
+            {
+                titleDict = value;
+            }
+        }
+        /// <summary>
+        /// 哈希表的Data链表
+        /// </summary>
+        public List<List<string>> DataList
+        {
+            get
+            {
+                return dataList;
+            }
+
+            set
+            {
+                dataList = value;
+            }
+        }
+        /// <summary>
+        /// 是否在推送
+        /// </summary>
+        public bool IsPushing
+        {
+            get
+            {
+                return isPushing;
+            }
+
+            set
+            {
+                isPushing = value;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -117,6 +228,7 @@ namespace RealTimeDB
             InitHashTable();
             initIndexTable();
             //strJson = JsonHepler.HashtableToJson(ht, 0);
+            
         }
         /// <summary>
         /// 使用用户名密码构造方法
@@ -135,12 +247,22 @@ namespace RealTimeDB
             initIndexTable();
             //strJson = JsonHepler.HashtableToJson(ht, 0);
         }
+
+        /// <summary>
+        /// 初始化推送进程索引表
+        /// </summary>
         private void initIndexTable()
         {
             DataColumn dc1 = new DataColumn("TabId", Type.GetType("System.String"));
-            DataColumn dc2 = new DataColumn("DateTime", Type.GetType("System.String"));
+            DataColumn dc2 = new DataColumn("Date", Type.GetType("System.String"));
+            DataColumn dc3 = new DataColumn("Time", Type.GetType("System.String"));
+            DataColumn dc4 = new DataColumn("StartIndex", Type.GetType("System.String"));
+            DataColumn dc5 = new DataColumn("EndIndex", Type.GetType("System.String"));
             IndexTable.Columns.Add(dc1);
             IndexTable.Columns.Add(dc2);
+            IndexTable.Columns.Add(dc3);
+            IndexTable.Columns.Add(dc4);
+            IndexTable.Columns.Add(dc5);
         }
         /// <summary>
         /// 空哈希表初始化方法
@@ -226,8 +348,11 @@ namespace RealTimeDB
         /// <param name="_curvename"></param>
         /// <param name="curvedata"></param>
         /// <returns></returns>
-        public Hashtable InitCurveTable(String logid,String recordno,int size,String instname, List<String> _curvename,DataTable _curvedata)
+        public String InitCurveTable(String logid,String recordno,int size,String instname, List<String> _curvename,DataTable _curvedata)
         {
+            String temp0 = "";
+            String temp1 = "";
+            String temp2 = "";
             DataTable dt = _curvedata.Copy();
             ht.Clear();
             ht.Add("logid", logid);
@@ -239,16 +364,61 @@ namespace RealTimeDB
             ht.Add("size", size);
             ht.Add("msg", "");
             ht.Add("return", size);
-            string strCurveNames="";
-            string strCurveData = "";
+            temp0 = JsonHepler.HashtableToJson(ht, 0);
+
+            //title
+
+            string strCurveNames= "\"title\" :[";
             DataRow rowCurveData = dt.Rows[0];
             foreach (String cv in _curvename)
-                strCurveNames+= cv+",";
-            ht.Add("title", strCurveNames);
-            for(int i=0;i<dt.Columns.Count;i++)
-                strCurveData += rowCurveData[i].ToString()+",";
-            ht.Add("data", strCurveData);
-            return ht;
+            {
+                String elem = "\"";
+                if (cv.Length < 1)
+                {
+                    elem += "-999.25\"";
+                }
+                else
+                {
+                    elem += cv+"\"";
+                }
+                strCurveNames += elem + ",";
+            }
+            strCurveNames=strCurveNames.Remove(strCurveNames.Length - 1);
+            strCurveNames += "]";
+            temp1= temp0.Insert(1,strCurveNames+",");
+            //data
+
+            string strCurveData = "";
+            strCurveData += createDataString(dt);
+            temp2=temp1.Insert(1,strCurveData+"],");
+            return temp2;
+        }
+
+        private String createDataString(DataTable dt)
+        {
+            string strCurveData = "\"data\" :[";
+            for(int j=0;j<dt.Rows.Count;j++)
+            {
+                DataRow rowCurveData = dt.Rows[j];
+                strCurveData += "[";
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    string elem = "\"";
+                    if (rowCurveData[i].ToString().Length < 1)
+                    {
+                        elem += "-999.25\"";
+                    }
+                    else
+                    {
+                        elem += rowCurveData[i].ToString() + "\"";
+                    }
+                    strCurveData += elem + ",";
+                }
+                strCurveData = strCurveData.Remove(strCurveData.Length - 1);
+                strCurveData += "],";
+            }
+            strCurveData = strCurveData.Remove(strCurveData.Length - 1);
+            return strCurveData;
         }
         
         /// <summary>
@@ -522,23 +692,44 @@ namespace RealTimeDB
         /// </summary>
         void StartPushing()
         {
-            while(true)
+            try
             {
-                if(PushingDataTabQueue.Count>0)
+                while (IsPushing)
                 {
-                    String receivedStr = "";
-                    //String sendStr=CreatePushingDataBag();
-                    //receivedStr= _realdbws.WriteCurveData(sendStr);
+                    if (PushingDataTabQueue.Count > 0 && IndexTable.Rows.Count > 0)
+                    {
+                        DataTable dt = new DataTable();
+                        if (PushingDataTabQueue.TryDequeue(out dt))
+                        {
+                            String RecordName = dt.TableName;
+                            String RecordNo = RecordName.Split('-')[0];
+                            List<String> curvenames = new List<string>();
+                            if (TitleDict.TryGetValue(RecordName, out curvenames))
+                            {
+                                int Size = dt.Rows.Count;
+                                dt.Columns.RemoveAt(0);
+                                String SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
+                                String recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
+                            }
+                            else continue;
+                        }
+                    }
                 }
             }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
+
         /// <summary>
-        /// 创建推送数据Json包
+        /// 创建推送数据的Json包
         /// </summary>
         /// <returns></returns>
         private String CreatePushingDataBag()
         {
             String jsonStr="";
+            Hashtable ht = new Hashtable();
             return jsonStr;
         }
 
@@ -562,25 +753,68 @@ namespace RealTimeDB
         /// <summary>
         /// 获取即将推送的数据
         /// </summary>
-        public void getData(SQLiteDBHelper helper, List<String> selecttablist, String instru, String beginDate, String beginTime,int _startindex,int _fps)
+        /// <returns>缓存是否读取完</returns>
+        public bool getData(SQLiteDBHelper helper, List<String> selecttablist, String instru, String beginDate, String beginTime,int _fps)
         {
+            bool isOver = false;
             try
             {
                 foreach (String tabname in selecttablist)
                 {
+                    int rowidstart = 0;
+                    int rowidend = 0;
                     DataTable dt = new DataTable();
-                    dt = helper.getPushingData(instru, tabname, beginDate, beginTime, _startindex, _fps).Copy();
-                    String strDatetime = dt.Rows[dt.Rows.Count - 1].ItemArray[4].ToString() + dt.Rows[dt.Rows.Count - 1].ItemArray[5].ToString();
-                    PushingDataTabQueue.Enqueue(dt);
-                    DataRow dr=IndexTable.NewRow();
-                    dr[0] = tabname;
-                    dr[1] = strDatetime;
+                    int _startindex = getLastIndex(tabname,IndexTable);
+                    if (_startindex >=0)
+                    {
+                        dt = helper.getPushingData(instru, tabname, _startindex, _fps, out rowidstart, out rowidend).Copy();
+                        String strDate = dt.Rows[dt.Rows.Count - 1].ItemArray[5].ToString();
+                        String strTime = dt.Rows[dt.Rows.Count - 1].ItemArray[6].ToString();
+                        PushingDataTabQueue.Enqueue(dt);
+                        DataRow dr = IndexTable.NewRow();
+                        dr[0] = tabname;
+                        dr[1] = strDate;
+                        dr[2] = strTime;
+                        //起始rowid
+                        dr[3] = rowidstart;
+                        //截至rowid
+                        dr[4] = rowidend;
+                        IndexTable.Rows.Add(dr);
+                    }
+                    if ((rowidend - rowidstart + 1) < _fps)
+                    {
+                        isOver = true;
+                        continue;
+                    }
                 }
+                return isOver;
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData()");
+                return false;
             }
+        }
+        /// <summary>
+        /// 从索引表里查找对应表的最后一次索引
+        /// </summary>
+        /// <param name="tabname"></param>
+        /// <param name="_indextab"></param>
+        /// <returns>最后一个索引值</returns>
+        private int getLastIndex(string tabname,DataTable _indextab)
+        {
+            int lastindex = 0;
+            int i = _indextab.Rows.Count - 1;
+            while (i>=0)
+            {
+                if (_indextab.Rows[i].ItemArray[0].ToString() == tabname)
+                {
+                    lastindex = int.Parse(_indextab.Rows[i].ItemArray[4].ToString());
+                    break;
+                }
+                else i--;
+            }
+            return lastindex;
         }
     }
 }

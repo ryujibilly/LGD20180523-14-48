@@ -58,5 +58,44 @@ namespace RealTimeDB.Properties {
                 this["NewProjectPath"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public decimal Interval {
+            get {
+                return ((decimal)(this["Interval"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal Repeat {
+            get {
+                return ((decimal)(this["Repeat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public decimal FPS {
+            get {
+                return ((decimal)(this["FPS"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HoldOn {
+            get {
+                return ((bool)(this["HoldOn"]));
+            }
+            set {
+                this["HoldOn"] = value;
+            }
+        }
     }
 }
