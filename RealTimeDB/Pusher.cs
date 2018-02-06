@@ -47,6 +47,8 @@ namespace RealTimeDB
         private List<List<String>> dataList = new List<List<string>>();
         private Boolean isPushing = false;
         public Thread PushingThread;
+        private Dictionary<String,int> sendSum = new Dictionary<string, int>();
+
 
         private String username;
         private String userpassword;
@@ -210,6 +212,21 @@ namespace RealTimeDB
             set
             {
                 isPushing = value;
+            }
+        }
+        /// <summary>
+        /// 累计发送记录数目字典
+        /// </summary>
+        public Dictionary<string,int> SendSum
+        {
+            get
+            {
+                return sendSum;
+            }
+
+            set
+            {
+                sendSum = value;
             }
         }
         #endregion
@@ -701,15 +718,20 @@ namespace RealTimeDB
                         DataTable dt = new DataTable();
                         if (PushingDataTabQueue.TryDequeue(out dt))
                         {
+                            //表号+仪器，断句
                             String RecordName = dt.TableName;
                             String RecordNo = RecordName.Split('-')[0];
                             List<String> curvenames = new List<string>();
                             if (TitleDict.TryGetValue(RecordName, out curvenames))
                             {
                                 int Size = dt.Rows.Count;
+                                //移除rowid 列
                                 dt.Columns.RemoveAt(0);
                                 String SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
                                 String recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
+                                //计数
+                                if (recvJsonStr.Contains("ok"))
+                                    SendSum[RecordNo] += Size;
                             }
                             else continue;
                         }
@@ -718,7 +740,7 @@ namespace RealTimeDB
             }
             catch (System.Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message+ "<======PushingThread线程主体StartPushing()异常=====> \r\n");
             }
         }
 

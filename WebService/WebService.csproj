@@ -89,7 +89,7 @@
     </Reference>
     <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\LWD_DataProcess0725\LWD_DataProcess\Properties\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\LGD.DAL\SQLite\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.IO, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>

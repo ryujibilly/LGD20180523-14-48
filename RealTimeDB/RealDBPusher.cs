@@ -643,6 +643,12 @@ namespace RealTimeDB
                     }
                 }
             }
+            //创建发送计数字典！
+            foreach (String recno in m_selectedTableList)
+            {
+                pusher.SendSum.Clear();
+                pusher.SendSum.Add(recno, 0);
+            }
         }
         //取消节点选中状态之后，取消所有父节点的选中状态
         private void setParentNodeCheckedState(TreeNode currNode, bool state)
