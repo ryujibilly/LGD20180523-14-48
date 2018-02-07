@@ -23,7 +23,7 @@ namespace WitsTransmission.XMLUtil
         {  
             try
             {
-                m_xmlReader = XmlReader.Create(@"..\..\ConfigFile\" + filename, settings);
+                m_xmlReader = XmlReader.Create(@"..\..\..\ConfigFile\" + filename, settings);
                 m_xmlDoc.Load(m_xmlReader);
                 Trace.WriteLine("----->getDocument()");
                 return m_xmlDoc;
@@ -315,7 +315,7 @@ namespace WitsTransmission.XMLUtil
                 }
             }
             m_xmlReader.Close();
-            m_xmlDoc.Save(@"..\..\ConfigFile\" + filename);
+            m_xmlDoc.Save(@"..\..\..\ConfigFile\" + filename);
         }
         //修改节点，最多可修改三级节点
         public void alterXmlNode(String filename,TreeNode selectedTreeNode, String atrributeName, String atrributeValue)
@@ -332,7 +332,7 @@ namespace WitsTransmission.XMLUtil
                         {
                             node.Attributes[atrributeName].Value = atrributeValue;
                             m_xmlReader.Close();
-                            m_xmlDoc.Save(@"..\..\ConfigFile\" + filename);
+                            m_xmlDoc.Save(@"..\..\..\ConfigFile\" + filename);
                         }
                     }
                     break;
@@ -345,7 +345,7 @@ namespace WitsTransmission.XMLUtil
                         {
                             node.Attributes[atrributeName].Value = atrributeValue;
                             m_xmlReader.Close();
-                            m_xmlDoc.Save(@"..\..\ConfigFile\" + filename);
+                            m_xmlDoc.Save(@"..\..\..\ConfigFile\" + filename);
                         }
                     }
                     break;
@@ -363,7 +363,7 @@ namespace WitsTransmission.XMLUtil
                                 {
                                     subNode.Attributes[atrributeName].Value = atrributeValue;
                                     m_xmlReader.Close();
-                                    m_xmlDoc.Save(@"..\..\ConfigFile\" + filename);
+                                    m_xmlDoc.Save(@"..\..\..\ConfigFile\" + filename);
                                 }
                             }
                         }
@@ -426,7 +426,7 @@ namespace WitsTransmission.XMLUtil
                     break;
             }
             m_xmlReader.Close();
-            m_xmlDoc.Save(@"..\..\ConfigFile\" + filename);
+            m_xmlDoc.Save(@"..\..\..\ConfigFile\" + filename);
         }
     }
 }

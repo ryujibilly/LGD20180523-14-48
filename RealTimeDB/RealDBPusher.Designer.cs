@@ -77,6 +77,8 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.timer_Push = new System.Windows.Forms.Timer(this.components);
+            this.groupBox_StatusMonitor = new System.Windows.Forms.GroupBox();
+            this.dataGridView_StatusMonitor = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -84,6 +86,8 @@
             this.groupBox_Push.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            this.groupBox_StatusMonitor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_StatusMonitor)).BeginInit();
             this.SuspendLayout();
             // 
             // button_getAllRegions
@@ -179,7 +183,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textBox_UserName);
             this.groupBox1.Controls.Add(this.textBox_PassWord);
-            this.groupBox1.Location = new System.Drawing.Point(752, 23);
+            this.groupBox1.Location = new System.Drawing.Point(1062, 288);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(304, 69);
             this.groupBox1.TabIndex = 9;
@@ -199,7 +203,7 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(752, 98);
+            this.dataGridView1.Location = new System.Drawing.Point(1062, 363);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.Size = new System.Drawing.Size(304, 172);
@@ -563,11 +567,31 @@
             this.timer_Push.Interval = 30000;
             this.timer_Push.Tick += new System.EventHandler(this.timer_Push_Tick);
             // 
+            // groupBox_StatusMonitor
+            // 
+            this.groupBox_StatusMonitor.Controls.Add(this.dataGridView_StatusMonitor);
+            this.groupBox_StatusMonitor.Location = new System.Drawing.Point(682, 23);
+            this.groupBox_StatusMonitor.Name = "groupBox_StatusMonitor";
+            this.groupBox_StatusMonitor.Size = new System.Drawing.Size(374, 247);
+            this.groupBox_StatusMonitor.TabIndex = 16;
+            this.groupBox_StatusMonitor.TabStop = false;
+            this.groupBox_StatusMonitor.Text = "状态监视";
+            // 
+            // dataGridView_StatusMonitor
+            // 
+            this.dataGridView_StatusMonitor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_StatusMonitor.Location = new System.Drawing.Point(7, 21);
+            this.dataGridView_StatusMonitor.Name = "dataGridView_StatusMonitor";
+            this.dataGridView_StatusMonitor.RowTemplate.Height = 23;
+            this.dataGridView_StatusMonitor.Size = new System.Drawing.Size(360, 220);
+            this.dataGridView_StatusMonitor.TabIndex = 0;
+            // 
             // RealDBPusher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1068, 615);
+            this.ClientSize = new System.Drawing.Size(1061, 615);
+            this.Controls.Add(this.groupBox_StatusMonitor);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox_Push);
             this.Controls.Add(this.groupBox3);
@@ -588,6 +612,8 @@
             this.groupBox_Push.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            this.groupBox_StatusMonitor.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_StatusMonitor)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -642,5 +668,7 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.Timer timer_Push;
+        private System.Windows.Forms.GroupBox groupBox_StatusMonitor;
+        private System.Windows.Forms.DataGridView dataGridView_StatusMonitor;
     }
 }

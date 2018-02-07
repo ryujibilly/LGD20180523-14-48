@@ -150,7 +150,7 @@ namespace WitsTransmission.WellConfig
                 pathNodeList.Item(2).Attributes["value"].Value = m_strRootPath + "\\" + strWellcountPath[Length - 3];
                 pathNodeList.Item(3).Attributes["value"].Value = m_strRootPath + "\\" + strWellcountPath[Length - 3] + "\\" + strWellcountPath[Length - 2];
                 pathNodeList.Item(4).Attributes["value"].Value = currentPath_textBox.Text;
-                m_xmlUtil.m_xmlDoc.Save(@"..\..\ConfigFile\" + "Path.xml");
+                m_xmlUtil.m_xmlDoc.Save(@"..\..\..\ConfigFile\" + "Path.xml");
                 m_xmlUtil.m_xmlReader.Close();
                 setwellcount(strWellcountPath.Last());
                 SQLiteDBHelper dbhelper = new SQLiteDBHelper(getRealDBPath());

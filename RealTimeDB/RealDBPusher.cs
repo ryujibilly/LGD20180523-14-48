@@ -32,6 +32,7 @@ namespace RealTimeDB
         //pusher
         private Pusher pusher = new Pusher();
         private DataTable JsonTable = new DataTable();
+        private DataTable tsmdt = new DataTable();
         private String JsonString = string.Empty;
         private List<String> instName = new List<String>();
         private List<String> instDesc = new List<String>();
@@ -342,6 +343,21 @@ namespace RealTimeDB
                 titleList = value;
             }
         }
+        /// <summary>
+        /// Status Monitor Data Table传输状态监视表
+        /// </summary>
+        public DataTable TSMdt
+        {
+            get
+            {
+                return tsmdt;
+            }
+
+            set
+            {
+                tsmdt = value;
+            }
+        }
         #endregion
 
         public RealDBPusher()
@@ -389,12 +405,23 @@ namespace RealTimeDB
             m_itemAttributesList.Add("index");
             m_itemAttributesList.Add("describe");
             m_itemAttributesList.Add("short-mnemonic");
+            TSMdt = this.CreateStatusMonitorDT();
+            dataGridView_StatusMonitor.DataSource = TSMdt;
 
             pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
             pusher.ConnectTest();
             this.Interval = int.Parse(Properties.Settings.Default.Interval.ToString());
             this.Repeat = int.Parse(Properties.Settings.Default.Repeat.ToString());
             this.Fps = int.Parse(Properties.Settings.Default.FPS.ToString());
+        }
+        private DataTable CreateStatusMonitorDT()
+        {
+            DataTable dt = new DataTable("StatusMonitorDT");
+            DataColumn dc1 = new DataColumn("表号");
+            DataColumn dc2 = new DataColumn("累计传输记录/条");
+            dt.Columns.Add(dc1);
+            dt.Columns.Add(dc2);
+            return dt;
         }
 
         private void button_GetAllInstInfo_Click(object sender, EventArgs e)
@@ -474,24 +501,6 @@ namespace RealTimeDB
             }
         }
 
-        //private void radioButton_Log_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    if (radioButton_Log.Checked)
-        //        instType = InstType.Log;
-        //}
-
-        //private void radioButton_MudLog_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    if (radioButton_Log.Checked)
-        //        instType = InstType.MudLog;
-        //}
-
-        //private void radioButton_Drill_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    if (radioButton_Log.Checked)
-        //        instType = InstType.Drill;
-        //}
-
         private void button_OpenLocalLog_Click(object sender, EventArgs e)
         {
             WellConfig_Form wcf = new WellConfig_Form();
@@ -555,6 +564,7 @@ namespace RealTimeDB
 
         private void WitsTable_treeView_AfterCheck(object sender, TreeViewEventArgs e)
         {
+
             if (e.Action == TreeViewAction.ByMouse)
             {
                 int k = 0;
@@ -642,12 +652,6 @@ namespace RealTimeDB
                         }
                     }
                 }
-            }
-            //创建发送计数字典！
-            foreach (String recno in m_selectedTableList)
-            {
-                pusher.SendSum.Clear();
-                pusher.SendSum.Add(recno, 0);
             }
         }
         //取消节点选中状态之后，取消所有父节点的选中状态
@@ -832,6 +836,11 @@ namespace RealTimeDB
         {
             try
             {
+                pusher.SendSum.Clear();
+                //创建发送计数字典！
+                if (m_selectServerToolDictionary.Count > 0)
+                    foreach (String recno in m_selectServerToolDictionary[Instru])
+                        pusher.SendSum.Add(recno, 0);
                 timer_Push.Interval = Interval;
                 timer_Push.Enabled = true;
                 pusher.IsPushing = true;
@@ -879,11 +888,25 @@ namespace RealTimeDB
         {
             if (!checkBox_DateToBottom.Checked)
                 pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
-            else if (pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
+            else 
             {
-                timer_Push.Stop();
+                if (pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
+                {
+                    timer_Push.Stop();
+                }
+                else
+                {
+                    TSMdt.Clear();
+                    foreach (String recno in pusher.SendSum.Keys)
+                    {
+                        DataRow dr = TSMdt.NewRow();
+                        dr.ItemArray[0] = (object)recno;
+                        dr.ItemArray[1] = (object)pusher.SendSum[recno];
+                        TSMdt.Rows.Add(dr);
+                    }
+                    dataGridView_StatusMonitor.DataSource = TSMdt;
+                }
             }
-
         }
 
         private void button_StopPush_Click(object sender, EventArgs e)

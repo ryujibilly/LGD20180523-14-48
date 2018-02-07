@@ -621,7 +621,7 @@ namespace Tool.Json
                         str = de.Value.ToString();
                         _list = new List<string>(str.Split(seperator,StringSplitOptions.RemoveEmptyEntries));
                     }
-                    else return _list;
+                    else continue;
                 }
                 return _list;
             }
