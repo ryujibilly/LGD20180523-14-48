@@ -41,6 +41,8 @@
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.测试用例ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItem_SynSaveSend = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -54,7 +56,8 @@
             this.数据采集ToolStripMenuItem,
             this.基地数据库推送ToolStripMenuItem,
             this.查询ToolStripMenuItem,
-            this.关于ToolStripMenuItem});
+            this.关于ToolStripMenuItem,
+            this.测试用例ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
@@ -87,7 +90,7 @@
             // 数据库配置ToolStripMenuItem
             // 
             this.数据库配置ToolStripMenuItem.Name = "数据库配置ToolStripMenuItem";
-            this.数据库配置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.数据库配置ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.数据库配置ToolStripMenuItem.Text = "数据库配置";
             this.数据库配置ToolStripMenuItem.Click += new System.EventHandler(this.数据库配置ToolStripMenuItem_Click);
             // 
@@ -144,6 +147,20 @@
             this.toolStripButton1.Text = "toolStripButton1";
             this.toolStripButton1.ToolTipText = "登录";
             // 
+            // 测试用例ToolStripMenuItem
+            // 
+            this.测试用例ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolStripMenuItem_SynSaveSend});
+            this.测试用例ToolStripMenuItem.Name = "测试用例ToolStripMenuItem";
+            this.测试用例ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.测试用例ToolStripMenuItem.Text = "测试用例";
+            // 
+            // ToolStripMenuItem_SynSaveSend
+            // 
+            this.ToolStripMenuItem_SynSaveSend.Name = "ToolStripMenuItem_SynSaveSend";
+            this.ToolStripMenuItem_SynSaveSend.Size = new System.Drawing.Size(160, 22);
+            this.ToolStripMenuItem_SynSaveSend.Text = "同步存储和推送";
+            // 
             // RealTimeDBManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -180,6 +197,8 @@
         private System.Windows.Forms.ToolStripMenuItem 数据采集ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 数据浏览ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 查询ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 测试用例ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_SynSaveSend;
     }
 }
 

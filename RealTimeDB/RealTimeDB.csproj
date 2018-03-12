@@ -145,6 +145,12 @@
       <DependentUpon>RemoteWell.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="TestForm_SynSaveSend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestForm_SynSaveSend.Designer.cs">
+      <DependentUpon>TestForm_SynSaveSend.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddItem.resx">
       <DependentUpon>AddItem.cs</DependentUpon>
     </EmbeddedResource>
@@ -174,6 +180,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RemoteWell.resx">
       <DependentUpon>RemoteWell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestForm_SynSaveSend.resx">
+      <DependentUpon>TestForm_SynSaveSend.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

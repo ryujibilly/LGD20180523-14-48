@@ -97,5 +97,17 @@ namespace RealTimeDB.Properties {
                 this["HoldOn"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RealDBPath {
+            get {
+                return ((string)(this["RealDBPath"]));
+            }
+            set {
+                this["RealDBPath"] = value;
+            }
+        }
     }
 }
