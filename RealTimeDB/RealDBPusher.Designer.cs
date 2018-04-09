@@ -75,6 +75,7 @@
             this.checkBox_DataCover = new System.Windows.Forms.CheckBox();
             this.button_AdvancedOption = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.listBox_UpdateStatus = new System.Windows.Forms.ListBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.timer_Push = new System.Windows.Forms.Timer(this.components);
             this.groupBox_StatusMonitor = new System.Windows.Forms.GroupBox();
@@ -92,9 +93,10 @@
             // 
             // button_getAllRegions
             // 
-            this.button_getAllRegions.Location = new System.Drawing.Point(99, 218);
+            this.button_getAllRegions.Location = new System.Drawing.Point(476, 28);
+            this.button_getAllRegions.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_getAllRegions.Name = "button_getAllRegions";
-            this.button_getAllRegions.Size = new System.Drawing.Size(87, 23);
+            this.button_getAllRegions.Size = new System.Drawing.Size(101, 36);
             this.button_getAllRegions.TabIndex = 0;
             this.button_getAllRegions.Text = "获取工区信息";
             this.button_getAllRegions.UseVisualStyleBackColor = true;
@@ -102,19 +104,21 @@
             // 
             // textBox_UserName
             // 
-            this.textBox_UserName.Location = new System.Drawing.Point(63, 17);
+            this.textBox_UserName.Location = new System.Drawing.Point(73, 24);
+            this.textBox_UserName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox_UserName.Name = "textBox_UserName";
-            this.textBox_UserName.Size = new System.Drawing.Size(100, 21);
+            this.textBox_UserName.Size = new System.Drawing.Size(116, 23);
             this.textBox_UserName.TabIndex = 1;
             this.textBox_UserName.Text = "yuwenmao";
             this.textBox_UserName.TextChanged += new System.EventHandler(this.textBox_UserName_TextChanged);
             // 
             // textBox_PassWord
             // 
-            this.textBox_PassWord.Location = new System.Drawing.Point(63, 44);
+            this.textBox_PassWord.Location = new System.Drawing.Point(73, 62);
+            this.textBox_PassWord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox_PassWord.Name = "textBox_PassWord";
             this.textBox_PassWord.PasswordChar = '*';
-            this.textBox_PassWord.Size = new System.Drawing.Size(100, 21);
+            this.textBox_PassWord.Size = new System.Drawing.Size(116, 23);
             this.textBox_PassWord.TabIndex = 2;
             this.textBox_PassWord.Text = "123";
             this.textBox_PassWord.TextChanged += new System.EventHandler(this.textBox_PassWord_TextChanged);
@@ -122,42 +126,45 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 20);
+            this.label1.Location = new System.Drawing.Point(19, 28);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.Size = new System.Drawing.Size(44, 17);
             this.label1.TabIndex = 3;
             this.label1.Text = "用户名";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 47);
+            this.label2.Location = new System.Drawing.Point(19, 67);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.Size = new System.Drawing.Size(40, 17);
             this.label2.TabIndex = 4;
             this.label2.Text = "密  码";
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(18, 71);
+            this.textBox3.Location = new System.Drawing.Point(21, 101);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 21);
+            this.textBox3.Size = new System.Drawing.Size(116, 23);
             this.textBox3.TabIndex = 5;
             this.textBox3.Text = "1";
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(124, 71);
+            this.textBox4.Location = new System.Drawing.Point(145, 101);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 21);
+            this.textBox4.Size = new System.Drawing.Size(116, 23);
             this.textBox4.TabIndex = 6;
             this.textBox4.Text = "2";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(18, 98);
+            this.button1.Location = new System.Drawing.Point(21, 139);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(87, 33);
             this.button1.TabIndex = 7;
             this.button1.Text = "加法";
             this.button1.UseVisualStyleBackColor = true;
@@ -166,9 +173,9 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(112, 103);
+            this.label3.Location = new System.Drawing.Point(131, 146);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(11, 12);
+            this.label3.Size = new System.Drawing.Size(17, 17);
             this.label3.TabIndex = 8;
             this.label3.Text = "=";
             // 
@@ -183,18 +190,21 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textBox_UserName);
             this.groupBox1.Controls.Add(this.textBox_PassWord);
-            this.groupBox1.Location = new System.Drawing.Point(1062, 288);
+            this.groupBox1.Location = new System.Drawing.Point(1309, 408);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(304, 69);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox1.Size = new System.Drawing.Size(355, 98);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "本地测试";
             // 
             // button_ConnectTest
             // 
-            this.button_ConnectTest.Location = new System.Drawing.Point(169, 20);
+            this.button_ConnectTest.Location = new System.Drawing.Point(197, 28);
+            this.button_ConnectTest.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_ConnectTest.Name = "button_ConnectTest";
-            this.button_ConnectTest.Size = new System.Drawing.Size(129, 39);
+            this.button_ConnectTest.Size = new System.Drawing.Size(150, 55);
             this.button_ConnectTest.TabIndex = 12;
             this.button_ConnectTest.Text = "测试连接服务器";
             this.button_ConnectTest.UseVisualStyleBackColor = true;
@@ -203,17 +213,19 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(1062, 363);
+            this.dataGridView1.Location = new System.Drawing.Point(1309, 514);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(304, 172);
+            this.dataGridView1.Size = new System.Drawing.Size(355, 244);
             this.dataGridView1.TabIndex = 10;
             // 
             // button_GetAllInstInfo
             // 
-            this.button_GetAllInstInfo.Location = new System.Drawing.Point(6, 218);
+            this.button_GetAllInstInfo.Location = new System.Drawing.Point(367, 28);
+            this.button_GetAllInstInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_GetAllInstInfo.Name = "button_GetAllInstInfo";
-            this.button_GetAllInstInfo.Size = new System.Drawing.Size(87, 23);
+            this.button_GetAllInstInfo.Size = new System.Drawing.Size(101, 36);
             this.button_GetAllInstInfo.TabIndex = 11;
             this.button_GetAllInstInfo.Text = "获取仪器信息";
             this.button_GetAllInstInfo.UseVisualStyleBackColor = true;
@@ -227,18 +239,21 @@
             this.groupBox2.Controls.Add(this.textBox_LocalLog);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Location = new System.Drawing.Point(13, 13);
+            this.groupBox2.Location = new System.Drawing.Point(15, 18);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(458, 79);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox2.Size = new System.Drawing.Size(534, 112);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "井次选择";
+            this.groupBox2.Text = "井 次 选 择";
             // 
             // button_OpenRemoteLog
             // 
-            this.button_OpenRemoteLog.Location = new System.Drawing.Point(405, 47);
+            this.button_OpenRemoteLog.Location = new System.Drawing.Point(472, 67);
+            this.button_OpenRemoteLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_OpenRemoteLog.Name = "button_OpenRemoteLog";
-            this.button_OpenRemoteLog.Size = new System.Drawing.Size(45, 23);
+            this.button_OpenRemoteLog.Size = new System.Drawing.Size(52, 33);
             this.button_OpenRemoteLog.TabIndex = 5;
             this.button_OpenRemoteLog.Text = "选择";
             this.button_OpenRemoteLog.UseVisualStyleBackColor = true;
@@ -246,9 +261,10 @@
             // 
             // button_OpenLocalLog
             // 
-            this.button_OpenLocalLog.Location = new System.Drawing.Point(405, 20);
+            this.button_OpenLocalLog.Location = new System.Drawing.Point(472, 28);
+            this.button_OpenLocalLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_OpenLocalLog.Name = "button_OpenLocalLog";
-            this.button_OpenLocalLog.Size = new System.Drawing.Size(45, 23);
+            this.button_OpenLocalLog.Size = new System.Drawing.Size(52, 33);
             this.button_OpenLocalLog.TabIndex = 4;
             this.button_OpenLocalLog.Text = "选择";
             this.button_OpenLocalLog.UseVisualStyleBackColor = true;
@@ -256,35 +272,37 @@
             // 
             // textBox_RemoteLog
             // 
-            this.textBox_RemoteLog.Location = new System.Drawing.Point(69, 48);
+            this.textBox_RemoteLog.Location = new System.Drawing.Point(80, 68);
+            this.textBox_RemoteLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox_RemoteLog.Name = "textBox_RemoteLog";
             this.textBox_RemoteLog.ReadOnly = true;
-            this.textBox_RemoteLog.Size = new System.Drawing.Size(330, 21);
+            this.textBox_RemoteLog.Size = new System.Drawing.Size(384, 23);
             this.textBox_RemoteLog.TabIndex = 3;
             // 
             // textBox_LocalLog
             // 
-            this.textBox_LocalLog.Location = new System.Drawing.Point(69, 21);
+            this.textBox_LocalLog.Location = new System.Drawing.Point(80, 30);
+            this.textBox_LocalLog.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox_LocalLog.Name = "textBox_LocalLog";
             this.textBox_LocalLog.ReadOnly = true;
-            this.textBox_LocalLog.Size = new System.Drawing.Size(330, 21);
+            this.textBox_LocalLog.Size = new System.Drawing.Size(384, 23);
             this.textBox_LocalLog.TabIndex = 2;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 51);
+            this.label5.Location = new System.Drawing.Point(10, 72);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(53, 12);
+            this.label5.Size = new System.Drawing.Size(56, 17);
             this.label5.TabIndex = 1;
             this.label5.Text = "远程井次";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 25);
+            this.label4.Location = new System.Drawing.Point(10, 35);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.Size = new System.Drawing.Size(56, 17);
             this.label4.TabIndex = 0;
             this.label4.Text = "本地井次";
             // 
@@ -308,18 +326,21 @@
             this.groupBox3.Controls.Add(this.comboBox_Inst);
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Location = new System.Drawing.Point(13, 98);
+            this.groupBox3.Location = new System.Drawing.Point(15, 139);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(458, 510);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox3.Size = new System.Drawing.Size(534, 520);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "仪器信息选择";
+            this.groupBox3.Text = "仪 器 信 息 选 择";
             // 
             // button_AllNone
             // 
-            this.button_AllNone.Location = new System.Drawing.Point(262, 480);
+            this.button_AllNone.Location = new System.Drawing.Point(310, 479);
+            this.button_AllNone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_AllNone.Name = "button_AllNone";
-            this.button_AllNone.Size = new System.Drawing.Size(107, 23);
+            this.button_AllNone.Size = new System.Drawing.Size(125, 33);
             this.button_AllNone.TabIndex = 12;
             this.button_AllNone.Text = "全不选";
             this.button_AllNone.UseVisualStyleBackColor = true;
@@ -327,9 +348,10 @@
             // 
             // button_SelectAll
             // 
-            this.button_SelectAll.Location = new System.Drawing.Point(69, 480);
+            this.button_SelectAll.Location = new System.Drawing.Point(84, 479);
+            this.button_SelectAll.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_SelectAll.Name = "button_SelectAll";
-            this.button_SelectAll.Size = new System.Drawing.Size(107, 23);
+            this.button_SelectAll.Size = new System.Drawing.Size(125, 33);
             this.button_SelectAll.TabIndex = 11;
             this.button_SelectAll.Text = "全  选";
             this.button_SelectAll.UseVisualStyleBackColor = true;
@@ -338,9 +360,10 @@
             // drilling_checkBox
             // 
             this.drilling_checkBox.AutoSize = true;
-            this.drilling_checkBox.Location = new System.Drawing.Point(371, 20);
+            this.drilling_checkBox.Location = new System.Drawing.Point(433, 28);
+            this.drilling_checkBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.drilling_checkBox.Name = "drilling_checkBox";
-            this.drilling_checkBox.Size = new System.Drawing.Size(48, 16);
+            this.drilling_checkBox.Size = new System.Drawing.Size(51, 21);
             this.drilling_checkBox.TabIndex = 10;
             this.drilling_checkBox.Text = "钻井";
             this.drilling_checkBox.UseVisualStyleBackColor = true;
@@ -349,9 +372,10 @@
             // wellLog_checkBox
             // 
             this.wellLog_checkBox.AutoSize = true;
-            this.wellLog_checkBox.Location = new System.Drawing.Point(219, 20);
+            this.wellLog_checkBox.Location = new System.Drawing.Point(255, 28);
+            this.wellLog_checkBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.wellLog_checkBox.Name = "wellLog_checkBox";
-            this.wellLog_checkBox.Size = new System.Drawing.Size(48, 16);
+            this.wellLog_checkBox.Size = new System.Drawing.Size(51, 21);
             this.wellLog_checkBox.TabIndex = 9;
             this.wellLog_checkBox.Text = "录井";
             this.wellLog_checkBox.UseVisualStyleBackColor = true;
@@ -360,9 +384,10 @@
             // logging_checkBox
             // 
             this.logging_checkBox.AutoSize = true;
-            this.logging_checkBox.Location = new System.Drawing.Point(72, 20);
+            this.logging_checkBox.Location = new System.Drawing.Point(84, 28);
+            this.logging_checkBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.logging_checkBox.Name = "logging_checkBox";
-            this.logging_checkBox.Size = new System.Drawing.Size(48, 16);
+            this.logging_checkBox.Size = new System.Drawing.Size(51, 21);
             this.logging_checkBox.TabIndex = 8;
             this.logging_checkBox.Text = "测井";
             this.logging_checkBox.UseVisualStyleBackColor = true;
@@ -371,18 +396,19 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 65);
+            this.label8.Location = new System.Drawing.Point(14, 92);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(59, 12);
+            this.label8.Size = new System.Drawing.Size(59, 17);
             this.label8.TabIndex = 7;
             this.label8.Text = "数据记录:";
             // 
             // WitsTable_treeView
             // 
             this.WitsTable_treeView.CheckBoxes = true;
-            this.WitsTable_treeView.Location = new System.Drawing.Point(11, 80);
+            this.WitsTable_treeView.Location = new System.Drawing.Point(13, 113);
+            this.WitsTable_treeView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.WitsTable_treeView.Name = "WitsTable_treeView";
-            this.WitsTable_treeView.Size = new System.Drawing.Size(439, 394);
+            this.WitsTable_treeView.Size = new System.Drawing.Size(511, 355);
             this.WitsTable_treeView.TabIndex = 6;
             this.WitsTable_treeView.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.WitsTable_treeView_AfterCheck);
             // 
@@ -390,27 +416,28 @@
             // 
             this.comboBox_Inst.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Inst.FormattingEnabled = true;
-            this.comboBox_Inst.Location = new System.Drawing.Point(72, 42);
+            this.comboBox_Inst.Location = new System.Drawing.Point(84, 59);
+            this.comboBox_Inst.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.comboBox_Inst.Name = "comboBox_Inst";
-            this.comboBox_Inst.Size = new System.Drawing.Size(377, 20);
+            this.comboBox_Inst.Size = new System.Drawing.Size(439, 25);
             this.comboBox_Inst.TabIndex = 5;
             this.comboBox_Inst.SelectedIndexChanged += new System.EventHandler(this.comboBox_Inst_SelectedIndexChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 21);
+            this.label7.Location = new System.Drawing.Point(14, 30);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(41, 12);
+            this.label7.Size = new System.Drawing.Size(44, 17);
             this.label7.TabIndex = 1;
             this.label7.Text = "类型：";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 45);
+            this.label6.Location = new System.Drawing.Point(14, 64);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(41, 12);
+            this.label6.Size = new System.Drawing.Size(44, 17);
             this.label6.TabIndex = 0;
             this.label6.Text = "仪器：";
             // 
@@ -429,18 +456,21 @@
             this.groupBox_Push.Controls.Add(this.button_StartPush_Test);
             this.groupBox_Push.Controls.Add(this.checkBox_DataCover);
             this.groupBox_Push.Controls.Add(this.button_AdvancedOption);
-            this.groupBox_Push.Location = new System.Drawing.Point(477, 23);
+            this.groupBox_Push.Location = new System.Drawing.Point(556, 18);
+            this.groupBox_Push.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox_Push.Name = "groupBox_Push";
-            this.groupBox_Push.Size = new System.Drawing.Size(199, 247);
+            this.groupBox_Push.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox_Push.Size = new System.Drawing.Size(728, 112);
             this.groupBox_Push.TabIndex = 14;
             this.groupBox_Push.TabStop = false;
-            this.groupBox_Push.Text = "推  送";
+            this.groupBox_Push.Text = "推 送 选 项";
             // 
             // button_Push
             // 
-            this.button_Push.Location = new System.Drawing.Point(18, 189);
+            this.button_Push.Location = new System.Drawing.Point(150, 28);
+            this.button_Push.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Push.Name = "button_Push";
-            this.button_Push.Size = new System.Drawing.Size(75, 23);
+            this.button_Push.Size = new System.Drawing.Size(101, 36);
             this.button_Push.TabIndex = 10;
             this.button_Push.Text = "开始";
             this.button_Push.UseVisualStyleBackColor = true;
@@ -448,26 +478,29 @@
             // 
             // dateTimePicker_End
             // 
-            this.dateTimePicker_End.Location = new System.Drawing.Point(63, 103);
+            this.dateTimePicker_End.Location = new System.Drawing.Point(502, 74);
+            this.dateTimePicker_End.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dateTimePicker_End.Name = "dateTimePicker_End";
-            this.dateTimePicker_End.Size = new System.Drawing.Size(110, 21);
+            this.dateTimePicker_End.Size = new System.Drawing.Size(128, 23);
             this.dateTimePicker_End.TabIndex = 9;
             this.dateTimePicker_End.ValueChanged += new System.EventHandler(this.dateTimePicker_End_ValueChanged);
             // 
             // dateTimePicker_Begin
             // 
-            this.dateTimePicker_Begin.Location = new System.Drawing.Point(63, 54);
+            this.dateTimePicker_Begin.Location = new System.Drawing.Point(181, 74);
+            this.dateTimePicker_Begin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dateTimePicker_Begin.Name = "dateTimePicker_Begin";
-            this.dateTimePicker_Begin.Size = new System.Drawing.Size(110, 21);
+            this.dateTimePicker_Begin.Size = new System.Drawing.Size(128, 23);
             this.dateTimePicker_Begin.TabIndex = 8;
             this.dateTimePicker_Begin.ValueChanged += new System.EventHandler(this.dateTimePicker_Begin_ValueChanged);
             // 
             // checkBox_DateFromTop
             // 
             this.checkBox_DateFromTop.AutoSize = true;
-            this.checkBox_DateFromTop.Location = new System.Drawing.Point(6, 81);
+            this.checkBox_DateFromTop.Location = new System.Drawing.Point(316, 77);
+            this.checkBox_DateFromTop.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox_DateFromTop.Name = "checkBox_DateFromTop";
-            this.checkBox_DateFromTop.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_DateFromTop.Size = new System.Drawing.Size(75, 21);
             this.checkBox_DateFromTop.TabIndex = 7;
             this.checkBox_DateFromTop.Text = "从头开始";
             this.checkBox_DateFromTop.UseVisualStyleBackColor = true;
@@ -476,9 +509,10 @@
             // checkBox_DateToBottom
             // 
             this.checkBox_DateToBottom.AutoSize = true;
-            this.checkBox_DateToBottom.Location = new System.Drawing.Point(6, 130);
+            this.checkBox_DateToBottom.Location = new System.Drawing.Point(637, 77);
+            this.checkBox_DateToBottom.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox_DateToBottom.Name = "checkBox_DateToBottom";
-            this.checkBox_DateToBottom.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_DateToBottom.Size = new System.Drawing.Size(75, 21);
             this.checkBox_DateToBottom.TabIndex = 6;
             this.checkBox_DateToBottom.Text = "持续更新";
             this.checkBox_DateToBottom.UseVisualStyleBackColor = true;
@@ -487,26 +521,27 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(4, 109);
+            this.label10.Location = new System.Drawing.Point(433, 79);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(53, 12);
+            this.label10.Size = new System.Drawing.Size(56, 17);
             this.label10.TabIndex = 5;
             this.label10.Text = "结束时间";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(4, 60);
+            this.label9.Location = new System.Drawing.Point(112, 79);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.Size = new System.Drawing.Size(56, 17);
             this.label9.TabIndex = 4;
             this.label9.Text = "起始时间";
             // 
             // button_StopPush
             // 
-            this.button_StopPush.Location = new System.Drawing.Point(111, 189);
+            this.button_StopPush.Location = new System.Drawing.Point(259, 28);
+            this.button_StopPush.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_StopPush.Name = "button_StopPush";
-            this.button_StopPush.Size = new System.Drawing.Size(75, 23);
+            this.button_StopPush.Size = new System.Drawing.Size(101, 36);
             this.button_StopPush.TabIndex = 3;
             this.button_StopPush.Text = "停止";
             this.button_StopPush.UseVisualStyleBackColor = true;
@@ -514,9 +549,10 @@
             // 
             // button_StartPush_Test
             // 
-            this.button_StartPush_Test.Location = new System.Drawing.Point(111, 160);
+            this.button_StartPush_Test.Location = new System.Drawing.Point(584, 28);
+            this.button_StartPush_Test.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_StartPush_Test.Name = "button_StartPush_Test";
-            this.button_StartPush_Test.Size = new System.Drawing.Size(75, 23);
+            this.button_StartPush_Test.Size = new System.Drawing.Size(101, 36);
             this.button_StartPush_Test.TabIndex = 2;
             this.button_StartPush_Test.Text = "测试";
             this.button_StartPush_Test.UseVisualStyleBackColor = true;
@@ -525,9 +561,10 @@
             // checkBox_DataCover
             // 
             this.checkBox_DataCover.AutoSize = true;
-            this.checkBox_DataCover.Location = new System.Drawing.Point(6, 24);
+            this.checkBox_DataCover.Location = new System.Drawing.Point(7, 77);
+            this.checkBox_DataCover.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox_DataCover.Name = "checkBox_DataCover";
-            this.checkBox_DataCover.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_DataCover.Size = new System.Drawing.Size(75, 21);
             this.checkBox_DataCover.TabIndex = 1;
             this.checkBox_DataCover.Text = "数据覆盖";
             this.checkBox_DataCover.UseVisualStyleBackColor = true;
@@ -535,9 +572,10 @@
             // 
             // button_AdvancedOption
             // 
-            this.button_AdvancedOption.Location = new System.Drawing.Point(99, 20);
+            this.button_AdvancedOption.Location = new System.Drawing.Point(7, 28);
+            this.button_AdvancedOption.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_AdvancedOption.Name = "button_AdvancedOption";
-            this.button_AdvancedOption.Size = new System.Drawing.Size(75, 23);
+            this.button_AdvancedOption.Size = new System.Drawing.Size(101, 36);
             this.button_AdvancedOption.TabIndex = 0;
             this.button_AdvancedOption.Text = "高级设置";
             this.button_AdvancedOption.UseVisualStyleBackColor = true;
@@ -545,21 +583,34 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.dataGridView2);
-            this.groupBox4.Location = new System.Drawing.Point(477, 277);
+            this.groupBox4.Controls.Add(this.listBox_UpdateStatus);
+            this.groupBox4.Location = new System.Drawing.Point(558, 139);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(579, 331);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox4.Size = new System.Drawing.Size(728, 520);
             this.groupBox4.TabIndex = 15;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "推送数据";
+            this.groupBox4.Text = "推 送 状 态";
+            // 
+            // listBox_UpdateStatus
+            // 
+            this.listBox_UpdateStatus.FormattingEnabled = true;
+            this.listBox_UpdateStatus.ItemHeight = 17;
+            this.listBox_UpdateStatus.Location = new System.Drawing.Point(6, 22);
+            this.listBox_UpdateStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.listBox_UpdateStatus.Name = "listBox_UpdateStatus";
+            this.listBox_UpdateStatus.Size = new System.Drawing.Size(712, 480);
+            this.listBox_UpdateStatus.TabIndex = 0;
             // 
             // dataGridView2
             // 
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(6, 20);
+            this.dataGridView2.Location = new System.Drawing.Point(7, 21);
+            this.dataGridView2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowTemplate.Height = 23;
-            this.dataGridView2.Size = new System.Drawing.Size(567, 306);
+            this.dataGridView2.Size = new System.Drawing.Size(409, 320);
             this.dataGridView2.TabIndex = 0;
             // 
             // timer_Push
@@ -569,10 +620,12 @@
             // 
             // groupBox_StatusMonitor
             // 
-            this.groupBox_StatusMonitor.Controls.Add(this.dataGridView_StatusMonitor);
-            this.groupBox_StatusMonitor.Location = new System.Drawing.Point(682, 23);
+            this.groupBox_StatusMonitor.Controls.Add(this.dataGridView2);
+            this.groupBox_StatusMonitor.Location = new System.Drawing.Point(1309, 790);
+            this.groupBox_StatusMonitor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox_StatusMonitor.Name = "groupBox_StatusMonitor";
-            this.groupBox_StatusMonitor.Size = new System.Drawing.Size(374, 247);
+            this.groupBox_StatusMonitor.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox_StatusMonitor.Size = new System.Drawing.Size(436, 350);
             this.groupBox_StatusMonitor.TabIndex = 16;
             this.groupBox_StatusMonitor.TabStop = false;
             this.groupBox_StatusMonitor.Text = "状态监视";
@@ -580,17 +633,19 @@
             // dataGridView_StatusMonitor
             // 
             this.dataGridView_StatusMonitor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_StatusMonitor.Location = new System.Drawing.Point(7, 21);
+            this.dataGridView_StatusMonitor.Location = new System.Drawing.Point(1309, 48);
+            this.dataGridView_StatusMonitor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dataGridView_StatusMonitor.Name = "dataGridView_StatusMonitor";
             this.dataGridView_StatusMonitor.RowTemplate.Height = 23;
-            this.dataGridView_StatusMonitor.Size = new System.Drawing.Size(360, 220);
+            this.dataGridView_StatusMonitor.Size = new System.Drawing.Size(355, 320);
             this.dataGridView_StatusMonitor.TabIndex = 0;
             // 
             // RealDBPusher
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1061, 615);
+            this.ClientSize = new System.Drawing.Size(1298, 676);
+            this.Controls.Add(this.dataGridView_StatusMonitor);
             this.Controls.Add(this.groupBox_StatusMonitor);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox_Push);
@@ -598,6 +653,8 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox1);
+            this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "RealDBPusher";
             this.Text = "实时数据推送";
             this.Load += new System.EventHandler(this.RealDBPusher_Load);
@@ -670,5 +727,6 @@
         private System.Windows.Forms.Timer timer_Push;
         private System.Windows.Forms.GroupBox groupBox_StatusMonitor;
         private System.Windows.Forms.DataGridView dataGridView_StatusMonitor;
+        private System.Windows.Forms.ListBox listBox_UpdateStatus;
     }
 }

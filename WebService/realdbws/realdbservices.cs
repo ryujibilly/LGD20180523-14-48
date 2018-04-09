@@ -39,10 +39,16 @@ namespace WebService
         /// <remarks/>
         public realdbservices()
         {
-            //server
+            //外网
+            //this.Url = "http://113.200.64.43:2036/realdb/services/realdbservices";
+            //内网
             this.Url = "http://10.242.0.186/realdb/services/realdbservices";
-            //yuwenmao  
+            //后台测试  
             //this.Url = "http://10.242.104.54:8080/realdb/services/realdbservices?wsdl";
+        }
+        public realdbservices(String url)
+        {
+            this.Url = url;
         }
         public realdbsoapHeader Authentication;
 

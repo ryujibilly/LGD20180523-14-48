@@ -77,8 +77,14 @@ namespace RealTimeDB
 
         private void 基地数据库推送ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RealDBPusher rtpusher = new RealDBPusher();
-            rtpusher.Show();
+            NetWorkSelections nws = new NetWorkSelections();
+            nws.ShowDialog();
+            if(nws.DialogResult==DialogResult.OK)
+            {
+                Properties.Settings.Default.ServiceUrl = nws.serviceURL;
+                RealDBPusher rtpusher = new RealDBPusher();
+                rtpusher.Show();
+            }
         }
     }
 }

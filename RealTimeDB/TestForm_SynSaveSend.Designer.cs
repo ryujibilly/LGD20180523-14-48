@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button_Save = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // button_Save
@@ -45,10 +47,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 338);
+            this.ClientSize = new System.Drawing.Size(313, 96);
             this.Controls.Add(this.button_Save);
             this.Name = "TestForm_SynSaveSend";
-            this.Text = "同步存储和推送";
+            this.Text = "同步测试";
             this.ResumeLayout(false);
 
         }
@@ -56,5 +58,6 @@
         #endregion
 
         private System.Windows.Forms.Button button_Save;
+        private System.Windows.Forms.Timer timer1;
     }
 }

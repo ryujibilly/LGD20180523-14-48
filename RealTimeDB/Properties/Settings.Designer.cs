@@ -59,30 +59,39 @@ namespace RealTimeDB.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public decimal Interval {
             get {
                 return ((decimal)(this["Interval"]));
             }
+            set {
+                this["Interval"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public decimal Repeat {
             get {
                 return ((decimal)(this["Repeat"]));
             }
+            set {
+                this["Repeat"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
         public decimal FPS {
             get {
                 return ((decimal)(this["FPS"]));
+            }
+            set {
+                this["FPS"] = value;
             }
         }
         
@@ -107,6 +116,18 @@ namespace RealTimeDB.Properties {
             }
             set {
                 this["RealDBPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://10.242.0.186/realdb/services/realdbservices")]
+        public string ServiceUrl {
+            get {
+                return ((string)(this["ServiceUrl"]));
+            }
+            set {
+                this["ServiceUrl"] = value;
             }
         }
     }

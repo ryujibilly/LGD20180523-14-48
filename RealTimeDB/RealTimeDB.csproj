@@ -111,6 +111,12 @@
     <Compile Include="AdvancedOption.Designer.cs">
       <DependentUpon>AdvancedOption.cs</DependentUpon>
     </Compile>
+    <Compile Include="NetWorkSelectioncs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetWorkSelectioncs.Designer.cs">
+      <DependentUpon>NetWorkSelectioncs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pusher.cs" />
     <Compile Include="RealDBPusher.cs">
       <SubType>Form</SubType>
@@ -156,6 +162,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdvancedOption.resx">
       <DependentUpon>AdvancedOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetWorkSelectioncs.resx">
+      <DependentUpon>NetWorkSelectioncs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

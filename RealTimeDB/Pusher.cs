@@ -28,7 +28,7 @@ namespace RealTimeDB
     public class Pusher
     {
         #region 字段属性
-        public realdbservices _realdbws = new realdbservices();
+        public realdbservices _realdbws = new realdbservices(Properties.Settings.Default.ServiceUrl);
         public realdbservices.UserNameHeader name = new realdbservices.UserNameHeader();
         public realdbservices.UserPassWordHeader password = new realdbservices.UserPassWordHeader();
         public NetworkCredential nc = new NetworkCredential();
@@ -48,7 +48,7 @@ namespace RealTimeDB
         private Boolean isPushing = false;
         public Thread PushingThread;
         private Dictionary<String,int> sendSum = new Dictionary<string, int>();
-
+        private ConcurrentQueue<String> sendStatus = new ConcurrentQueue<string>();
 
         private String username;
         private String userpassword;
@@ -227,6 +227,21 @@ namespace RealTimeDB
             set
             {
                 sendSum = value;
+            }
+        }
+        /// <summary>
+        /// WITSML的推送状态
+        /// </summary>
+        public ConcurrentQueue<string> SendStatus
+        {
+            get
+            {
+                return sendStatus;
+            }
+
+            set
+            {
+                sendStatus = value;
             }
         }
         #endregion
@@ -711,6 +726,7 @@ namespace RealTimeDB
         {
             try
             {
+                int i = 0;
                 while (IsPushing)
                 {
                     if (PushingDataTabQueue.Count > 0 && IndexTable.Rows.Count > 0)
@@ -729,9 +745,16 @@ namespace RealTimeDB
                                 dt.Columns.RemoveAt(0);
                                 String SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
                                 String recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
+
                                 //计数
                                 if (recvJsonStr.Contains("ok"))
+                                {
                                     SendSum[RecordNo] += Size;
+                                    string status = ">>>"+i++.ToString("D4")+"Date："+
+                                        DateTime.Now.ToShortDateString() +"..Time:"+ DateTime.Now.ToLongTimeString() + 
+                                        "..TabNo:"+RecordNo+"..Records:" +Size+"<<<";
+                                    SendStatus.Enqueue(status);
+                                }
                             }
                             else continue;
                         }

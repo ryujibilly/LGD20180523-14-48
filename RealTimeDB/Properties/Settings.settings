@@ -11,20 +11,23 @@
     <Setting Name="NewProjectPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Interval" Type="System.Decimal" Scope="Application">
-      <Value Profile="(Default)">1</Value>
+    <Setting Name="Interval" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">5</Value>
     </Setting>
-    <Setting Name="Repeat" Type="System.Decimal" Scope="Application">
+    <Setting Name="Repeat" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="FPS" Type="System.Decimal" Scope="Application">
-      <Value Profile="(Default)">100</Value>
+    <Setting Name="FPS" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">50</Value>
     </Setting>
     <Setting Name="HoldOn" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="RealDBPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ServiceUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://10.242.0.186/realdb/services/realdbservices</Value>
     </Setting>
   </Settings>
 </SettingsFile>

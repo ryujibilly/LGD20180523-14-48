@@ -39,10 +39,10 @@
             this.基地数据库推送ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.测试用例ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItem_SynSaveSend = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -126,6 +126,20 @@
             this.关于ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.关于ToolStripMenuItem.Text = "关于";
             // 
+            // 测试用例ToolStripMenuItem
+            // 
+            this.测试用例ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolStripMenuItem_SynSaveSend});
+            this.测试用例ToolStripMenuItem.Name = "测试用例ToolStripMenuItem";
+            this.测试用例ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.测试用例ToolStripMenuItem.Text = "测试用例";
+            // 
+            // ToolStripMenuItem_SynSaveSend
+            // 
+            this.ToolStripMenuItem_SynSaveSend.Name = "ToolStripMenuItem_SynSaveSend";
+            this.ToolStripMenuItem_SynSaveSend.Size = new System.Drawing.Size(160, 22);
+            this.ToolStripMenuItem_SynSaveSend.Text = "同步存储和推送";
+            // 
             // toolStrip1
             // 
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
@@ -146,20 +160,6 @@
             this.toolStripButton1.Size = new System.Drawing.Size(28, 28);
             this.toolStripButton1.Text = "toolStripButton1";
             this.toolStripButton1.ToolTipText = "登录";
-            // 
-            // 测试用例ToolStripMenuItem
-            // 
-            this.测试用例ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ToolStripMenuItem_SynSaveSend});
-            this.测试用例ToolStripMenuItem.Name = "测试用例ToolStripMenuItem";
-            this.测试用例ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
-            this.测试用例ToolStripMenuItem.Text = "测试用例";
-            // 
-            // ToolStripMenuItem_SynSaveSend
-            // 
-            this.ToolStripMenuItem_SynSaveSend.Name = "ToolStripMenuItem_SynSaveSend";
-            this.ToolStripMenuItem_SynSaveSend.Size = new System.Drawing.Size(160, 22);
-            this.ToolStripMenuItem_SynSaveSend.Text = "同步存储和推送";
             // 
             // RealTimeDBManager
             // 

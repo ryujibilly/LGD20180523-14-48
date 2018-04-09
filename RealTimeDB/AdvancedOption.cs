@@ -92,16 +92,19 @@ namespace RealTimeDB
         private void numericUpDown_Interval_ValueChanged(object sender, EventArgs e)
         {
             Interval = (int)numericUpDown_Interval.Value;
+            Properties.Settings.Default.Interval= this.numericUpDown_Interval.Value;
         }
 
         private void numericUpDown_Repeat_ValueChanged(object sender, EventArgs e)
         {
             Repeat = (int)numericUpDown_Repeat.Value;
+            Properties.Settings.Default.Repeat= this.numericUpDown_Repeat.Value;
         }
 
         private void numericUpDown_Fps_ValueChanged(object sender, EventArgs e)
         {
             Fps = (int)numericUpDown_Fps.Value;
+            Properties.Settings.Default.FPS= this.numericUpDown_Fps.Value ;
         }
 
         private void button_ok_Click(object sender, EventArgs e)

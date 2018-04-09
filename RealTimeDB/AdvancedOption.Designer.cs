@@ -31,9 +31,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.checkBox_hold = new System.Windows.Forms.CheckBox();
             this.button_ok = new System.Windows.Forms.Button();
             this.button_cancel = new System.Windows.Forms.Button();
+            this.checkBox_hold = new System.Windows.Forms.CheckBox();
             this.numericUpDown_Fps = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_Repeat = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_Interval = new System.Windows.Forms.NumericUpDown();
@@ -69,19 +69,6 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "每次推送帧数:";
             // 
-            // checkBox_hold
-            // 
-            this.checkBox_hold.AutoSize = true;
-            this.checkBox_hold.Checked = global::RealTimeDB.Properties.Settings.Default.HoldOn;
-            this.checkBox_hold.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::RealTimeDB.Properties.Settings.Default, "HoldOn", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBox_hold.Location = new System.Drawing.Point(240, 63);
-            this.checkBox_hold.Name = "checkBox_hold";
-            this.checkBox_hold.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_hold.TabIndex = 6;
-            this.checkBox_hold.Text = "保持工作";
-            this.checkBox_hold.UseVisualStyleBackColor = true;
-            this.checkBox_hold.CheckedChanged += new System.EventHandler(this.checkBox_hold_CheckedChanged);
-            // 
             // button_ok
             // 
             this.button_ok.Location = new System.Drawing.Point(55, 143);
@@ -101,6 +88,20 @@
             this.button_cancel.Text = "取消";
             this.button_cancel.UseVisualStyleBackColor = true;
             this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
+            // 
+            // checkBox_hold
+            // 
+            this.checkBox_hold.AutoSize = true;
+            this.checkBox_hold.Checked = global::RealTimeDB.Properties.Settings.Default.HoldOn;
+            this.checkBox_hold.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_hold.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::RealTimeDB.Properties.Settings.Default, "HoldOn", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox_hold.Location = new System.Drawing.Point(240, 63);
+            this.checkBox_hold.Name = "checkBox_hold";
+            this.checkBox_hold.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_hold.TabIndex = 6;
+            this.checkBox_hold.Text = "保持工作";
+            this.checkBox_hold.UseVisualStyleBackColor = true;
+            this.checkBox_hold.CheckedChanged += new System.EventHandler(this.checkBox_hold_CheckedChanged);
             // 
             // numericUpDown_Fps
             // 

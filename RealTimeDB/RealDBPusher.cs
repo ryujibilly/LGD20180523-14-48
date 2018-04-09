@@ -22,6 +22,7 @@ using WitsTransmission.WellConfig;
 using WitsTransmission.XMLUtil;
 using LGD.DAL.SQLite;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace RealTimeDB
 {
@@ -39,7 +40,7 @@ namespace RealTimeDB
         private String curInst=String.Empty;
         private SQLiteDBHelper realDBHelper;
         private String instru = "";
-
+        private Thread statusThread;
 
         //treeview
         private bool isComboxInstClear = false;
@@ -358,11 +359,27 @@ namespace RealTimeDB
                 tsmdt = value;
             }
         }
+        /// <summary>
+        /// 更新推送状态信息
+        /// </summary>
+        public Thread StatusThread
+        {
+            get
+            {
+                return statusThread;
+            }
+
+            set
+            {
+                statusThread = value;
+            }
+        }
         #endregion
 
         public RealDBPusher()
         {
             InitializeComponent();
+            Control.CheckForIllegalCrossThreadCalls = false;
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -407,7 +424,7 @@ namespace RealTimeDB
             m_itemAttributesList.Add("short-mnemonic");
             TSMdt = this.CreateStatusMonitorDT();
             dataGridView_StatusMonitor.DataSource = TSMdt;
-
+            StatusThread = new Thread(new ThreadStart(updatestatus));
             pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
             pusher.ConnectTest();
             this.Interval = int.Parse(Properties.Settings.Default.Interval.ToString());
@@ -825,6 +842,7 @@ namespace RealTimeDB
                 item[1]=(object)str;
                 dr.ItemArray = item;
                 dt.Rows.Add(item);
+                Thread.Sleep(Interval * 1000);
             }
             i = 0;
             dataGridView1.DataSource = dt;
@@ -843,12 +861,31 @@ namespace RealTimeDB
                     foreach (String recno in m_selectServerToolDictionary[Instru])
                         pusher.SendSum.Add(recno, 0);
                 timer_Push.Interval = Interval;
-                timer_Push.Enabled = true;
                 pusher.IsPushing = true;
-                timer_Push.Start();
                 //获取字段名
                 this.getTitleList();
-                pusher.PushingThread.Start();
+
+
+                //计时器启动
+                if (!timer_Push.Enabled)
+                {
+                    timer_Push.Enabled = true;
+                    timer_Push.Start();
+                }
+                //推送线程启动/继续
+                if (!pusher.PushingThread.IsAlive)
+                {
+                    pusher.PushingThread.Start();
+                    if (pusher.PushingThread.ThreadState == System.Threading.ThreadState.Suspended)
+                        pusher.PushingThread.Resume();
+                }
+                //状态监视线程启动/继续
+                if (!StatusThread.IsAlive)
+                {
+                    StatusThread.Start();
+                    if (StatusThread.ThreadState == System.Threading.ThreadState.Suspended)
+                        StatusThread.Resume();
+                }
                 dataGridView2.DataSource = pusher.IndexTable;
                 button_Push.Enabled = false;
                 button_StopPush.Enabled = true;
@@ -859,6 +896,29 @@ namespace RealTimeDB
                 button_StopPush.Enabled = false;
             }
         }
+        void updatestatus()
+        {
+            try
+            {
+                while(true)
+                {
+                    if(pusher.SendStatus.Count>0)
+                    {
+                        string status = "";
+                        if (pusher.SendStatus.TryDequeue(out status))
+                        {
+                            listBox_UpdateStatus.Items.Add(status);
+                            listBox_UpdateStatus.SelectedIndex = listBox_UpdateStatus.Items.Count - 1;
+                        }
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
         /// <summary>
         /// 获取每个表的字段名
         /// </summary>
@@ -887,27 +947,35 @@ namespace RealTimeDB
 
         private void timer_Push_Tick(object sender, EventArgs e)
         {
-            if (!checkBox_DateToBottom.Checked)
-                pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
-            else 
+            try
             {
-                if (pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
-                {
-                    timer_Push.Stop();
-                }
+                if (!checkBox_DateToBottom.Checked)
+                    pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
                 else
                 {
-                    TSMdt.Clear();
-                    foreach (String recno in pusher.SendSum.Keys)
+                    if (pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
                     {
-                        DataRow dr = TSMdt.NewRow();
-                        dr.ItemArray[0] = (object)recno;
-                        dr.ItemArray[1] = (object)pusher.SendSum[recno];
-                        TSMdt.Rows.Add(dr);
+                        timer_Push.Stop();
                     }
-                    dataGridView_StatusMonitor.DataSource = TSMdt;
+                    else
+                    {
+                        TSMdt.Clear();
+                        foreach (String recno in pusher.SendSum.Keys)
+                        {
+                            DataRow dr = TSMdt.NewRow();
+                            dr.ItemArray[0] = (object)recno;
+                            dr.ItemArray[1] = (object)pusher.SendSum[recno];
+                            TSMdt.Rows.Add(dr);
+                        }
+                        dataGridView_StatusMonitor.DataSource = TSMdt;
+                    }
                 }
             }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "RealDBPusher.cs-timer_Push_Tick()");
+            }
+ 
         }
 
         private void button_StopPush_Click(object sender, EventArgs e)
@@ -915,7 +983,12 @@ namespace RealTimeDB
             try
             {
                 pusher.IsPushing = false;
-                pusher.PushingThread.Abort();
+                //推送线程 挂起
+                pusher.PushingThread.Suspend();
+                //监控线程 挂起
+                statusThread.Suspend();
+                //计时器
+                timer_Push.Stop();
                 button_StopPush.Enabled = false;
                 button_Push.Enabled = true;
             }
