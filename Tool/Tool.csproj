@@ -82,6 +82,7 @@
     <Compile Include="TCP\AsyncSocketState.cs" />
     <Compile Include="TCP\AsyncSocketTCPServer.cs" />
     <Compile Include="TCP\StateObject.cs" />
+    <Compile Include="Timer\MMTimer.cs" />
     <Compile Include="Tool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

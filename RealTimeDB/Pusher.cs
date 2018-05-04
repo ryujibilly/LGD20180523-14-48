@@ -15,6 +15,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using LGD.DAL.SQLite;
 using System.Data.SQLite;
+using Tool.Timer;
 
 namespace RealTimeDB
 {
@@ -25,8 +26,9 @@ namespace RealTimeDB
     /// <summary>
     /// 数据推送--业务逻辑类
     /// </summary>
-    public class Pusher
+    public sealed class Pusher
     {
+        public static readonly Pusher _pusher = new Pusher("yuwenmao","123",RealDBPusher.RealDBHelper);
         #region 字段属性
         public realdbservices _realdbws = new realdbservices(Properties.Settings.Default.ServiceUrl);
         public realdbservices.UserNameHeader name = new realdbservices.UserNameHeader();
@@ -37,6 +39,7 @@ namespace RealTimeDB
         public String strJsonReceive = String.Empty;
         public List<String> colName = new List<string>();
         public List<List<String>> colData = new List<List<string>>();
+        public List<String> selectedTabList = new List<string>();
         private ConcurrentQueue<DataTable> pushingDataTabQueue = new ConcurrentQueue<DataTable>();
         private DataTable indexTable = new DataTable();
         private List<int> startlabs = new List<int>();
@@ -47,11 +50,16 @@ namespace RealTimeDB
         private List<List<String>> dataList = new List<List<string>>();
         private Boolean isPushing = false;
         public Thread PushingThread;
-        private Dictionary<String,int> sendSum = new Dictionary<string, int>();
-        private ConcurrentQueue<String> sendStatus = new ConcurrentQueue<string>();
-
+        public MMTimer RowidTimer;
+        private Dictionary<String,int> sendSumDic = new Dictionary<string, int>();
+        private ConcurrentQueue<String> sendStatusQ = new ConcurrentQueue<string>();
+        /// <summary>
+        /// 数据库中各表记录数
+        /// </summary>
+        public Dictionary<String, int> lastRowIDDic = new Dictionary<string, int>();
         private String username;
         private String userpassword;
+        private SQLiteDBHelper dbhelper = new SQLiteDBHelper();
 
         public string Username
         {
@@ -217,31 +225,47 @@ namespace RealTimeDB
         /// <summary>
         /// 累计发送记录数目字典
         /// </summary>
-        public Dictionary<string,int> SendSum
+        public Dictionary<string,int> SendSumDic
         {
             get
             {
-                return sendSum;
+                return sendSumDic;
             }
 
             set
             {
-                sendSum = value;
+                sendSumDic = value;
             }
         }
         /// <summary>
         /// WITSML的推送状态
         /// </summary>
-        public ConcurrentQueue<string> SendStatus
+        public ConcurrentQueue<string> SendStatusQ
         {
             get
             {
-                return sendStatus;
+                return sendStatusQ;
             }
 
             set
             {
-                sendStatus = value;
+                sendStatusQ = value;
+            }
+        }
+
+        /// <summary>
+        /// SQLiteDBHelper
+        /// </summary>
+        public SQLiteDBHelper Dbhelper
+        {
+            get
+            {
+                return dbhelper;
+            }
+
+            set
+            {
+                dbhelper = value;
             }
         }
         #endregion
@@ -257,11 +281,13 @@ namespace RealTimeDB
             nc.Password = "123";
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
+            RowidTimer = new MMTimer(RowidMonitoring);
             InitHashTable();
             initIndexTable();
-            //strJson = JsonHepler.HashtableToJson(ht, 0);
-            
         }
+
+
+
         /// <summary>
         /// 使用用户名密码构造方法
         /// </summary>
@@ -275,9 +301,27 @@ namespace RealTimeDB
             nc.Password = password;
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
+            RowidTimer = new MMTimer(RowidMonitoring);
             InitHashTable(username, password);
             initIndexTable();
-            //strJson = JsonHepler.HashtableToJson(ht, 0);
+        }
+        /// <summary>
+        /// 使用SQLiteDBHelper,用户名,密码构造方法
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        public Pusher(String username, String password,SQLiteDBHelper helper)
+        {
+            this.Username = username;
+            this.Userpassword = password;
+            nc.UserName = username;
+            nc.Password = password;
+            _realdbws.Credentials = nc;
+            PushingThread = new Thread(new ThreadStart(StartPushing));
+            RowidTimer = new MMTimer(RowidMonitoring);
+            InitHashTable(username, password);
+            initIndexTable();
+            this.Dbhelper = helper;
         }
 
         /// <summary>
@@ -729,7 +773,7 @@ namespace RealTimeDB
                 int i = 0;
                 while (IsPushing)
                 {
-                    if (PushingDataTabQueue.Count > 0 && IndexTable.Rows.Count > 0)
+                    if (PushingDataTabQueue.Count > 0 )//&& IndexTable.Rows.Count > 0
                     {
                         DataTable dt = new DataTable();
                         if (PushingDataTabQueue.TryDequeue(out dt))
@@ -745,15 +789,15 @@ namespace RealTimeDB
                                 dt.Columns.RemoveAt(0);
                                 String SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
                                 String recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
-
                                 //计数
                                 if (recvJsonStr.Contains("ok"))
                                 {
-                                    SendSum[RecordNo] += Size;
+                                    //各表累计发送记录数
+                                    SendSumDic[RecordNo] += Size;
                                     string status = ">>>"+i++.ToString("D4")+"Date："+
                                         DateTime.Now.ToShortDateString() +"..Time:"+ DateTime.Now.ToLongTimeString() + 
                                         "..TabNo:"+RecordNo+"..Records:" +Size+"<<<";
-                                    SendStatus.Enqueue(status);
+                                    SendStatusQ.Enqueue(status);
                                 }
                             }
                             else continue;
@@ -767,6 +811,20 @@ namespace RealTimeDB
             }
         }
 
+        /// <summary>
+        /// 监视最新rowid
+        /// </summary>
+        private void RowidMonitoring(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
+        {
+            try
+            {
+                    getLastRowID(out lastRowIDDic);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message+ ">>>Pusher.cs==>RowidMonitoring(）计时器托管线程异常~!<<<");
+            }
+        }
         /// <summary>
         /// 创建推送数据的Json包
         /// </summary>
@@ -860,6 +918,22 @@ namespace RealTimeDB
                 else i--;
             }
             return lastindex;
+        }
+        /// <summary>
+        /// 获取所有表当前记录数rowid
+        /// </summary>
+        /// <param name="lastrowid"></param>
+        private void getLastRowID(out Dictionary<String,int> lastrowiddic)
+        {
+            Properties.Settings.Default.Last_Insert_RowID = "";
+            lastrowiddic =null;
+            int lastrowid = -1;
+            foreach(String tabname in selectedTabList)
+            {
+                lastrowid = Dbhelper.getLastRowID(tabname, Instname);
+                lastrowiddic.Add(tabname+"-"+Instname,lastrowid);
+                Properties.Settings.Default.Last_Insert_RowID += tabname + "-" + lastrowid+"\r\n";
+            }
         }
     }
 }

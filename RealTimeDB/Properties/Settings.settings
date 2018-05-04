@@ -29,5 +29,11 @@
     <Setting Name="ServiceUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://10.242.0.186/realdb/services/realdbservices</Value>
     </Setting>
+    <Setting Name="Last_Insert_RowID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">null</Value>
+    </Setting>
+    <Setting Name="Last_Sent_RowID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">null</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

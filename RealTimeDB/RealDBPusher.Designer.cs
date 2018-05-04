@@ -1,4 +1,5 @@
-﻿namespace RealTimeDB
+﻿
+namespace RealTimeDB
 {
     partial class RealDBPusher
     {
@@ -28,7 +29,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.button_getAllRegions = new System.Windows.Forms.Button();
             this.textBox_UserName = new System.Windows.Forms.TextBox();
             this.textBox_PassWord = new System.Windows.Forms.TextBox();
@@ -40,7 +40,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button_ConnectTest = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button_GetAllInstInfo = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button_OpenRemoteLog = new System.Windows.Forms.Button();
@@ -77,23 +76,19 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.listBox_UpdateStatus = new System.Windows.Forms.ListBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.timer_Push = new System.Windows.Forms.Timer(this.components);
             this.groupBox_StatusMonitor = new System.Windows.Forms.GroupBox();
-            this.dataGridView_StatusMonitor = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox_Push.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.groupBox_StatusMonitor.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_StatusMonitor)).BeginInit();
             this.SuspendLayout();
             // 
             // button_getAllRegions
             // 
-            this.button_getAllRegions.Location = new System.Drawing.Point(476, 28);
+            this.button_getAllRegions.Location = new System.Drawing.Point(500, 68);
             this.button_getAllRegions.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_getAllRegions.Name = "button_getAllRegions";
             this.button_getAllRegions.Size = new System.Drawing.Size(101, 36);
@@ -190,7 +185,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textBox_UserName);
             this.groupBox1.Controls.Add(this.textBox_PassWord);
-            this.groupBox1.Location = new System.Drawing.Point(1309, 408);
+            this.groupBox1.Location = new System.Drawing.Point(1328, 32);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -210,19 +205,9 @@
             this.button_ConnectTest.UseVisualStyleBackColor = true;
             this.button_ConnectTest.Click += new System.EventHandler(this.button_ConnectTest_Click);
             // 
-            // dataGridView1
-            // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(1309, 514);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(355, 244);
-            this.dataGridView1.TabIndex = 10;
-            // 
             // button_GetAllInstInfo
             // 
-            this.button_GetAllInstInfo.Location = new System.Drawing.Point(367, 28);
+            this.button_GetAllInstInfo.Location = new System.Drawing.Point(381, 68);
             this.button_GetAllInstInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_GetAllInstInfo.Name = "button_GetAllInstInfo";
             this.button_GetAllInstInfo.Size = new System.Drawing.Size(101, 36);
@@ -449,11 +434,11 @@
             this.groupBox_Push.Controls.Add(this.dateTimePicker_Begin);
             this.groupBox_Push.Controls.Add(this.checkBox_DateFromTop);
             this.groupBox_Push.Controls.Add(this.button_getAllRegions);
+            this.groupBox_Push.Controls.Add(this.button_StartPush_Test);
             this.groupBox_Push.Controls.Add(this.checkBox_DateToBottom);
             this.groupBox_Push.Controls.Add(this.label10);
             this.groupBox_Push.Controls.Add(this.label9);
             this.groupBox_Push.Controls.Add(this.button_StopPush);
-            this.groupBox_Push.Controls.Add(this.button_StartPush_Test);
             this.groupBox_Push.Controls.Add(this.checkBox_DataCover);
             this.groupBox_Push.Controls.Add(this.button_AdvancedOption);
             this.groupBox_Push.Location = new System.Drawing.Point(556, 18);
@@ -467,7 +452,7 @@
             // 
             // button_Push
             // 
-            this.button_Push.Location = new System.Drawing.Point(150, 28);
+            this.button_Push.Location = new System.Drawing.Point(133, 68);
             this.button_Push.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Push.Name = "button_Push";
             this.button_Push.Size = new System.Drawing.Size(101, 36);
@@ -478,7 +463,7 @@
             // 
             // dateTimePicker_End
             // 
-            this.dateTimePicker_End.Location = new System.Drawing.Point(502, 74);
+            this.dateTimePicker_End.Location = new System.Drawing.Point(510, 24);
             this.dateTimePicker_End.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dateTimePicker_End.Name = "dateTimePicker_End";
             this.dateTimePicker_End.Size = new System.Drawing.Size(128, 23);
@@ -487,7 +472,7 @@
             // 
             // dateTimePicker_Begin
             // 
-            this.dateTimePicker_Begin.Location = new System.Drawing.Point(181, 74);
+            this.dateTimePicker_Begin.Location = new System.Drawing.Point(189, 24);
             this.dateTimePicker_Begin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dateTimePicker_Begin.Name = "dateTimePicker_Begin";
             this.dateTimePicker_Begin.Size = new System.Drawing.Size(128, 23);
@@ -497,7 +482,7 @@
             // checkBox_DateFromTop
             // 
             this.checkBox_DateFromTop.AutoSize = true;
-            this.checkBox_DateFromTop.Location = new System.Drawing.Point(316, 77);
+            this.checkBox_DateFromTop.Location = new System.Drawing.Point(324, 27);
             this.checkBox_DateFromTop.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox_DateFromTop.Name = "checkBox_DateFromTop";
             this.checkBox_DateFromTop.Size = new System.Drawing.Size(75, 21);
@@ -509,7 +494,7 @@
             // checkBox_DateToBottom
             // 
             this.checkBox_DateToBottom.AutoSize = true;
-            this.checkBox_DateToBottom.Location = new System.Drawing.Point(637, 77);
+            this.checkBox_DateToBottom.Location = new System.Drawing.Point(645, 27);
             this.checkBox_DateToBottom.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox_DateToBottom.Name = "checkBox_DateToBottom";
             this.checkBox_DateToBottom.Size = new System.Drawing.Size(75, 21);
@@ -521,7 +506,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(433, 79);
+            this.label10.Location = new System.Drawing.Point(441, 29);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(56, 17);
             this.label10.TabIndex = 5;
@@ -530,7 +515,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(112, 79);
+            this.label9.Location = new System.Drawing.Point(120, 29);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(56, 17);
             this.label9.TabIndex = 4;
@@ -538,7 +523,7 @@
             // 
             // button_StopPush
             // 
-            this.button_StopPush.Location = new System.Drawing.Point(259, 28);
+            this.button_StopPush.Location = new System.Drawing.Point(255, 68);
             this.button_StopPush.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_StopPush.Name = "button_StopPush";
             this.button_StopPush.Size = new System.Drawing.Size(101, 36);
@@ -549,14 +534,11 @@
             // 
             // button_StartPush_Test
             // 
-            this.button_StartPush_Test.Location = new System.Drawing.Point(584, 28);
-            this.button_StartPush_Test.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button_StartPush_Test.Location = new System.Drawing.Point(626, 68);
             this.button_StartPush_Test.Name = "button_StartPush_Test";
-            this.button_StartPush_Test.Size = new System.Drawing.Size(101, 36);
-            this.button_StartPush_Test.TabIndex = 2;
+            this.button_StartPush_Test.Size = new System.Drawing.Size(75, 36);
+            this.button_StartPush_Test.TabIndex = 12;
             this.button_StartPush_Test.Text = "测试";
-            this.button_StartPush_Test.UseVisualStyleBackColor = true;
-            this.button_StartPush_Test.Click += new System.EventHandler(this.button_StartPush_Click);
             // 
             // checkBox_DataCover
             // 
@@ -613,11 +595,6 @@
             this.dataGridView2.Size = new System.Drawing.Size(409, 320);
             this.dataGridView2.TabIndex = 0;
             // 
-            // timer_Push
-            // 
-            this.timer_Push.Interval = 30000;
-            this.timer_Push.Tick += new System.EventHandler(this.timer_Push_Tick);
-            // 
             // groupBox_StatusMonitor
             // 
             this.groupBox_StatusMonitor.Controls.Add(this.dataGridView2);
@@ -630,28 +607,16 @@
             this.groupBox_StatusMonitor.TabStop = false;
             this.groupBox_StatusMonitor.Text = "状态监视";
             // 
-            // dataGridView_StatusMonitor
-            // 
-            this.dataGridView_StatusMonitor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_StatusMonitor.Location = new System.Drawing.Point(1309, 48);
-            this.dataGridView_StatusMonitor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.dataGridView_StatusMonitor.Name = "dataGridView_StatusMonitor";
-            this.dataGridView_StatusMonitor.RowTemplate.Height = 23;
-            this.dataGridView_StatusMonitor.Size = new System.Drawing.Size(355, 320);
-            this.dataGridView_StatusMonitor.TabIndex = 0;
-            // 
             // RealDBPusher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1298, 676);
-            this.Controls.Add(this.dataGridView_StatusMonitor);
+            this.ClientSize = new System.Drawing.Size(1294, 676);
             this.Controls.Add(this.groupBox_StatusMonitor);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox_Push);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -660,7 +625,6 @@
             this.Load += new System.EventHandler(this.RealDBPusher_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -670,7 +634,6 @@
             this.groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.groupBox_StatusMonitor.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_StatusMonitor)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -687,7 +650,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button_GetAllInstInfo;
         private System.Windows.Forms.Button button_ConnectTest;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -724,9 +686,9 @@
         private System.Windows.Forms.Button button_Push;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.Timer timer_Push;
+        //private System.Windows.Forms.Timer timer_Push;
+        private Tool.Timer.MMTimer timer_Push;
         private System.Windows.Forms.GroupBox groupBox_StatusMonitor;
-        private System.Windows.Forms.DataGridView dataGridView_StatusMonitor;
         private System.Windows.Forms.ListBox listBox_UpdateStatus;
     }
 }

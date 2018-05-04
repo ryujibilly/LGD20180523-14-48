@@ -17,16 +17,11 @@ namespace RealTimeDB
     {
 
         #region 字段、属性
-        /// <summary>
-        /// 推送类
-        /// </summary>
-        private Pusher pusher = new Pusher();
         private DataTable JsonTable = new DataTable();
         private String JsonString = string.Empty;
         private List<String> instName = new List<String>();
         private List<String> instDesc = new List<String>();
         private String curInst = String.Empty;
-        private SQLiteDBHelper realDBHelper;
         private String instru = "";
         private List<String> nodeMap = new List<string>();
         //树形结构图涉及数据结构
@@ -316,7 +311,7 @@ namespace RealTimeDB
         {
             try
             {
-                DataTable dt = pusher.GetAllRegions(out JsonString);
+                DataTable dt = Pusher._pusher.GetAllRegions(out JsonString);
                 foreach (DataRow dr in dt.Rows)
                 {
                     allRegions.Add(dr.ItemArray[1]);
@@ -430,7 +425,7 @@ namespace RealTimeDB
             try
             {
                 DataTable dt = new DataTable();
-                dt=pusher.GetAllWellsByRegionId(rid, out JsonString);
+                dt= Pusher._pusher.GetAllWellsByRegionId(rid, out JsonString);
                 foreach (DataRow dr in dt.Rows)
                 {
                     WellnameList.Add(dr[0].ToString());
@@ -459,7 +454,7 @@ namespace RealTimeDB
             try
             {
                 DataTable dt = new DataTable();
-                dt = pusher.GetAllLogsByWellId(wid, out JsonString);
+                dt = Pusher._pusher.GetAllLogsByWellId(wid, out JsonString);
                 foreach (DataRow dr in dt.Rows)
                 {
                     LognameList.Add(dr[0].ToString());
@@ -549,7 +544,7 @@ namespace RealTimeDB
             if(ai.DialogResult==DialogResult.OK)
             {
                 newRegionName = ai.ItemName;
-                DataTable dt=pusher.AddRegion("name",newRegionName, out JsonString);
+                DataTable dt= Pusher._pusher.AddRegion("name",newRegionName, out JsonString);
             }
         }
         /// <summary>

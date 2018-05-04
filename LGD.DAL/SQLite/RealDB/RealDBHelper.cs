@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using Tool;
 
 namespace LGD.DAL.SQLite.RealDB
 {
@@ -212,6 +213,5 @@ namespace LGD.DAL.SQLite.RealDB
         //    }
         //}
         #endregion
-
     }
 }

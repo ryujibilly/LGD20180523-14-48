@@ -8,7 +8,7 @@ namespace WitsTransmission.Model
 {
     public class WitsTableDictionary : Dictionary<String, DataTable>
     {
-        private String m_toolName;
+        //private String m_toolName;
         public List<String> m_itemAttributesList = new List<String>();
         private XMLUtil.XMLUtil m_xmlUtil = new XMLUtil.XMLUtil();
         public WitsTableDictionary()

@@ -743,7 +743,7 @@ namespace LGD.DAL.SQLite
         #region 数据推送
 
         /// <summary>
-        /// 获取推送的数据DataTable
+        /// 获取推送的数据DataTable--通过时间索引(定时定量)
         /// </summary>
         /// <param name="instru">仪器序号</param>
         /// <param name="tabid">表号集合</param>
@@ -783,13 +783,13 @@ namespace LGD.DAL.SQLite
             }
             catch (Exception ex) 
             {
-                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData()-->tran事务异常!<<<---- \r\t" + ex.Message);
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData(String instru,String tabid,String startDate,String startTime,String endDate,String endTime)-->tran事务异常!<<<---- \r\t" + ex.Message);
                 return null;
             }
         }
 
         /// <summary>
-        /// 获取推送的数据DataTable
+        /// 获取推送的数据DataTable--返回 rowid 
         /// </summary>
         /// <param name="instru">仪器序号</param>
         /// <param name="tabid">表号集合</param>
@@ -832,12 +832,95 @@ namespace LGD.DAL.SQLite
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData()异常!<<<---- \r\t" + ex.Message);
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData(String instru, String tabid,int startindex,int fps,out int rowidstart,out int rowidend)异常!<<<---- \r\t" + ex.Message);
                 rowidstart = -1;
                 rowidend = -1;
                 return null;
             }
         }
+
+        /// <summary>
+        /// 获取推送的数据DataTable--通过时间索引(实时至最新，并返回lastrowid)
+        /// </summary>
+        /// <param name="instru">仪器序号</param>
+        /// <param name="tabid">表号集合</param>
+        /// <param name="startrowid">起始rowid</param>
+        /// <param name="endrowid">发送截至rowid</param>
+        /// <returns></returns>
+        public DataTable getPushingData(String instru, String tabid, int startrowid,out int endrowid)
+        {
+            // 自动打开
+            if (this.DbConnection == null)
+            {
+                this.AutoOpenClose = true;
+                this.Open();
+            }
+            else if (this.DbConnection.State == ConnectionState.Closed)
+            {
+                this.Open();
+            }
+            SQLiteConnection conn = this.dbConnection;
+            this.DbCommand = this.DbConnection.CreateCommand();
+            try
+            {
+                string strSQL = string.Format(@"SELECT rowid,* FROM [" + tabid + "-" + instru + "] WHERE [rowid]>" + startrowid,tabid + "-" + instru);
+                this.DbCommand.CommandText = strSQL;
+                dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
+                DataSet ds = new DataSet();
+                DataTable dt = new DataTable();
+                dbDataAdapter.Fill(ds);
+                dt = ds.Tables[0];
+                dt.TableName = tabid + "-" + instru;
+                endrowid = int.Parse(dt.Rows[dt.Rows.Count - 1].ItemArray[0].ToString());
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getPushingData(String instru, String tabid, int startrowid,out int endrowid)-->tran事务异常!<<<---- \r\t" + ex.Message);
+                endrowid = -1;
+                return null;
+            }
+        }
+        /// <summary>
+        /// 获取该表最大rowid
+        /// </summary>
+        /// <param name="tabname">表名</param>
+        /// <returns>rowid</returns>
+        public int getLastRowID(String tabname,String instruname)
+        {
+            int lastrowid = 0;
+            // 自动打开
+            if (this.DbConnection == null)
+            {
+                this.AutoOpenClose = true;
+                this.Open();
+            }
+            else if (this.DbConnection.State == ConnectionState.Closed)
+            {
+                this.Open();
+            }
+            SQLiteConnection conn = this.dbConnection;
+            this.DbCommand = this.DbConnection.CreateCommand();
+            try
+            {
+                //select rowid from [01-Shenkai] order by rowid desc
+                string strSQL = string.Format(@"SELECT rowid FROM [" + tabname +"-"+ instruname + "] order by rowid desc ", tabname + "-" + instruname);
+                this.DbCommand.CommandText = strSQL;
+                dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
+                DataSet ds = new DataSet();
+                DataTable dt = new DataTable();
+                dbDataAdapter.Fill(ds);
+                dt = ds.Tables[0];
+                lastrowid = int.Parse(dt.Rows[0].ItemArray[0].ToString());
+                return lastrowid;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(">>>SQLiteHelper.cs-->getLastRowID()-->tran事务异常!<<<---- \r\t" + ex.Message);
+                return -1;
+            }
+        }
+
         public List<String> getTitleList(String tabname)
         {
             List<String> sqllist = new List<string>();

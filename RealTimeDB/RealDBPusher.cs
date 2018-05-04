@@ -23,6 +23,8 @@ using WitsTransmission.XMLUtil;
 using LGD.DAL.SQLite;
 using System.Collections.Concurrent;
 using System.Threading;
+using Tool.Timer;
+using RealTimeDB;
 
 namespace RealTimeDB
 {
@@ -30,17 +32,16 @@ namespace RealTimeDB
     public partial class RealDBPusher : Form
     {
         #region 字段、属性
-        //pusher
-        private Pusher pusher = new Pusher();
         private DataTable JsonTable = new DataTable();
         private DataTable tsmdt = new DataTable();
         private String JsonString = string.Empty;
         private List<String> instName = new List<String>();
         private List<String> instDesc = new List<String>();
         private String curInst=String.Empty;
-        private SQLiteDBHelper realDBHelper;
+        private static SQLiteDBHelper realDBHelper;
         private String instru = "";
         private Thread statusThread;
+
 
         //treeview
         private bool isComboxInstClear = false;
@@ -211,7 +212,7 @@ namespace RealTimeDB
         /// <summary>
         /// 本地井次对应的实时库
         /// </summary>
-        public SQLiteDBHelper RealDBHelper
+        public static SQLiteDBHelper RealDBHelper
         {
             get
             {
@@ -400,9 +401,9 @@ namespace RealTimeDB
         {
             try
             {
-                DataTable dt = pusher.GetAllRegions(out JsonString);
-                dataGridView1.DataSource = dt;
-                dataGridView1.Refresh();
+                DataTable dt = Pusher._pusher.GetAllRegions(out JsonString);
+                //dataGridView1.DataSource = dt;
+                //dataGridView1.Refresh();
             }
             catch (System.Exception)
             {
@@ -413,6 +414,7 @@ namespace RealTimeDB
 
         private void RealDBPusher_Load(object sender, EventArgs e)
         {
+            timer_Push=new MMTimer(this.timer_Push_Tick);
             m_checkBoxList.Add(logging_checkBox);//测井
             m_checkBoxList.Add(wellLog_checkBox);//录井
             m_checkBoxList.Add(drilling_checkBox);//钻井
@@ -422,11 +424,11 @@ namespace RealTimeDB
             m_itemAttributesList.Add("index");
             m_itemAttributesList.Add("describe");
             m_itemAttributesList.Add("short-mnemonic");
-            TSMdt = this.CreateStatusMonitorDT();
-            dataGridView_StatusMonitor.DataSource = TSMdt;
+            //TSMdt = this.CreateStatusMonitorDT();
+            //dataGridView_StatusMonitor.DataSource = TSMdt;
             StatusThread = new Thread(new ThreadStart(updatestatus));
-            pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
-            pusher.ConnectTest();
+            //pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
+            Pusher._pusher.ConnectTest();
             this.Interval = int.Parse(Properties.Settings.Default.Interval.ToString());
             this.Repeat = int.Parse(Properties.Settings.Default.Repeat.ToString());
             this.Fps = int.Parse(Properties.Settings.Default.FPS.ToString());
@@ -445,7 +447,7 @@ namespace RealTimeDB
         {
             try
             {
-                DataTable dt = pusher.GetAllInstName(out JsonString);
+                DataTable dt = Pusher._pusher.GetAllInstName(out JsonString);
 
                 foreach(DataRow dr in dt.Rows)
                 {
@@ -459,8 +461,8 @@ namespace RealTimeDB
                 //comboBox_Inst.Items.AddRange(InstDesc.ToArray<string>());
                 //isComboxInstClear = true;
                 //comboBox_Inst.SelectedIndex = 0;
-                dataGridView1.DataSource = dt;
-                dataGridView1.Refresh();
+                //dataGridView1.DataSource = dt;
+                //dataGridView1.Refresh();
             }
             catch (System.Exception)
             {
@@ -471,8 +473,8 @@ namespace RealTimeDB
 
         private void button_ConnectTest_Click(object sender, EventArgs e)
         {
-            pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
-            if (pusher.ConnectTest())
+            //pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
+            if (Pusher._pusher.ConnectTest())
                 MessageBox.Show("连接成功！");
             else MessageBox.Show("连接异常！");
         }
@@ -488,7 +490,7 @@ namespace RealTimeDB
             m_selectedTableList.Clear();//清空上次选择仪器所对应的所选的表
             String strSelected = comboBox_Inst.Items[index].ToString();
             Instru = strSelected;
-            pusher.Instname = Instru;
+            Pusher._pusher.Instname = Instru;
             //根据ComboBox选择，从WITS.xml中读取相应仪器的record信息，加载到WitsTable_treeView第一级节点
             List<List<String>> recordList = new List<List<String>>();
             recordList = m_xmlUtil.getSubChildNodes(m_xmlUtil.getChildNodes(m_xmlUtil.getRoot(m_xmlUtil.getDocument("WITS.xml"))), m_recordAttributesList, strSelected);
@@ -526,6 +528,7 @@ namespace RealTimeDB
             {
                 textBox_LocalLog.Text = wcf.getwellcountPath();
                 RealDBHelper = new SQLiteDBHelper(wcf.getwellcountPath()+".db3");
+                Pusher._pusher.Dbhelper = RealDBHelper;
                 Properties.Settings.Default.RealDBPath = RealDBHelper.RealDBPath;
             }
         }
@@ -582,7 +585,7 @@ namespace RealTimeDB
 
         private void WitsTable_treeView_AfterCheck(object sender, TreeViewEventArgs e)
         {
-
+            String toolName = comboBox_Inst.SelectedItem.ToString();
             if (e.Action == TreeViewAction.ByMouse)
             {
                 int k = 0;
@@ -626,7 +629,7 @@ namespace RealTimeDB
             //父节点被选中，将其内容添加到m_selectedTableList
             if (e.Node.Parent == null && e.Node.GetNodeCount(true) != 0)
             {
-                String toolName = comboBox_Inst.SelectedItem.ToString();
+
                 if (!m_selectServerToolDictionary.Keys.Contains(toolName))//不存在该仪器名
                 {
                     m_selectedTableList.Clear();//清空上次选择仪器所对应的所选的表
@@ -663,6 +666,7 @@ namespace RealTimeDB
                             foreach (String str in m_selectedTableList)
                             {
                                 selectedTableList.Add(str);
+
                             }
                             //每次添加前移除，确保最后一次添加的是所选仪器对应所选的表全集
                             m_selectServerToolDictionary.Remove(toolName);
@@ -671,6 +675,7 @@ namespace RealTimeDB
                     }
                 }
             }
+            Pusher._pusher.selectedTabList = this.m_selectedTableList;
         }
         //取消节点选中状态之后，取消所有父节点的选中状态
         private void setParentNodeCheckedState(TreeNode currNode, bool state)
@@ -822,7 +827,7 @@ namespace RealTimeDB
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button_StartPush_Click(object sender, EventArgs e)
+        private void button_testPush_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
             DataColumn dc1 = new DataColumn("序号");
@@ -845,8 +850,8 @@ namespace RealTimeDB
                 Thread.Sleep(Interval * 1000);
             }
             i = 0;
-            dataGridView1.DataSource = dt;
-            dataGridView1.Refresh();
+            //dataGridView1.DataSource = dt;
+            //dataGridView1.Refresh();
         }
 
 
@@ -855,29 +860,26 @@ namespace RealTimeDB
         {
             try
             {
-                pusher.SendSum.Clear();
+                Pusher._pusher.SendSumDic.Clear();
                 //创建发送计数字典！
                 if (m_selectServerToolDictionary.Count > 0)
                     foreach (String recno in m_selectServerToolDictionary[Instru])
-                        pusher.SendSum.Add(recno, 0);
+                        Pusher._pusher.SendSumDic.Add(recno, 0);
                 timer_Push.Interval = Interval;
-                pusher.IsPushing = true;
+                Pusher._pusher.RowidTimer.Interval = Interval;
+                Pusher._pusher.IsPushing = true;
                 //获取字段名
                 this.getTitleList();
-
-
-                //计时器启动
-                if (!timer_Push.Enabled)
-                {
-                    timer_Push.Enabled = true;
-                    timer_Push.Start();
-                }
+                //推送计时器启动
+                timer_Push.Start(true);
+                //rowid对比计时器
+                Pusher._pusher.RowidTimer.Start(true);
                 //推送线程启动/继续
-                if (!pusher.PushingThread.IsAlive)
+                if (!Pusher._pusher.PushingThread.IsAlive)
                 {
-                    pusher.PushingThread.Start();
-                    if (pusher.PushingThread.ThreadState == System.Threading.ThreadState.Suspended)
-                        pusher.PushingThread.Resume();
+                    Pusher._pusher.PushingThread.Start();
+                    if (Pusher._pusher.PushingThread.ThreadState == System.Threading.ThreadState.Suspended)
+                        Pusher._pusher.PushingThread.Resume();
                 }
                 //状态监视线程启动/继续
                 if (!StatusThread.IsAlive)
@@ -886,14 +888,15 @@ namespace RealTimeDB
                     if (StatusThread.ThreadState == System.Threading.ThreadState.Suspended)
                         StatusThread.Resume();
                 }
-                dataGridView2.DataSource = pusher.IndexTable;
+                dataGridView2.DataSource = Pusher._pusher.IndexTable;
                 button_Push.Enabled = false;
                 button_StopPush.Enabled = true;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
                 button_Push.Enabled = true;
                 button_StopPush.Enabled = false;
+                Debug.WriteLine(ex.Message);
             }
         }
         void updatestatus()
@@ -902,10 +905,10 @@ namespace RealTimeDB
             {
                 while(true)
                 {
-                    if(pusher.SendStatus.Count>0)
+                    if(Pusher._pusher.SendStatusQ.Count>0)
                     {
                         string status = "";
-                        if (pusher.SendStatus.TryDequeue(out status))
+                        if (Pusher._pusher.SendStatusQ.TryDequeue(out status))
                         {
                             listBox_UpdateStatus.Items.Add(status);
                             listBox_UpdateStatus.SelectedIndex = listBox_UpdateStatus.Items.Count - 1;
@@ -929,9 +932,9 @@ namespace RealTimeDB
                 List<String> tempList = new List<string>();
                 tempList= RealDBHelper.getTitleList(tabname + "-" + Instru);
                 TitleList.Add(tempList);
-                pusher.TitleDict.Add(tabname + "-" + Instru, tempList);
+                Pusher._pusher.TitleDict.Add(tabname + "-" + Instru, tempList);
             }
-            pusher.TitleList = TitleList;
+            Pusher._pusher.TitleList = TitleList;
         }
 
         private void button_OpenRemoteLog_Click(object sender, EventArgs e)
@@ -940,34 +943,34 @@ namespace RealTimeDB
             rw.ShowDialog();
             if(rw.DialogResult==DialogResult.OK)
             {
-                pusher.Logid = rw.LogId;
+                Pusher._pusher.Logid = rw.LogId;
                 textBox_RemoteLog.Text = @"//10.242.0.186//" + rw.RegionName + "/" + rw.WellName + "/" + rw.SelectedLogName;
             }
         }
 
-        private void timer_Push_Tick(object sender, EventArgs e)
+        private void timer_Push_Tick(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
         {
             try
             {
                 if (!checkBox_DateToBottom.Checked)
-                    pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
+                    Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
                 else
                 {
-                    if (pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
+                    if (Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
                     {
                         timer_Push.Stop();
                     }
                     else
                     {
-                        TSMdt.Clear();
-                        foreach (String recno in pusher.SendSum.Keys)
-                        {
-                            DataRow dr = TSMdt.NewRow();
-                            dr.ItemArray[0] = (object)recno;
-                            dr.ItemArray[1] = (object)pusher.SendSum[recno];
-                            TSMdt.Rows.Add(dr);
-                        }
-                        dataGridView_StatusMonitor.DataSource = TSMdt;
+                        //TSMdt.Clear();
+                        //foreach (String recno in Pusher._pusher.SendSumDic.Keys)
+                        //{
+                        //    DataRow dr = TSMdt.NewRow();
+                        //    dr.ItemArray[0] = (object)recno;
+                        //    dr.ItemArray[1] = (object)Pusher._pusher.SendSumDic[recno];
+                        //    TSMdt.Rows.Add(dr);
+                        //}
+                        //dataGridView_StatusMonitor.DataSource = TSMdt;
                     }
                 }
             }
@@ -982,9 +985,9 @@ namespace RealTimeDB
         {
             try
             {
-                pusher.IsPushing = false;
+                Pusher._pusher.IsPushing = false;
                 //推送线程 挂起
-                pusher.PushingThread.Suspend();
+                Pusher._pusher.PushingThread.Suspend();
                 //监控线程 挂起
                 statusThread.Suspend();
                 //计时器

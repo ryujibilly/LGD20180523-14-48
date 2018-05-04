@@ -130,5 +130,29 @@ namespace RealTimeDB.Properties {
                 this["ServiceUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("null")]
+        public string Last_Insert_RowID {
+            get {
+                return ((string)(this["Last_Insert_RowID"]));
+            }
+            set {
+                this["Last_Insert_RowID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("null")]
+        public string Last_Sent_RowID {
+            get {
+                return ((string)(this["Last_Sent_RowID"]));
+            }
+            set {
+                this["Last_Sent_RowID"] = value;
+            }
+        }
     }
 }
