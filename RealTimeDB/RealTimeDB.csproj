@@ -223,6 +223,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ConfigFile\Path.xml" />
+    <Content Include="ConfigFile\PushingInfo.xml" />
     <Content Include="ConfigFile\ToolInfo.xml" />
     <Content Include="ConfigFile\Well.xml" />
     <Content Include="ConfigFile\WITS.xml" />

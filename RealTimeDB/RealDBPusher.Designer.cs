@@ -622,6 +622,7 @@ namespace RealTimeDB
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "RealDBPusher";
             this.Text = "实时数据推送";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RealDBPusher_FormClosing);
             this.Load += new System.EventHandler(this.RealDBPusher_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

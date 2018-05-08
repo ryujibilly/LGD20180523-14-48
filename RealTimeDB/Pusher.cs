@@ -30,6 +30,7 @@ namespace RealTimeDB
     {
         public static readonly Pusher _pusher = new Pusher("yuwenmao","123",RealDBPusher.RealDBHelper);
         #region 字段属性
+        public String url = "";
         public realdbservices _realdbws = new realdbservices(Properties.Settings.Default.ServiceUrl);
         public realdbservices.UserNameHeader name = new realdbservices.UserNameHeader();
         public realdbservices.UserPassWordHeader password = new realdbservices.UserPassWordHeader();
@@ -51,6 +52,7 @@ namespace RealTimeDB
         private Boolean isPushing = false;
         public Thread PushingThread;
         public MMTimer RowidTimer;
+        public MMTimer GetHttpStatusTimer;
         private Dictionary<String,int> sendSumDic = new Dictionary<string, int>();
         private ConcurrentQueue<String> sendStatusQ = new ConcurrentQueue<string>();
         /// <summary>
@@ -282,6 +284,7 @@ namespace RealTimeDB
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
+            GetHttpStatusTimer = new MMTimer(GetHttpStatus);
             InitHashTable();
             initIndexTable();
         }
@@ -926,7 +929,7 @@ namespace RealTimeDB
         private void getLastRowID(out Dictionary<String,int> lastrowiddic)
         {
             Properties.Settings.Default.Last_Insert_RowID = "";
-            lastrowiddic =null;
+            lastrowiddic = new Dictionary<string, int>();;
             int lastrowid = -1;
             foreach(String tabname in selectedTabList)
             {
@@ -934,6 +937,14 @@ namespace RealTimeDB
                 lastrowiddic.Add(tabname+"-"+Instname,lastrowid);
                 Properties.Settings.Default.Last_Insert_RowID += tabname + "-" + lastrowid+"\r\n";
             }
+        }
+        /// <summary>
+        /// 获取WebService网络连接状态
+        /// </summary>
+        private void GetHttpStatus()
+        {
+            WebRequest request = WebRequest.Create(url);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse(); 
         }
     }
 }

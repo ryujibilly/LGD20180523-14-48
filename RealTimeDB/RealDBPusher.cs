@@ -1001,5 +1001,14 @@ namespace RealTimeDB
                 button_Push.Enabled = true;
             }
         }
+        /// <summary>
+        /// 关闭窗体前，保存推送状态到PushingInfo.xml文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RealDBPusher_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+        }
     }
 }
