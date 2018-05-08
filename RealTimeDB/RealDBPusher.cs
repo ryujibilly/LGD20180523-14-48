@@ -961,7 +961,7 @@ namespace RealTimeDB
                     //实时推送
                     if (Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps))
                     {
-                        timer_Push.Stop();
+                        Pusher._pusher.SynchroData(RealDBHelper, m_selectedTableList, Instru);
                     }
                     else
                     {

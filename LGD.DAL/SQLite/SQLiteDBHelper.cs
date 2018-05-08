@@ -903,8 +903,8 @@ namespace LGD.DAL.SQLite
             this.DbCommand = this.DbConnection.CreateCommand();
             try
             {
-                //select rowid from [01-Shenkai] order by rowid desc
-                string strSQL = string.Format(@"SELECT rowid FROM [" + tabname +"-"+ instruname + "] order by rowid desc ", tabname + "-" + instruname);
+                //select rowid from [01-Shenkai] order by rowid desc limit 0,1 获取最后一条记录的 rowid
+                string strSQL = string.Format(@"SELECT rowid FROM [" + tabname +"-"+ instruname + "] order by rowid desc limit 0,1", tabname + "-" + instruname);
                 this.DbCommand.CommandText = strSQL;
                 dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
                 DataSet ds = new DataSet();

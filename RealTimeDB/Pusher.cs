@@ -68,7 +68,8 @@ namespace RealTimeDB
         /// <summary>
         /// 数据库中各表记录数
         /// </summary>
-        public Dictionary<String, int> lastRowIDDic = new Dictionary<string, int>();
+        public Dictionary<String, int> lastInsertRowIDDic = new Dictionary<string, int>();
+        public Dictionary<String, int> lastSentRowIDDic = new Dictionary<string, int>();
         private String username;
         private String userpassword;
         private SQLiteDBHelper dbhelper = new SQLiteDBHelper();
@@ -839,7 +840,7 @@ namespace RealTimeDB
         {
             try
             {
-                    getLastRowID(out lastRowIDDic);
+                    getLastRowID(out lastInsertRowIDDic);
             }
             catch (System.Exception ex)
             {
@@ -947,7 +948,7 @@ namespace RealTimeDB
         private void getLastRowID(out Dictionary<String,int> lastrowiddic)
         {
             Properties.Settings.Default.Last_Insert_RowID = "";
-            lastrowiddic = new Dictionary<string, int>();;
+            lastrowiddic = new Dictionary<string, int>();
             int lastrowid = -1;
             foreach(String tabname in selectedTabList)
             {
@@ -973,6 +974,10 @@ namespace RealTimeDB
                 realdbservices_Status = false;
                 IsPushing = false;
             }
+        }
+        public void SynchroData(SQLiteDBHelper helper, List<String> selecttablist, String instru)
+        {
+
         }
     }
 }
