@@ -42,6 +42,12 @@ namespace Tool.Timer
         {
             this.thisCB = cbFunc;
         }
+
+        public MMTimer(Action getHttpStatus)
+        {
+            this.getHttpStatus = getHttpStatus;
+        }
+
         /// <summary>
         /// The current timer instance ID
         /// </summary>
@@ -54,6 +60,8 @@ namespace Tool.Timer
 
         //IDisposable code
         private bool disposed = false;
+        private Action getHttpStatus;
+
         /// <summary>
         /// 触发间隔
         /// </summary>

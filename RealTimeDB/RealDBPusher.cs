@@ -874,6 +874,7 @@ namespace RealTimeDB
                 timer_Push.Start(true);
                 //rowid对比计时器
                 Pusher._pusher.RowidTimer.Start(true);
+                //Pusher._pusher.GetHttpStatusTimer.Start(true);
                 //推送线程启动/继续
                 if (!Pusher._pusher.PushingThread.IsAlive)
                 {
@@ -952,11 +953,13 @@ namespace RealTimeDB
         {
             try
             {
+                //按时间段推送
                 if (!checkBox_DateToBottom.Checked)
                     Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
                 else
                 {
-                    if (Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, Fps))
+                    //实时推送
+                    if (Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps))
                     {
                         timer_Push.Stop();
                     }

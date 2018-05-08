@@ -32,6 +32,10 @@ namespace RealTimeDB
         #region 字段属性
         public String url = "";
         public realdbservices _realdbws = new realdbservices(Properties.Settings.Default.ServiceUrl);
+        /// <summary>
+        /// Webservice连接状态
+        /// </summary>
+        public bool realdbservices_Status = false;
         public realdbservices.UserNameHeader name = new realdbservices.UserNameHeader();
         public realdbservices.UserPassWordHeader password = new realdbservices.UserPassWordHeader();
         public NetworkCredential nc = new NetworkCredential();
@@ -51,7 +55,13 @@ namespace RealTimeDB
         private List<List<String>> dataList = new List<List<string>>();
         private Boolean isPushing = false;
         public Thread PushingThread;
+        /// <summary>
+        /// 监视实时库Rowid的计时器
+        /// </summary>
         public MMTimer RowidTimer;
+        /// <summary>
+        /// 监视webservices网络状态的计时器
+        /// </summary>
         public MMTimer GetHttpStatusTimer;
         private Dictionary<String,int> sendSumDic = new Dictionary<string, int>();
         private ConcurrentQueue<String> sendStatusQ = new ConcurrentQueue<string>();
@@ -285,6 +295,7 @@ namespace RealTimeDB
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
+            Pusher._pusher.GetHttpStatusTimer.Interval = 30000;
             InitHashTable();
             initIndexTable();
         }
@@ -305,6 +316,8 @@ namespace RealTimeDB
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
+            GetHttpStatusTimer = new MMTimer(GetHttpStatus);
+            Pusher._pusher.GetHttpStatusTimer.Interval = 30000;
             InitHashTable(username, password);
             initIndexTable();
         }
@@ -322,6 +335,8 @@ namespace RealTimeDB
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
+            GetHttpStatusTimer = new MMTimer(GetHttpStatus);
+            Pusher._pusher.GetHttpStatusTimer.Interval = 30000;
             InitHashTable(username, password);
             initIndexTable();
             this.Dbhelper = helper;
@@ -811,6 +826,9 @@ namespace RealTimeDB
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message+ "<======PushingThread线程主体StartPushing()异常=====> \r\n");
+                this.realdbservices_Status = false;
+                GetHttpStatusTimer.Start(true);
+                IsPushing = false;
             }
         }
 
@@ -860,7 +878,7 @@ namespace RealTimeDB
         /// 获取即将推送的数据
         /// </summary>
         /// <returns>缓存是否读取完</returns>
-        public bool getData(SQLiteDBHelper helper, List<String> selecttablist, String instru, String beginDate, String beginTime,int _fps)
+        public bool getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)
         {
             bool isOver = false;
             try
@@ -939,12 +957,22 @@ namespace RealTimeDB
             }
         }
         /// <summary>
-        /// 获取WebService网络连接状态
+        /// 获取WebService网络连接状态,异常则挂起推送线程，恢复正常则继续推送线程。
         /// </summary>
-        private void GetHttpStatus()
+        private void GetHttpStatus(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
         {
             WebRequest request = WebRequest.Create(url);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse(); 
+            HttpWebResponse response=(HttpWebResponse)request.GetResponse();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                realdbservices_Status = true;
+                IsPushing = true;
+            }
+            else
+            {
+                realdbservices_Status = false;
+                IsPushing = false;
+            }
         }
     }
 }
