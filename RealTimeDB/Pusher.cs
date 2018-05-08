@@ -977,7 +977,10 @@ namespace RealTimeDB
         }
         public void SynchroData(SQLiteDBHelper helper, List<String> selecttablist, String instru)
         {
+            foreach (String tabname in selectedTabList)
+            {
 
+            }
         }
     }
 }
