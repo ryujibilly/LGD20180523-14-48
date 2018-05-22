@@ -41,6 +41,7 @@ namespace RealTimeDB
         private static SQLiteDBHelper realDBHelper;
         private String instru = "";
         private Thread statusThread;
+        private realdbservices rdbservices = new realdbservices();
 
 
         //treeview
@@ -63,9 +64,6 @@ namespace RealTimeDB
         private int fps=100;
         private bool isHold=true;
         private bool isCover=true;
-
-        //for test
-        //WebService1 ws1 = new WebService1();
 
         //webservice url
         String url = "http://10.242.0.186/realdb/services/realdbservices";
@@ -384,7 +382,6 @@ namespace RealTimeDB
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            //label3.Text = "=" + ws1.Add(int.Parse(textBox3.Text.Trim()), int.Parse(textBox4.Text.Trim()));
         }
 
         private void textBox_UserName_TextChanged(object sender, EventArgs e)
@@ -402,8 +399,6 @@ namespace RealTimeDB
             try
             {
                 DataTable dt = Pusher._pusher.GetAllRegions(out JsonString);
-                //dataGridView1.DataSource = dt;
-                //dataGridView1.Refresh();
             }
             catch (System.Exception)
             {
@@ -427,8 +422,7 @@ namespace RealTimeDB
             //TSMdt = this.CreateStatusMonitorDT();
             //dataGridView_StatusMonitor.DataSource = TSMdt;
             StatusThread = new Thread(new ThreadStart(updatestatus));
-            //pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
-            Pusher._pusher.ConnectTest();
+            //Pusher._pusher.ConnectTest();
             this.Interval = int.Parse(Properties.Settings.Default.Interval.ToString());
             this.Repeat = int.Parse(Properties.Settings.Default.Repeat.ToString());
             this.Fps = int.Parse(Properties.Settings.Default.FPS.ToString());
@@ -473,10 +467,9 @@ namespace RealTimeDB
 
         private void button_ConnectTest_Click(object sender, EventArgs e)
         {
-            //pusher = new Pusher(textBox_UserName.Text, textBox_PassWord.Text);
-            if (Pusher._pusher.ConnectTest())
-                MessageBox.Show("连接成功！");
-            else MessageBox.Show("连接异常！");
+            //if (Pusher._pusher.ConnectTest())
+            //    MessageBox.Show("连接成功！");
+            //else MessageBox.Show("连接异常！");
         }
 
         private void comboBox_Inst_SelectedIndexChanged(object sender, EventArgs e)
@@ -850,8 +843,6 @@ namespace RealTimeDB
                 Thread.Sleep(Interval * 1000);
             }
             i = 0;
-            //dataGridView1.DataSource = dt;
-            //dataGridView1.Refresh();
         }
 
 
@@ -860,11 +851,11 @@ namespace RealTimeDB
         {
             try
             {
-                Pusher._pusher.SendSumDic.Clear();
-                //创建发送计数字典！
-                if (m_selectServerToolDictionary.Count > 0)
-                    foreach (String recno in m_selectServerToolDictionary[Instru])
-                        Pusher._pusher.SendSumDic.Add(recno, 0);
+                //Pusher._pusher.SendSumDic.Clear();
+                ////创建发送计数字典！
+                //if (m_selectServerToolDictionary.Count > 0)
+                //    foreach (String recno in m_selectServerToolDictionary[Instru])
+                //        Pusher._pusher.SendSumDic.Add(recno, 0);
                 timer_Push.Interval = Interval;
                 Pusher._pusher.RowidTimer.Interval = Interval;
                 Pusher._pusher.IsPushing = true;
@@ -945,7 +936,7 @@ namespace RealTimeDB
             if(rw.DialogResult==DialogResult.OK)
             {
                 Pusher._pusher.Logid = rw.LogId;
-                textBox_RemoteLog.Text = @"//10.242.0.186//" + rw.RegionName + "/" + rw.WellName + "/" + rw.SelectedLogName;
+                textBox_RemoteLog.Text =  @"//" +rdbservices.Url+@"//"+ rw.RegionName + "/" + rw.WellName + "/" + rw.SelectedLogName;
             }
         }
 
@@ -965,6 +956,7 @@ namespace RealTimeDB
                     }
                     else
                     {
+                        
                         //TSMdt.Clear();
                         //foreach (String recno in Pusher._pusher.SendSumDic.Keys)
                         //{

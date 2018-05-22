@@ -1,0 +1,39 @@
+[core]
+	bare = false
+	filemode = false
+	symlinks = false
+	ignorecase = true
+	logallrefupdates = true
+[core]
+	repositoryformatversion = 0
+[user]
+	name = ryujibilly
+	email = ryujibilly@qq.com
+[user]
+[diff]
+	tool = vsdiffmerge
+[difftool]
+	prompt = true
+[difftool "vsdiffmerge"]
+	cmd = \"F:\\vs2015\\Common7\\IDE\\vsdiffmerge.exe\" \"$LOCAL\" \"$REMOTE\" //t
+[difftool "vsdiffmerge"]
+	keepbackup = false
+[merge]
+	tool = vsdiffmerge
+[mergetool]
+	prompt = true
+[mergetool "vsdiffmerge"]
+	cmd = \"F:\\vs2015\\Common7\\IDE\\vsdiffmerge.exe\" \"$REMOTE\" \"$LOCAL\" \"$BASE\" \"$MERGED\" //m
+	trustexitcode = true
+[mergetool "vsdiffmerge"]
+	keepbackup = false
+[remote "origin"]
+[remote "origin"]
+[branch "master"]
+[branch "master"]
+[remote "LGD"]
+[remote "LGD"]
+[remote "GitHub"]
+	url = https://github.com/ryujibilly/LGD
+[remote "GitHub"]
+	fetch = +refs/heads/*:refs/remotes/GitHub/*

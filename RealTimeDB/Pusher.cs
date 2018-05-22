@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using LGD.DAL.SQLite;
 using System.Data.SQLite;
 using Tool.Timer;
+using System.Text;
 
 namespace RealTimeDB
 {
@@ -28,10 +29,10 @@ namespace RealTimeDB
     /// </summary>
     public sealed class Pusher
     {
-        public static readonly Pusher _pusher = new Pusher("yuwenmao","123",RealDBPusher.RealDBHelper);
+        public static readonly Pusher _pusher = new Pusher("yuwenmao","123");
         #region 字段属性
         public String url = "";
-        public realdbservices _realdbws = new realdbservices(Properties.Settings.Default.ServiceUrl);
+        public realdbservices _realdbws = new realdbservices();
         /// <summary>
         /// Webservice连接状态
         /// </summary>
@@ -68,8 +69,8 @@ namespace RealTimeDB
         /// <summary>
         /// 数据库中各表记录数
         /// </summary>
-        public Dictionary<String, int> lastInsertRowIDDic = new Dictionary<string, int>();
-        public Dictionary<String, int> lastSentRowIDDic = new Dictionary<string, int>();
+        private  Dictionary<String, int> lastInsertRowIDDic = new Dictionary<string, int>();
+        private  Dictionary<String, int> lastSentRowIDDic = new Dictionary<string, int>();
         private String username;
         private String userpassword;
         private SQLiteDBHelper dbhelper = new SQLiteDBHelper();
@@ -281,6 +282,36 @@ namespace RealTimeDB
                 dbhelper = value;
             }
         }
+        /// <summary>
+        /// 最新写入数据库记录的rowid字典 <表名,rowid>
+        /// </summary>
+        public Dictionary<string, int> LastInsertRowIDDic
+        {
+            get
+            {
+                return lastInsertRowIDDic;
+            }
+
+            set
+            {
+                lastInsertRowIDDic = value;
+            }
+        }
+        /// <summary>
+        /// 最后推送数据记录的rowid字典 <表名,rowid>
+        /// </summary>
+        public Dictionary<string, int> LastSentRowIDDic
+        {
+            get
+            {
+                return lastSentRowIDDic;
+            }
+
+            set
+            {
+                lastSentRowIDDic = value;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -296,15 +327,13 @@ namespace RealTimeDB
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
-            Pusher._pusher.GetHttpStatusTimer.Interval = 30000;
+            this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable();
             initIndexTable();
         }
 
-
-
         /// <summary>
-        /// 使用用户名密码构造方法
+        /// 使用用户名+密码构造方法
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
@@ -318,12 +347,12 @@ namespace RealTimeDB
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
-            Pusher._pusher.GetHttpStatusTimer.Interval = 30000;
+            this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable(username, password);
             initIndexTable();
         }
         /// <summary>
-        /// 使用SQLiteDBHelper,用户名,密码构造方法
+        /// 使用SQLiteDBHelper+用户名+密码构造方法
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
@@ -337,7 +366,7 @@ namespace RealTimeDB
             PushingThread = new Thread(new ThreadStart(StartPushing));
             RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
-            Pusher._pusher.GetHttpStatusTimer.Interval = 30000;
+            this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable(username, password);
             initIndexTable();
             this.Dbhelper = helper;
@@ -437,11 +466,16 @@ namespace RealTimeDB
             }
             return ht;
         }
+
         /// <summary>
-        /// 填充曲线HashTable
+        /// 生成推送Json字符串
         /// </summary>
-        /// <param name="_curvename"></param>
-        /// <param name="curvedata"></param>
+        /// <param name="logid">井id</param>
+        /// <param name="recordno">表号</param>
+        /// <param name="size">记录size</param>
+        /// <param name="instname">仪器名</param>
+        /// <param name="_curvename">曲线名</param>
+        /// <param name="_curvedata">曲线数据</param>
         /// <returns></returns>
         public String InitCurveTable(String logid,String recordno,int size,String instname, List<String> _curvename,DataTable _curvedata)
         {
@@ -488,7 +522,11 @@ namespace RealTimeDB
             temp2=temp1.Insert(1,strCurveData+"],");
             return temp2;
         }
-
+        /// <summary>
+        /// 生成曲线数据的Json字符串
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         private String createDataString(DataTable dt)
         {
             string strCurveData = "\"data\" :[";
@@ -515,7 +553,37 @@ namespace RealTimeDB
             strCurveData = strCurveData.Remove(strCurveData.Length - 1);
             return strCurveData;
         }
-        
+
+        /// <summary>
+        /// 写曲线
+        /// </summary>
+        /// <returns>写的记录条数</returns>
+        public int WriteCurveData(String title, String regionName, out String jstring)
+        {
+            int sum = 0;
+            try
+            {
+                InitHashTable(false, title, regionName);
+                colName.Clear();
+                colData.Clear();
+                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
+                jstring = _realdbws.WriteCurveData(strJsonSend);
+                Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
+                //获取列名
+                colName = JsonHepler.getJsonCol(tempHT, "title");
+                //获取数据
+                colData = JsonHepler.getJsonData(tempHT, "data", colName.Count);
+                //return JsonHepler.List2DataTable(colData, colName);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllLogsByWellId()");
+                jstring = String.Empty;
+                //return null;
+            }
+            return sum;
+        }
+
         /// <summary>
         /// 连接测试
         /// </summary>
@@ -605,9 +673,12 @@ namespace RealTimeDB
 
                 return JsonHepler.List2DataTable(colData, colName);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                throw;
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllInstName()");
+                jstring = "";
+                DataTable dt = new DataTable();
+                return dt;
             }
         }
 
@@ -751,42 +822,13 @@ namespace RealTimeDB
                 return null;
             }
         }
-
-
-        /// <summary>
-        /// 写曲线
-        /// </summary>
-        /// <returns>写的记录条数</returns>
-        public int WriteCurveData(String title, String regionName, out String jstring)
-        {
-            int sum = 0;
-            try
-            {
-                InitHashTable(false, title, regionName);
-                colName.Clear();
-                colData.Clear();
-                strJsonSend = JsonHepler.HashtableToJson(ht, 0);
-                jstring = _realdbws. WriteCurveData(strJsonSend);
-                Hashtable tempHT = (Hashtable)JsonConvert.DeserializeObject(jstring, typeof(Hashtable));
-                //获取列名
-                colName = JsonHepler.getJsonCol(tempHT, "title");
-                //获取数据
-                colData = JsonHepler.getJsonData(tempHT, "data", colName.Count);
-                //return JsonHepler.List2DataTable(colData, colName);
-            }
-            catch (System.Exception ex)
-            {
-                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetAllLogsByWellId()");
-                jstring = String.Empty;
-                //return null;
-            }
-            return sum;
-        }
         /// <summary>
         /// 推送数据
         /// </summary>
         void StartPushing()
         {
+            String SendJsonStr = "";
+            String recvJsonStr = "";
             try
             {
                 int i = 0;
@@ -795,6 +837,7 @@ namespace RealTimeDB
                     if (PushingDataTabQueue.Count > 0 )//&& IndexTable.Rows.Count > 0
                     {
                         DataTable dt = new DataTable();
+                        DataTable dt_orgin = new DataTable();
                         if (PushingDataTabQueue.TryDequeue(out dt))
                         {
                             //表号+仪器，断句
@@ -803,16 +846,19 @@ namespace RealTimeDB
                             List<String> curvenames = new List<string>();
                             if (TitleDict.TryGetValue(RecordName, out curvenames))
                             {
+                                dt_orgin = dt.Copy();
                                 int Size = dt.Rows.Count;
+                                int rowid = int.Parse(dt.Rows[dt.Rows.Count - 1].ItemArray[0].ToString());
                                 //移除rowid 列
                                 dt.Columns.RemoveAt(0);
-                                String SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
-                                String recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
+                                SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
+                                recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
                                 //计数
-                                if (recvJsonStr.Contains("ok"))
+                                if (recvJsonStr.Contains("ok"))                                    //各表累计发送记录数
+                                                                                                   //SendSumDic[RecordNo] += Size;
                                 {
-                                    //各表累计发送记录数
-                                    SendSumDic[RecordNo] += Size;
+                                    //各表推送数据的最后一条记录rowid
+                                    lastSentRowIDDic[RecordNo] = rowid;
                                     string status = ">>>"+i++.ToString("D4")+"Date："+
                                         DateTime.Now.ToShortDateString() +"..Time:"+ DateTime.Now.ToLongTimeString() + 
                                         "..TabNo:"+RecordNo+"..Records:" +Size+"<<<";
@@ -828,6 +874,7 @@ namespace RealTimeDB
             {
                 Debug.WriteLine(ex.Message+ "<======PushingThread线程主体StartPushing()异常=====> \r\n");
                 this.realdbservices_Status = false;
+                //切入网络状态监控线程。
                 GetHttpStatusTimer.Start(true);
                 IsPushing = false;
             }
@@ -872,7 +919,7 @@ namespace RealTimeDB
             }
             catch (System.Exception ex)
             {
-                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData()");
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getDataSQLiteDBHelper helper,List<String> selecttablist,String instru,String beginDate,String beginTime,String endDate,String endTime)");
             }
         }
         /// <summary>
@@ -916,7 +963,7 @@ namespace RealTimeDB
             }
             catch (System.Exception ex)
             {
-                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData()");
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)");
                 return false;
             }
         }
@@ -928,18 +975,27 @@ namespace RealTimeDB
         /// <returns>最后一个索引值</returns>
         private int getLastIndex(string tabname,DataTable _indextab)
         {
-            int lastindex = 0;
-            int i = _indextab.Rows.Count - 1;
-            while (i>=0)
+            try
             {
-                if (_indextab.Rows[i].ItemArray[0].ToString() == tabname)
+                int lastindex = 0;
+                int i = _indextab.Rows.Count - 1;
+                while (i >= 0)
                 {
-                    lastindex = int.Parse(_indextab.Rows[i].ItemArray[4].ToString());
-                    break;
+                    if (_indextab.Rows[i].ItemArray[0].ToString() == tabname)
+                    {
+                        lastindex = int.Parse(_indextab.Rows[i].ItemArray[4].ToString());
+                        break;
+                    }
+                    else i--;
                 }
-                else i--;
+                return lastindex;
             }
-            return lastindex;
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getLastIndex(string tabname,DataTable _indextab)");
+                return -1;
+            }
+
         }
         /// <summary>
         /// 获取所有表当前记录数rowid
@@ -947,37 +1003,83 @@ namespace RealTimeDB
         /// <param name="lastrowid"></param>
         private void getLastRowID(out Dictionary<String,int> lastrowiddic)
         {
-            Properties.Settings.Default.Last_Insert_RowID = "";
-            lastrowiddic = new Dictionary<string, int>();
-            int lastrowid = -1;
-            foreach(String tabname in selectedTabList)
+            try
             {
-                lastrowid = Dbhelper.getLastRowID(tabname, Instname);
-                lastrowiddic.Add(tabname+"-"+Instname,lastrowid);
-                Properties.Settings.Default.Last_Insert_RowID += tabname + "-" + lastrowid+"\r\n";
+                Properties.Settings.Default.Last_Insert_RowID = "";
+                lastrowiddic = new Dictionary<string, int>();
+                int lastrowid = -1;
+                foreach (String tabname in selectedTabList)
+                {
+                    lastrowid = Dbhelper.getLastRowID(tabname, Instname);
+                    lastrowiddic.Add(tabname + "-" + Instname, lastrowid);
+                    Properties.Settings.Default.Last_Insert_RowID += tabname + "-" + lastrowid + "\r\n";
+                }
             }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getLastIndexgetLastRowID(out Dictionary<String,int> lastrowiddic)");
+                lastrowiddic = new Dictionary<string, int>();
+            }
+
         }
         /// <summary>
         /// 获取WebService网络连接状态,异常则挂起推送线程，恢复正常则继续推送线程。
         /// </summary>
         private void GetHttpStatus(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
         {
-            WebRequest request = WebRequest.Create(url);
-            HttpWebResponse response=(HttpWebResponse)request.GetResponse();
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                realdbservices_Status = true;
-                IsPushing = true;
+                //WebRequest request = WebRequest.Create(url);
+                //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                //if (response.StatusCode == HttpStatusCode.OK)
+                //{
+                //    realdbservices_Status = true;
+                //    IsPushing = true;
+                //}
+                //else
+                //{
+                //    realdbservices_Status = false;
+                //    IsPushing = false;
+                //}
+                if(Ping("113.200.64.43"))
+                {
+                    realdbservices_Status = true;
+                    IsPushing = true;
+                }
+                else
+                {
+                    realdbservices_Status = false;
+                    IsPushing = false;
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-                realdbservices_Status = false;
-                IsPushing = false;
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetHttpStatus()");
             }
         }
         public void SynchroData(SQLiteDBHelper helper, List<String> selecttablist, String instru)
         {
 
+        }
+
+        /// <summary>
+        /// 是否能 Ping 通指定的主机
+        /// </summary>
+        /// <param name="ip">ip 地址或主机名或域名</param>
+        /// <returns>true 通，false 不通</returns>
+        public bool Ping(string ip)
+        {
+            System.Net.NetworkInformation.Ping p = new System.Net.NetworkInformation.Ping();
+            System.Net.NetworkInformation.PingOptions options = new System.Net.NetworkInformation.PingOptions();
+            options.DontFragment = true;
+            string data = "Test Data!";
+            byte[] buffer = Encoding.ASCII.GetBytes(data);
+            int timeout = 5000; // Timeout 时间，单位：毫秒
+            System.Net.NetworkInformation.PingReply reply = p.Send(ip, timeout, buffer, options);
+            if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                return true;
+            else
+                return false;
         }
     }
 }

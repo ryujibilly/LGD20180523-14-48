@@ -770,8 +770,6 @@ namespace LGD.DAL.SQLite
             {
                 string strSQL = string.Format(@"SELECT * FROM [" + tabid + "-" + instru + "] WHERE [DATE]>" + startDate + " AND [TIME]>"
                     + startTime + " AND [DATE]<" + endDate + " AND [TIME]<" + endTime, tabid+"-"+instru);
-                //this.DbCommand.CommandText = @"SELECT * FROM [" + tabid + "-" + instru + "] WHERE [DATE]>" + startDate + " AND [TIME]>"
-                //    + startTime + " AND [DATE]<" + endDate + " AND [TIME]<" + endTime;
                 this.DbCommand.CommandText = strSQL;
                 dbDataAdapter = new SQLiteDataAdapter(this.DbCommand);
                 DataSet ds = new DataSet();
@@ -825,7 +823,6 @@ namespace LGD.DAL.SQLite
                 dbDataAdapter.Fill(ds);
                 dt = ds.Tables[0];
                 dt.TableName = tabid + "-" + instru;
-
                 rowidstart = int.Parse(dt.Rows[0].ItemArray[0].ToString());
                 rowidend = int.Parse(dt.Rows[dt.Rows.Count - 1].ItemArray[0].ToString());
                 return dt;

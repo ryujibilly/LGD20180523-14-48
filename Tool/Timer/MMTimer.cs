@@ -63,7 +63,7 @@ namespace Tool.Timer
         private Action getHttpStatus;
 
         /// <summary>
-        /// 触发间隔
+        /// 触发间隔ms
         /// </summary>
         public int Interval
         {
@@ -152,7 +152,7 @@ namespace Tool.Timer
 
             lock (this)
             {
-                id = timeSetEvent(uint.Parse((Interval*1000).ToString()), 0, thisCB, UIntPtr.Zero, (uint)f);
+                id = timeSetEvent(uint.Parse((Interval).ToString()), 0, thisCB, UIntPtr.Zero, (uint)f);
                 if (id == 0)
                 {
                     throw new Exception("timeSetEvent error");
