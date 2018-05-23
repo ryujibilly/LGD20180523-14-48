@@ -851,11 +851,7 @@ namespace RealTimeDB
         {
             try
             {
-                //Pusher._pusher.SendSumDic.Clear();
-                ////创建发送计数字典！
-                //if (m_selectServerToolDictionary.Count > 0)
-                //    foreach (String recno in m_selectServerToolDictionary[Instru])
-                //        Pusher._pusher.SendSumDic.Add(recno, 0);
+                Pusher._pusher.initSentRowIDDic();
                 timer_Push.Interval = Interval;
                 Pusher._pusher.RowidTimer.Interval = Interval;
                 Pusher._pusher.IsPushing = true;
@@ -1003,7 +999,17 @@ namespace RealTimeDB
         /// <param name="e"></param>
         private void RealDBPusher_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //将推送rowid字典存储到配置文件
+            Properties.Settings.Default.Last_Sent_RowID = "{";
+            foreach (var elem in Pusher._pusher.LastSentRowIDDic)
+                Properties.Settings.Default.Last_Sent_RowID+= elem.Key+"-"+elem.Value.ToString()+",";
+            Properties.Settings.Default.Last_Sent_RowID += "}";
 
+            //将实时库rowid字典存储到配置文件
+            Properties.Settings.Default.Last_Insert_RowID = "{";
+            foreach (var elem in Pusher._pusher.LastInsertRowIDDic)
+                Properties.Settings.Default.Last_Insert_RowID += elem.Key + "-" + elem.Value.ToString() + ",";
+            Properties.Settings.Default.Last_Insert_RowID += "}";
         }
     }
 }

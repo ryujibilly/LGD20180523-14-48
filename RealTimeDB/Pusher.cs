@@ -1081,5 +1081,13 @@ namespace RealTimeDB
             else
                 return false;
         }
+        /// <summary>
+        /// 初始化 推送rowid字典
+        /// </summary>
+        public void initSentRowIDDic()
+        {
+            foreach (string recno in selectedTabList)
+                Pusher._pusher.LastSentRowIDDic.Add(recno, 0);
+        }
     }
 }
