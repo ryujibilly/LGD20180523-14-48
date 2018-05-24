@@ -55,6 +55,7 @@ namespace RealTimeDB
         private Dictionary<String, List<String>> titleDict = new Dictionary<string, List<string>>();
         private List<List<String>> dataList = new List<List<string>>();
         private Boolean isPushing = false;
+        private Boolean isSynPush = false;
         public Thread PushingThread;
         /// <summary>
         /// 监视实时库Rowid的计时器
@@ -310,6 +311,21 @@ namespace RealTimeDB
             set
             {
                 lastSentRowIDDic = value;
+            }
+        }
+        /// <summary>
+        /// 是否开始同步推送
+        /// </summary>
+        public bool IsSynPush
+        {
+            get
+            {
+                return isSynPush;
+            }
+
+            set
+            {
+                isSynPush = value;
             }
         }
         #endregion
@@ -906,7 +922,7 @@ namespace RealTimeDB
         }
 
         /// <summary>
-        /// 获取即将推送的数据
+        /// 获取即将推送的数据(指定时间)
         /// </summary>
         public void getData(SQLiteDBHelper helper,List<String> selecttablist,String instru,String beginDate,String beginTime,String endDate,String endTime)
         {
@@ -914,7 +930,9 @@ namespace RealTimeDB
             {
                 foreach (String tabname in selecttablist)
                 {
-                   PushingDataTabQueue.Enqueue(helper.getPushingData(instru, tabname, beginDate, beginTime, endDate, endTime));
+                    DataTable dt = new DataTable();
+                    dt = helper.getPushingData(instru, tabname, beginDate, beginTime, endDate, endTime);
+                    PushingDataTabQueue.Enqueue(dt);
                 }
             }
             catch (System.Exception ex)
@@ -923,12 +941,12 @@ namespace RealTimeDB
             }
         }
         /// <summary>
-        /// 获取即将推送的数据
+        /// 获取即将推送的数据（所有数据）
         /// </summary>
         /// <returns>缓存是否读取完</returns>
         public bool getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)
         {
-            bool isOver = false;
+            IsSynPush = false;
             try
             {
                 foreach (String tabname in selecttablist)
@@ -955,16 +973,40 @@ namespace RealTimeDB
                     }
                     if ((rowidend - rowidstart + 1) < _fps)
                     {
-                        isOver = true;
+                        IsSynPush = true;
                         continue;
                     }
                 }
-                return isOver;
+                return IsSynPush;
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)");
-                return false;
+                return IsSynPush;
+            }
+        }
+        /// <summary>
+        /// 将实时数据放入待推送队列中
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="selecttablist"></param>
+        /// <param name="instru"></param>
+        public void SynchroData(SQLiteDBHelper helper, List<String> selecttablist, String instru)
+        {
+            try
+            {
+                int rowid = 0;
+                foreach (String tabname in selecttablist)
+                {
+                    DataTable dt = new DataTable();
+                    dt = helper.getPushingData(instru, tabname, LastSentRowIDDic[tabname],out rowid);
+                    LastInsertRowIDDic[tabname] = rowid;
+                    PushingDataTabQueue.Enqueue(dt);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getDataSQLiteDBHelper helper,List<String> selecttablist,String instru,String beginDate,String beginTime,String endDate,String endTime)");
             }
         }
         /// <summary>
@@ -1029,6 +1071,18 @@ namespace RealTimeDB
         {
             try
             {
+                if(Ping(this.url))
+                {
+                    realdbservices_Status = true;
+                    IsPushing = true;
+                    PushingThread.Suspend();
+                }
+                else
+                {
+                    realdbservices_Status = false;
+                    IsPushing = false;
+                    PushingThread.Resume();
+                }
                 //WebRequest request = WebRequest.Create(url);
                 //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 //if (response.StatusCode == HttpStatusCode.OK)
@@ -1041,26 +1095,13 @@ namespace RealTimeDB
                 //    realdbservices_Status = false;
                 //    IsPushing = false;
                 //}
-                if(Ping("113.200.64.43"))
-                {
-                    realdbservices_Status = true;
-                    IsPushing = true;
-                }
-                else
-                {
-                    realdbservices_Status = false;
-                    IsPushing = false;
-                }
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.GetHttpStatus()");
             }
         }
-        public void SynchroData(SQLiteDBHelper helper, List<String> selecttablist, String instru)
-        {
 
-        }
 
         /// <summary>
         /// 是否能 Ping 通指定的主机
@@ -1088,6 +1129,14 @@ namespace RealTimeDB
         {
             foreach (string recno in selectedTabList)
                 Pusher._pusher.LastSentRowIDDic.Add(recno, 0);
+        }
+        /// <summary>
+        /// 初始化 实时库rowid字典
+        /// </summary>
+        public void initInsertRowIDDic()
+        {
+            foreach (string recno in selectedTabList)
+                Pusher._pusher.LastInsertRowIDDic.Add(recno, 0);
         }
     }
 }

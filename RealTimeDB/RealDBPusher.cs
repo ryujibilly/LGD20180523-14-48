@@ -852,6 +852,7 @@ namespace RealTimeDB
             try
             {
                 Pusher._pusher.initSentRowIDDic();
+                Pusher._pusher.initInsertRowIDDic();
                 timer_Push.Interval = Interval;
                 Pusher._pusher.RowidTimer.Interval = Interval;
                 Pusher._pusher.IsPushing = true;
@@ -876,7 +877,6 @@ namespace RealTimeDB
                     if (StatusThread.ThreadState == System.Threading.ThreadState.Suspended)
                         StatusThread.Resume();
                 }
-                dataGridView2.DataSource = Pusher._pusher.IndexTable;
                 button_Push.Enabled = false;
                 button_StopPush.Enabled = true;
             }
@@ -943,33 +943,19 @@ namespace RealTimeDB
                 //按时间段推送
                 if (!checkBox_DateToBottom.Checked)
                     Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
-                else
+                else//推送至最新记录
                 {
-                    //实时推送
-                    if (Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps))
-                    {
+
+                    if (!Pusher._pusher.IsSynPush)//积压数据
+                        Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps);
+                    else if (Pusher._pusher.IsSynPush)//实时数据
                         Pusher._pusher.SynchroData(RealDBHelper, m_selectedTableList, Instru);
-                    }
-                    else
-                    {
-                        
-                        //TSMdt.Clear();
-                        //foreach (String recno in Pusher._pusher.SendSumDic.Keys)
-                        //{
-                        //    DataRow dr = TSMdt.NewRow();
-                        //    dr.ItemArray[0] = (object)recno;
-                        //    dr.ItemArray[1] = (object)Pusher._pusher.SendSumDic[recno];
-                        //    TSMdt.Rows.Add(dr);
-                        //}
-                        //dataGridView_StatusMonitor.DataSource = TSMdt;
-                    }
                 }
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message + "RealDBPusher.cs-timer_Push_Tick()");
             }
- 
         }
 
         private void button_StopPush_Click(object sender, EventArgs e)

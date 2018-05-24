@@ -844,7 +844,7 @@ namespace LGD.DAL.SQLite
         /// <param name="startrowid">起始rowid</param>
         /// <param name="endrowid">发送截至rowid</param>
         /// <returns></returns>
-        public DataTable getPushingData(String instru, String tabid, int startrowid,out int endrowid)
+        public DataTable getPushingData(String instru, String tabid,int startrowid,out int endrowid)
         {
             // 自动打开
             if (this.DbConnection == null)

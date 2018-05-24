@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Xml;
-using LGD.DAL.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using LGD.DAL.SQLite;
 
 namespace WitsTransmission.WellConfig
 {
