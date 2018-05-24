@@ -993,7 +993,7 @@ namespace RealTimeDB
             }
         }
         /// <summary>
-        /// 关闭窗体前，保存推送状态到PushingInfo.xml文件
+        /// 关闭窗体前，保存推送,实时库状态到PushingInfo.xml文件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
