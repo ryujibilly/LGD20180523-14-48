@@ -520,7 +520,7 @@ namespace RealTimeDB
             if (wcf.DialogResult == DialogResult.OK)
             {
                 textBox_LocalLog.Text = wcf.getwellcountPath();
-                RealDBHelper = new SQLiteDBHelper(wcf.getwellcountPath()+".db3");
+                RealDBHelper = new SQLiteDBHelper(wcf.getwellcountPath()+"\\"+wcf.getwellcount()+".db3");
                 Pusher._pusher.Dbhelper = RealDBHelper;
                 Properties.Settings.Default.RealDBPath = RealDBHelper.RealDBPath;
             }
@@ -948,7 +948,7 @@ namespace RealTimeDB
 
                     if (!Pusher._pusher.IsSynPush)//积压数据
                         Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps);
-                    else if (Pusher._pusher.IsSynPush)//实时数据
+                    else if (!Pusher._pusher.IsSynPush)//实时数据
                         Pusher._pusher.SynchroData(RealDBHelper, m_selectedTableList, Instru);
                 }
             }
