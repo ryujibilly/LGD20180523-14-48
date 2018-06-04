@@ -521,6 +521,7 @@ namespace RealTimeDB
             {
                 textBox_LocalLog.Text = wcf.getwellcountPath();
                 RealDBHelper = new SQLiteDBHelper(wcf.getwellcountPath()+"\\"+wcf.getwellcount()+".db3");
+                RealDBHelper.RealDBPath = wcf.getwellcountPath() + "\\" + wcf.getwellcount() + ".db3";
                 Pusher._pusher.Dbhelper = RealDBHelper;
                 Properties.Settings.Default.RealDBPath = RealDBHelper.RealDBPath;
             }
