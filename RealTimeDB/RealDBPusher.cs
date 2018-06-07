@@ -949,7 +949,7 @@ namespace RealTimeDB
 
                     if (!Pusher._pusher.IsSynPush)//积压数据
                         Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps);
-                    else if (!Pusher._pusher.IsSynPush)//实时数据
+                    else if (Pusher._pusher.IsSynPush)//实时数据
                         Pusher._pusher.SynchroData(RealDBHelper, m_selectedTableList, Instru);
                 }
             }
@@ -997,6 +997,8 @@ namespace RealTimeDB
             foreach (var elem in Pusher._pusher.LastInsertRowIDDic)
                 Properties.Settings.Default.Last_Insert_RowID += elem.Key + "-" + elem.Value.ToString() + ",";
             Properties.Settings.Default.Last_Insert_RowID += "}";
+
+            Pusher._pusher.
         }
     }
 }
