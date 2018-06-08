@@ -870,6 +870,7 @@ namespace RealTimeDB
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message+ "<======PushingThread线程主体StartPushing()异常=====> \r\n");
+
                 //this.realdbservices_Status = false;
                 ////切入网络状态监控线程。
                 //GetHttpStatusTimer.Start(true);
