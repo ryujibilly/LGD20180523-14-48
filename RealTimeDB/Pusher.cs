@@ -29,7 +29,7 @@ namespace RealTimeDB
     /// </summary>
     public sealed class Pusher
     {
-        public static readonly Pusher _pusher = new Pusher("yuwenmao","123");
+        public  static readonly Pusher _pusher = new Pusher("yuwenmao","123");
         #region 字段属性
         public String url = "";
         public realdbservices _realdbws = new realdbservices();
@@ -57,10 +57,7 @@ namespace RealTimeDB
         private Boolean isPushing = false;
         private Boolean isSynPush = false;
         public Thread PushingThread;
-        /// <summary>
-        /// 监视实时库Rowid的计时器
-        /// </summary>
-        public MMTimer RowidTimer;
+
         /// <summary>
         /// 监视webservices网络状态的计时器
         /// </summary>
@@ -314,9 +311,9 @@ namespace RealTimeDB
             }
         }
         /// <summary>
-        /// 是否开始同步推送
+        /// 所有表是否积压数据
         /// </summary>
-        public bool IsSynPush
+        public Boolean IsSynPush
         {
             get
             {
@@ -341,11 +338,9 @@ namespace RealTimeDB
             nc.Password = "123";
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
-            RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
             this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable();
-            initIndexTable();
         }
 
         /// <summary>
@@ -361,11 +356,9 @@ namespace RealTimeDB
             nc.Password = password;
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
-            RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
             this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable(username, password);
-            initIndexTable();
         }
         /// <summary>
         /// 使用SQLiteDBHelper+用户名+密码构造方法
@@ -380,29 +373,17 @@ namespace RealTimeDB
             nc.Password = password;
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
-            RowidTimer = new MMTimer(RowidMonitoring);
             GetHttpStatusTimer = new MMTimer(GetHttpStatus);
             this.GetHttpStatusTimer.Interval = 30000;
-            InitHashTable(username, password);
-            initIndexTable();
             this.Dbhelper = helper;
         }
-
         /// <summary>
-        /// 初始化推送进程索引表
+        /// 强制回收对象
         /// </summary>
-        private void initIndexTable()
+        public void Dispose()
         {
-            DataColumn dc1 = new DataColumn("TabId", Type.GetType("System.String"));
-            DataColumn dc2 = new DataColumn("Date", Type.GetType("System.String"));
-            DataColumn dc3 = new DataColumn("Time", Type.GetType("System.String"));
-            DataColumn dc4 = new DataColumn("StartIndex", Type.GetType("System.String"));
-            DataColumn dc5 = new DataColumn("EndIndex", Type.GetType("System.String"));
-            IndexTable.Columns.Add(dc1);
-            IndexTable.Columns.Add(dc2);
-            IndexTable.Columns.Add(dc3);
-            IndexTable.Columns.Add(dc4);
-            IndexTable.Columns.Add(dc5);
+            int ge = GC.GetGeneration(this);
+            GC.Collect(ge);
         }
         /// <summary>
         /// 空哈希表初始化方法
@@ -877,7 +858,7 @@ namespace RealTimeDB
                                     lastSentRowIDDic[RecordNo] = rowid;
                                     string status = ">>>"+i++.ToString("D4")+"Date："+
                                         DateTime.Now.ToShortDateString() +"..Time:"+ DateTime.Now.ToLongTimeString() + 
-                                        "..TabNo:"+RecordNo+"..Records:" +Size+"<<<";
+                                        "..TabNo:"+RecordNo+"..Records:" +rowid+"<<<";
                                     SendStatusQ.Enqueue(status);
                                 }
                             }
@@ -889,17 +870,17 @@ namespace RealTimeDB
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message+ "<======PushingThread线程主体StartPushing()异常=====> \r\n");
-                this.realdbservices_Status = false;
-                //切入网络状态监控线程。
-                GetHttpStatusTimer.Start(true);
-                IsPushing = false;
+                //this.realdbservices_Status = false;
+                ////切入网络状态监控线程。
+                //GetHttpStatusTimer.Start(true);
+                //IsPushing = false;
             }
         }
 
         /// <summary>
         /// 监视最新rowid
         /// </summary>
-        private void RowidMonitoring(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
+        public void RowidMonitoring()
         {
             try
             {
@@ -940,11 +921,16 @@ namespace RealTimeDB
                 Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getDataSQLiteDBHelper helper,List<String> selecttablist,String instru,String beginDate,String beginTime,String endDate,String endTime)");
             }
         }
+
         /// <summary>
-        /// 获取即将推送的数据（所有数据）
+        /// wits表进入推送队列
         /// </summary>
-        /// <returns>缓存是否读取完</returns>
-        public bool getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)
+        /// <param name="helper">SQLitehelper</param>
+        /// <param name="selecttablist">推送的表名列</param>
+        /// <param name="instru">仪器</param>
+        /// <param name="_fps">单词推送表数量</param>
+        /// <returns>是否推送完毕</returns>
+        public void getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)
         {
             IsSynPush = false;
             try
@@ -954,35 +940,25 @@ namespace RealTimeDB
                     int rowidstart = 0;
                     int rowidend = 0;
                     DataTable dt = new DataTable();
-                    int _startindex = getLastIndex(tabname,IndexTable);
-                    if (_startindex >=0)
+                    //起始rowid
+                    int _startindex = LastSentRowIDDic[tabname];
+                    //截至rowid
+                    int _endindex = LastInsertRowIDDic[tabname];
+                    //入队条件 
+                    while (_startindex >= 0 && _endindex >= 0 && _startindex + _fps <= _endindex)
                     {
                         dt = helper.getPushingData(instru, tabname, _startindex, _fps, out rowidstart, out rowidend).Copy();
-                        String strDate = dt.Rows[dt.Rows.Count - 1].ItemArray[5].ToString();
-                        String strTime = dt.Rows[dt.Rows.Count - 1].ItemArray[6].ToString();
+                        _startindex += _fps;
                         PushingDataTabQueue.Enqueue(dt);
-                        DataRow dr = IndexTable.NewRow();
-                        dr[0] = tabname;
-                        dr[1] = strDate;
-                        dr[2] = strTime;
-                        //起始rowid
-                        dr[3] = rowidstart;
-                        //截至rowid
-                        dr[4] = rowidend;
-                        IndexTable.Rows.Add(dr);
-                    }
-                    if ((rowidend - rowidstart + 1) < _fps)
-                    {
-                        IsSynPush = true;
-                        continue;
+                        if (_endindex - _startindex < _fps)
+                            break;
                     }
                 }
-                return IsSynPush;
+                IsSynPush = true;
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getData(SQLiteDBHelper helper, List<String> selecttablist, String instru,int _fps)");
-                return IsSynPush;
             }
         }
         /// <summary>
@@ -1010,36 +986,6 @@ namespace RealTimeDB
             }
         }
         /// <summary>
-        /// 从索引表里查找对应表的最后一次索引
-        /// </summary>
-        /// <param name="tabname"></param>
-        /// <param name="_indextab"></param>
-        /// <returns>最后一个索引值</returns>
-        private int getLastIndex(string tabname,DataTable _indextab)
-        {
-            try
-            {
-                int lastindex = 0;
-                int i = _indextab.Rows.Count - 1;
-                while (i >= 0)
-                {
-                    if (_indextab.Rows[i].ItemArray[0].ToString() == tabname)
-                    {
-                        lastindex = int.Parse(_indextab.Rows[i].ItemArray[4].ToString());
-                        break;
-                    }
-                    else i--;
-                }
-                return lastindex;
-            }
-            catch (System.Exception ex)
-            {
-                Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getLastIndex(string tabname,DataTable _indextab)");
-                return -1;
-            }
-
-        }
-        /// <summary>
         /// 获取所有表当前记录数rowid
         /// </summary>
         /// <param name="lastrowid"></param>
@@ -1053,7 +999,7 @@ namespace RealTimeDB
                 foreach (String tabname in selectedTabList)
                 {
                     lastrowid = Dbhelper.getLastRowID(tabname, Instname);
-                    lastrowiddic.Add(tabname + "-" + Instname, lastrowid);
+                    lastrowiddic.Add(tabname,lastrowid);
                     Properties.Settings.Default.Last_Insert_RowID += tabname + "-" + lastrowid + "\r\n";
                 }
             }

@@ -855,15 +855,11 @@ namespace RealTimeDB
                 Pusher._pusher.initSentRowIDDic();
                 Pusher._pusher.initInsertRowIDDic();
                 timer_Push.Interval = Interval;
-                Pusher._pusher.RowidTimer.Interval = Interval;
                 Pusher._pusher.IsPushing = true;
                 //获取字段名
                 this.getTitleList();
                 //推送计时器启动
                 timer_Push.Start(true);
-                //rowid对比计时器
-                Pusher._pusher.RowidTimer.Start(true);
-                //Pusher._pusher.GetHttpStatusTimer.Start(true);
                 //推送线程启动/继续
                 if (!Pusher._pusher.PushingThread.IsAlive)
                 {
@@ -944,13 +940,12 @@ namespace RealTimeDB
                 //按时间段推送
                 if (!checkBox_DateToBottom.Checked)
                     Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
-                else//推送至最新记录
+                else if(!Pusher._pusher.IsSynPush)//推送至最新记录
                 {
-
-                    if (!Pusher._pusher.IsSynPush)//积压数据
+                        //查询最新写入数据rowid
+                        Pusher._pusher.RowidMonitoring();
+                        //提取数据到队列
                         Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps);
-                    else if (Pusher._pusher.IsSynPush)//实时数据
-                        Pusher._pusher.SynchroData(RealDBHelper, m_selectedTableList, Instru);
                 }
             }
             catch (System.Exception ex)
@@ -997,8 +992,7 @@ namespace RealTimeDB
             foreach (var elem in Pusher._pusher.LastInsertRowIDDic)
                 Properties.Settings.Default.Last_Insert_RowID += elem.Key + "-" + elem.Value.ToString() + ",";
             Properties.Settings.Default.Last_Insert_RowID += "}";
-
-            Pusher._pusher.
+            Pusher._pusher.Dispose();
         }
     }
 }
