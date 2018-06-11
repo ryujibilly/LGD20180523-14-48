@@ -845,9 +845,6 @@ namespace RealTimeDB
             }
             i = 0;
         }
-
-
-
         private void button_Push_Click(object sender, EventArgs e)  
         {
             try
@@ -884,6 +881,9 @@ namespace RealTimeDB
                 Debug.WriteLine(ex.Message);
             }
         }
+        /// <summary>
+        /// 更新推送状态
+        /// </summary>
         void updatestatus()
         {
             try

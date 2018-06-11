@@ -29,6 +29,7 @@ namespace RealTimeDB
     /// </summary>
     public sealed class Pusher
     {
+        //单例对象
         public  static readonly Pusher _pusher = new Pusher("yuwenmao","123");
         #region 字段属性
         public String url = "";

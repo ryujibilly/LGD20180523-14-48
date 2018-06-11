@@ -66,11 +66,11 @@ namespace RealTimeDB
             this.dateTimePicker_End = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker_Begin = new System.Windows.Forms.DateTimePicker();
             this.checkBox_DateFromTop = new System.Windows.Forms.CheckBox();
+            this.button_StartPush_Test = new System.Windows.Forms.Button();
             this.checkBox_DateToBottom = new System.Windows.Forms.CheckBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.button_StopPush = new System.Windows.Forms.Button();
-            this.button_StartPush_Test = new System.Windows.Forms.Button();
             this.checkBox_DataCover = new System.Windows.Forms.CheckBox();
             this.button_AdvancedOption = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -491,6 +491,14 @@ namespace RealTimeDB
             this.checkBox_DateFromTop.UseVisualStyleBackColor = true;
             this.checkBox_DateFromTop.CheckedChanged += new System.EventHandler(this.checkBox_DateFromTop_CheckedChanged);
             // 
+            // button_StartPush_Test
+            // 
+            this.button_StartPush_Test.Location = new System.Drawing.Point(626, 68);
+            this.button_StartPush_Test.Name = "button_StartPush_Test";
+            this.button_StartPush_Test.Size = new System.Drawing.Size(75, 36);
+            this.button_StartPush_Test.TabIndex = 12;
+            this.button_StartPush_Test.Text = "测试";
+            // 
             // checkBox_DateToBottom
             // 
             this.checkBox_DateToBottom.AutoSize = true;
@@ -531,14 +539,6 @@ namespace RealTimeDB
             this.button_StopPush.Text = "停止";
             this.button_StopPush.UseVisualStyleBackColor = true;
             this.button_StopPush.Click += new System.EventHandler(this.button_StopPush_Click);
-            // 
-            // button_StartPush_Test
-            // 
-            this.button_StartPush_Test.Location = new System.Drawing.Point(626, 68);
-            this.button_StartPush_Test.Name = "button_StartPush_Test";
-            this.button_StartPush_Test.Size = new System.Drawing.Size(75, 36);
-            this.button_StartPush_Test.TabIndex = 12;
-            this.button_StartPush_Test.Text = "测试";
             // 
             // checkBox_DataCover
             // 
