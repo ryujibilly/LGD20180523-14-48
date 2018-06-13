@@ -932,7 +932,14 @@ namespace RealTimeDB
                 textBox_RemoteLog.Text =  @"//" +rdbservices.Url+@"//"+ rw.RegionName + "/" + rw.WellName + "/" + rw.SelectedLogName;
             }
         }
-
+        /// <summary>
+        /// 计时器控制
+        /// </summary>
+        /// <param name="uTimerID"></param>
+        /// <param name="uMsg"></param>
+        /// <param name="dwUser"></param>
+        /// <param name="dw1"></param>
+        /// <param name="dw2"></param>
         private void timer_Push_Tick(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
         {
             try
