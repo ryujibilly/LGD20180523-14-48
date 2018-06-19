@@ -38,6 +38,14 @@ namespace RealTimeDB
         /// Webservice连接状态
         /// </summary>
         public bool realdbservices_Status = false;
+        /// <summary>
+        /// RealDB访问令牌
+        /// </summary>
+        public static bool canReadDB;
+        /// <summary>
+        /// RealDB访问的线程互斥锁
+        /// </summary>
+        private Mutex mtx;
         public realdbservices.UserNameHeader name = new realdbservices.UserNameHeader();
         public realdbservices.UserPassWordHeader password = new realdbservices.UserPassWordHeader();
         public NetworkCredential nc = new NetworkCredential();
@@ -324,6 +332,21 @@ namespace RealTimeDB
             set
             {
                 isSynPush = value;
+            }
+        }
+        /// <summary>
+        /// RealDB访问的线程互斥锁
+        /// </summary>
+        public Mutex MTX
+        {
+            get
+            {
+                return mtx;
+            }
+
+            set
+            {
+                mtx = value;
             }
         }
         #endregion
@@ -937,6 +960,8 @@ namespace RealTimeDB
             IsSynPush = false;
             try
             {
+                //锁定入队操作，加互斥锁
+                MTX = new Mutex(true, "ReaddingDB",out canReadDB);
                 foreach (String tabname in selecttablist)
                 {
                     int rowidstart = 0;
@@ -956,6 +981,8 @@ namespace RealTimeDB
                             break;
                     }
                 }
+                //完成入队操作，释放互斥锁
+                MTX.ReleaseMutex();
                 IsSynPush = true;
             }
             catch (System.Exception ex)
