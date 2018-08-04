@@ -29,7 +29,6 @@ namespace RealTimeDB
         /// </summary>
         private void InitializeComponent()
         {
-            this.button_getAllRegions = new System.Windows.Forms.Button();
             this.textBox_UserName = new System.Windows.Forms.TextBox();
             this.textBox_PassWord = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -77,6 +76,7 @@ namespace RealTimeDB
             this.listBox_UpdateStatus = new System.Windows.Forms.ListBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.groupBox_StatusMonitor = new System.Windows.Forms.GroupBox();
+            this.checkBox_realtime = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -85,17 +85,6 @@ namespace RealTimeDB
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.groupBox_StatusMonitor.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // button_getAllRegions
-            // 
-            this.button_getAllRegions.Location = new System.Drawing.Point(500, 68);
-            this.button_getAllRegions.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.button_getAllRegions.Name = "button_getAllRegions";
-            this.button_getAllRegions.Size = new System.Drawing.Size(101, 36);
-            this.button_getAllRegions.TabIndex = 0;
-            this.button_getAllRegions.Text = "获取工区信息";
-            this.button_getAllRegions.UseVisualStyleBackColor = true;
-            this.button_getAllRegions.Click += new System.EventHandler(this.button_Connect_Click);
             // 
             // textBox_UserName
             // 
@@ -207,7 +196,7 @@ namespace RealTimeDB
             // 
             // button_GetAllInstInfo
             // 
-            this.button_GetAllInstInfo.Location = new System.Drawing.Point(381, 68);
+            this.button_GetAllInstInfo.Location = new System.Drawing.Point(510, 69);
             this.button_GetAllInstInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_GetAllInstInfo.Name = "button_GetAllInstInfo";
             this.button_GetAllInstInfo.Size = new System.Drawing.Size(101, 36);
@@ -428,12 +417,12 @@ namespace RealTimeDB
             // 
             // groupBox_Push
             // 
+            this.groupBox_Push.Controls.Add(this.checkBox_realtime);
             this.groupBox_Push.Controls.Add(this.button_Push);
             this.groupBox_Push.Controls.Add(this.dateTimePicker_End);
             this.groupBox_Push.Controls.Add(this.button_GetAllInstInfo);
             this.groupBox_Push.Controls.Add(this.dateTimePicker_Begin);
             this.groupBox_Push.Controls.Add(this.checkBox_DateFromTop);
-            this.groupBox_Push.Controls.Add(this.button_getAllRegions);
             this.groupBox_Push.Controls.Add(this.button_StartPush_Test);
             this.groupBox_Push.Controls.Add(this.checkBox_DateToBottom);
             this.groupBox_Push.Controls.Add(this.label10);
@@ -452,7 +441,7 @@ namespace RealTimeDB
             // 
             // button_Push
             // 
-            this.button_Push.Location = new System.Drawing.Point(133, 68);
+            this.button_Push.Location = new System.Drawing.Point(262, 69);
             this.button_Push.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Push.Name = "button_Push";
             this.button_Push.Size = new System.Drawing.Size(101, 36);
@@ -531,7 +520,7 @@ namespace RealTimeDB
             // 
             // button_StopPush
             // 
-            this.button_StopPush.Location = new System.Drawing.Point(255, 68);
+            this.button_StopPush.Location = new System.Drawing.Point(384, 69);
             this.button_StopPush.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_StopPush.Name = "button_StopPush";
             this.button_StopPush.Size = new System.Drawing.Size(101, 36);
@@ -607,6 +596,19 @@ namespace RealTimeDB
             this.groupBox_StatusMonitor.TabStop = false;
             this.groupBox_StatusMonitor.Text = "状态监视";
             // 
+            // checkBox_realtime
+            // 
+            this.checkBox_realtime.AutoSize = true;
+            this.checkBox_realtime.Checked = global::RealTimeDB.Properties.Settings.Default.OnlyRealTimeData;
+            this.checkBox_realtime.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::RealTimeDB.Properties.Settings.Default, "OnlyRealTimeData", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox_realtime.Location = new System.Drawing.Point(123, 77);
+            this.checkBox_realtime.Name = "checkBox_realtime";
+            this.checkBox_realtime.Size = new System.Drawing.Size(87, 21);
+            this.checkBox_realtime.TabIndex = 13;
+            this.checkBox_realtime.Text = "仅实时数据";
+            this.checkBox_realtime.UseVisualStyleBackColor = true;
+            this.checkBox_realtime.CheckedChanged += new System.EventHandler(this.checkBox_realtime_CheckedChanged);
+            // 
             // RealDBPusher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -640,8 +642,6 @@ namespace RealTimeDB
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button_getAllRegions;
         private System.Windows.Forms.TextBox textBox_UserName;
         private System.Windows.Forms.TextBox textBox_PassWord;
         private System.Windows.Forms.Label label1;
@@ -691,5 +691,6 @@ namespace RealTimeDB
         private Tool.Timer.MMTimer timer_Push;
         private System.Windows.Forms.GroupBox groupBox_StatusMonitor;
         private System.Windows.Forms.ListBox listBox_UpdateStatus;
+        private System.Windows.Forms.CheckBox checkBox_realtime;
     }
 }

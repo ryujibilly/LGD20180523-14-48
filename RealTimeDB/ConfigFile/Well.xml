@@ -32,6 +32,7 @@
     </well>
     <well name="青测试8">
       <wellcount name="青测试8-9" />
+      <wellcount name="青测试8-10" />
     </well>
   </workspace>
   <workspace name="长庆油田">

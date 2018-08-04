@@ -17,6 +17,7 @@ using LGD.DAL.SQLite;
 using System.Data.SQLite;
 using Tool.Timer;
 using System.Text;
+using System.Net.NetworkInformation;
 
 namespace RealTimeDB
 {
@@ -65,8 +66,10 @@ namespace RealTimeDB
         private List<List<String>> dataList = new List<List<string>>();
         private Boolean isPushing = false;
         private Boolean isSynPush = false;
+        public Boolean PushingQueueFull = false;
         public Thread PushingThread;
-
+        public object sqliteLockObj = new object();
+        //public MMTimer PushingTimer;
         /// <summary>
         /// 监视webservices网络状态的计时器
         /// </summary>
@@ -74,9 +77,12 @@ namespace RealTimeDB
         private Dictionary<String,int> sendSumDic = new Dictionary<string, int>();
         private ConcurrentQueue<String> sendStatusQ = new ConcurrentQueue<string>();
         /// <summary>
-        /// 数据库中各表记录数
+        /// 各表最新的rowid
         /// </summary>
         private  Dictionary<String, int> lastInsertRowIDDic = new Dictionary<string, int>();
+        /// <summary>
+        /// 各表发送截止的rowid
+        /// </summary>
         private  Dictionary<String, int> lastSentRowIDDic = new Dictionary<string, int>();
         private String username;
         private String userpassword;
@@ -362,10 +368,10 @@ namespace RealTimeDB
             nc.Password = "123";
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
-            GetHttpStatusTimer = new MMTimer(GetHttpStatus);
-            this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable();
         }
+
+
 
         /// <summary>
         /// 使用用户名+密码构造方法
@@ -380,8 +386,9 @@ namespace RealTimeDB
             nc.Password = password;
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
-            GetHttpStatusTimer = new MMTimer(GetHttpStatus);
-            this.GetHttpStatusTimer.Interval = 30000;
+            //PushingTimer = new MMTimer(StartPushing);
+            //GetHttpStatusTimer = new MMTimer(GetHttpStatus);
+            //this.GetHttpStatusTimer.Interval = 30000;
             InitHashTable(username, password);
         }
         /// <summary>
@@ -397,10 +404,13 @@ namespace RealTimeDB
             nc.Password = password;
             _realdbws.Credentials = nc;
             PushingThread = new Thread(new ThreadStart(StartPushing));
-            GetHttpStatusTimer = new MMTimer(GetHttpStatus);
-            this.GetHttpStatusTimer.Interval = 30000;
             this.Dbhelper = helper;
         }
+        //public void InitPusherThreadPool()
+        //{
+        //    ThreadPool.SetMaxThreads(5, 5);
+        //    ThreadPool.QueueUserWorkItem(new WaitCallback(StartPushing), PushingDataTabQueue);
+        //}
         /// <summary>
         /// 强制回收对象
         /// </summary>
@@ -853,9 +863,9 @@ namespace RealTimeDB
             try
             {
                 int i = 0;
-                while (IsPushing)
+                while (true)
                 {
-                    if (PushingDataTabQueue.Count > 0 )//&& IndexTable.Rows.Count > 0
+                    if (PushingDataTabQueue.Count > 0 )
                     {
                         DataTable dt = new DataTable();
                         DataTable dt_orgin = new DataTable();
@@ -873,35 +883,36 @@ namespace RealTimeDB
                                 //移除rowid 列
                                 dt.Columns.RemoveAt(0);
                                 SendJsonStr = InitCurveTable(Logid, RecordNo, Size, Instname.ToLower(), curvenames, dt);
-                                recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
-                                //计数
-                                if (recvJsonStr.Contains("ok"))                                    //各表累计发送记录数
-                                                                                                   //SendSumDic[RecordNo] += Size;
+                                if (this.Ping("10.242.0.186"))
                                 {
-                                    //各表推送数据的最后一条记录rowid
-                                    lastSentRowIDDic[RecordNo] = rowid;
-                                    string status = ">>>"+i++.ToString("D4")+"Date："+
-                                        DateTime.Now.ToShortDateString() +"..Time:"+ DateTime.Now.ToLongTimeString() + 
-                                        "..TabNo:"+RecordNo+"..Records:" +rowid+"<<<";
-                                    SendStatusQ.Enqueue(status);
+                                    recvJsonStr = _realdbws.WriteCurveData(SendJsonStr);
+                                    //计数
+                                    if (recvJsonStr.Contains("ok"))                                    //各表累计发送记录数
+                                                                                                       //SendSumDic[RecordNo] += Size;
+                                    {
+                                        //各表推送数据的最后一条记录rowid
+                                        lastSentRowIDDic[RecordNo] = rowid;
+                                        string status = ">>>" + i++.ToString("D4") + "Date：" +
+                                            DateTime.Now.ToShortDateString() + "..Time:" + DateTime.Now.ToLongTimeString() +
+                                            "..TabNo:" + RecordNo + "..Records:" + rowid + "<<<";
+                                        SendStatusQ.Enqueue(status);
+                                    }
                                 }
                             }
                             else continue;
                         }
                     }
+                    Thread.Sleep(50);
                 }
             }
             catch (System.Exception ex)
             {
-                Debug.WriteLine(ex.Message+ "<======PushingThread线程主体StartPushing()异常=====> \r\n");
-
-                //this.realdbservices_Status = false;
-                ////切入网络状态监控线程。
-                //GetHttpStatusTimer.Start(true);
-                //IsPushing = false;
+                Trace.WriteLine(ex.Message+ "<======StartPushing()异常=====> \r\n");
+                PushingDataTabQueue = new ConcurrentQueue<DataTable>();
+                PushingThread.Abort();
+                PushingThread.Start();
             }
         }
-
         /// <summary>
         /// 监视最新rowid
         /// </summary>
@@ -909,22 +920,16 @@ namespace RealTimeDB
         {
             try
             {
+                lock (sqliteLockObj)
+                {
+                    //最新rowid
                     getLastRowID(out lastInsertRowIDDic);
+                }
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message+ ">>>Pusher.cs==>RowidMonitoring(）计时器托管线程异常~!<<<");
             }
-        }
-        /// <summary>
-        /// 创建推送数据的Json包
-        /// </summary>
-        /// <returns></returns>
-        private String CreatePushingDataBag()
-        {
-            String jsonStr="";
-            Hashtable ht = new Hashtable();
-            return jsonStr;
         }
 
         /// <summary>
@@ -934,21 +939,27 @@ namespace RealTimeDB
         {
             try
             {
-                foreach (String tabname in selecttablist)
+                lock (sqliteLockObj)
                 {
-                    DataTable dt = new DataTable();
-                    dt = helper.getPushingData(instru, tabname, beginDate, beginTime, endDate, endTime);
-                    PushingDataTabQueue.Enqueue(dt);
+                    foreach (String tabname in selecttablist)
+                    {
+                        DataTable dt = new DataTable();
+                        dt = helper.getPushingData(instru, tabname, beginDate, beginTime, endDate, endTime);
+                        //if (PushingDataTabQueue.Count >= 100)
+                        //    PushingQueueFull = true;
+                        //else
+                            PushingDataTabQueue.Enqueue(dt);
+                    }
                 }
             }
             catch (System.Exception ex)
             {
                 Debug.WriteLine(ex.Message + "\r\t==========" + "pusher.getDataSQLiteDBHelper helper,List<String> selecttablist,String instru,String beginDate,String beginTime,String endDate,String endTime)");
-            }
+            } 
         }
 
         /// <summary>
-        /// wits表进入推送队列
+        /// 静态推送数据进入队列
         /// </summary>
         /// <param name="helper">SQLitehelper</param>
         /// <param name="selecttablist">推送的表名列</param>
@@ -961,7 +972,8 @@ namespace RealTimeDB
             try
             {
                 //锁定入队操作，加互斥锁
-                MTX = new Mutex(true, "ReaddingDB",out canReadDB);
+                //MTX = new Mutex(true, "ReaddingDB",out canReadDB);
+
                 foreach (String tabname in selecttablist)
                 {
                     int rowidstart = 0;
@@ -974,16 +986,27 @@ namespace RealTimeDB
                     //入队条件 
                     while (_startindex >= 0 && _endindex >= 0 && _startindex + _fps <= _endindex)
                     {
-                        dt = helper.getPushingData(instru, tabname, _startindex, _fps, out rowidstart, out rowidend).Copy();
+                        lock (sqliteLockObj)
+                        {
+                            dt = helper.getPushingData(instru, tabname, _startindex, _fps, out rowidstart, out rowidend).Copy();
+                        }
                         _startindex += _fps;
-                        PushingDataTabQueue.Enqueue(dt);
+                        //if (PushingDataTabQueue.Count >= 100)
+                        //    PushingQueueFull = true;
+                        //else
+                            PushingDataTabQueue.Enqueue(dt);
+                        IsSynPush = true;
                         if (_endindex - _startindex < _fps)
+                        {
+                            SynchroData(helper, selectedTabList, Instname);
                             break;
+                        }
+
                     }
                 }
                 //完成入队操作，释放互斥锁
-                MTX.ReleaseMutex();
-                IsSynPush = true;
+                //MTX.ReleaseMutex();
+
             }
             catch (System.Exception ex)
             {
@@ -1000,14 +1023,38 @@ namespace RealTimeDB
         {
             try
             {
+                ////锁定入队操作，加互斥锁
+                //MTX = new Mutex(true, "ReaddingDB", out canReadDB);
                 int rowid = 0;
                 foreach (String tabname in selecttablist)
                 {
                     DataTable dt = new DataTable();
-                    dt = helper.getPushingData(instru, tabname, LastSentRowIDDic[tabname],out rowid);
-                    LastInsertRowIDDic[tabname] = rowid;
-                    PushingDataTabQueue.Enqueue(dt);
+                    //起始rowid
+                    int _startindex = LastSentRowIDDic[tabname];
+                    //截至rowid
+                    int _endindex = LastInsertRowIDDic[tabname];
+                    if (_endindex > _startindex)
+                        lock (sqliteLockObj)
+                        {
+                            dt = helper.getPushingData(instru, tabname, LastSentRowIDDic[tabname], out rowid);
+                        }
+                    if (rowid > 0)
+                    {
+                        LastInsertRowIDDic[tabname] = rowid;
+                        if (dt.Rows.Count > 0)
+                        {
+                            //if (PushingDataTabQueue.Count >= 100)
+                            //    PushingQueueFull = true;
+                            //else
+                                PushingDataTabQueue.Enqueue(dt);
+                        }
+                        //完成入队后  startindex赋值为最新rowid
+                        LastSentRowIDDic[tabname] = rowid;
+                    }
                 }
+                IsSynPush = false;
+                ////完成入队操作，释放互斥锁
+                //MTX.ReleaseMutex();
             }
             catch (System.Exception ex)
             {
@@ -1023,11 +1070,15 @@ namespace RealTimeDB
             try
             {
                 Properties.Settings.Default.Last_Insert_RowID = "";
+
                 lastrowiddic = new Dictionary<string, int>();
                 int lastrowid = -1;
                 foreach (String tabname in selectedTabList)
                 {
-                    lastrowid = Dbhelper.getLastRowID(tabname, Instname);
+                    lock (sqliteLockObj)
+                    {
+                        lastrowid = Dbhelper.getLastRowID(tabname, Instname);
+                    }
                     lastrowiddic.Add(tabname,lastrowid);
                     Properties.Settings.Default.Last_Insert_RowID += tabname + "-" + lastrowid + "\r\n";
                 }
@@ -1051,25 +1102,15 @@ namespace RealTimeDB
                     realdbservices_Status = true;
                     IsPushing = true;
                     PushingThread.Suspend();
+                    //PushingTimer.Stop();
                 }
                 else
                 {
                     realdbservices_Status = false;
                     IsPushing = false;
                     PushingThread.Resume();
+                    //PushingTimer.Start(true);
                 }
-                //WebRequest request = WebRequest.Create(url);
-                //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                //if (response.StatusCode == HttpStatusCode.OK)
-                //{
-                //    realdbservices_Status = true;
-                //    IsPushing = true;
-                //}
-                //else
-                //{
-                //    realdbservices_Status = false;
-                //    IsPushing = false;
-                //}
             }
             catch (System.Exception ex)
             {
@@ -1085,14 +1126,14 @@ namespace RealTimeDB
         /// <returns>true 通，false 不通</returns>
         public bool Ping(string ip)
         {
-            System.Net.NetworkInformation.Ping p = new System.Net.NetworkInformation.Ping();
-            System.Net.NetworkInformation.PingOptions options = new System.Net.NetworkInformation.PingOptions();
+            Ping p = new Ping();
+            PingOptions options = new System.Net.NetworkInformation.PingOptions();
             options.DontFragment = true;
             string data = "Test Data!";
             byte[] buffer = Encoding.ASCII.GetBytes(data);
             int timeout = 5000; // Timeout 时间，单位：毫秒
-            System.Net.NetworkInformation.PingReply reply = p.Send(ip, timeout, buffer, options);
-            if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+            PingReply reply = p.Send(ip, timeout, buffer, options);
+            if (reply.Status == IPStatus.Success)
                 return true;
             else
                 return false;

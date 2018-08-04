@@ -154,5 +154,17 @@ namespace RealTimeDB.Properties {
                 this["Last_Sent_RowID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OnlyRealTimeData {
+            get {
+                return ((bool)(this["OnlyRealTimeData"]));
+            }
+            set {
+                this["OnlyRealTimeData"] = value;
+            }
+        }
     }
 }

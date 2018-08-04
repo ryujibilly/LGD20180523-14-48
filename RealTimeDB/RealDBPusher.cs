@@ -42,7 +42,14 @@ namespace RealTimeDB
         private String instru = "";
         private Thread statusThread;
         private realdbservices rdbservices = new realdbservices();
-
+        /// <summary>
+        /// XML工具类单例
+        /// </summary>
+        public static XMLUtil _xmlutil = new XMLUtil();
+        /// <summary>
+        /// 仅推送实时数据
+        /// </summary>
+        public Boolean OnlyRealTimeData = false;
 
         //treeview
         private bool isComboxInstClear = false;
@@ -382,6 +389,7 @@ namespace RealTimeDB
         }
         private void button1_Click(object sender, EventArgs e)
         {
+
         }
 
         private void textBox_UserName_TextChanged(object sender, EventArgs e)
@@ -852,12 +860,13 @@ namespace RealTimeDB
                 Pusher._pusher.initSentRowIDDic();
                 Pusher._pusher.initInsertRowIDDic();
                 timer_Push.Interval = Interval;
+                //Pusher._pusher.PushingTimer.Interval = Interval;
                 Pusher._pusher.IsPushing = true;
                 //获取字段名
                 this.getTitleList();
                 //推送计时器启动
                 timer_Push.Start(true);
-                //推送线程启动/继续
+                //定时推送线程启动/继续
                 if (!Pusher._pusher.PushingThread.IsAlive)
                 {
                     Pusher._pusher.PushingThread.Start();
@@ -945,14 +954,41 @@ namespace RealTimeDB
             try
             {
                 //按时间段推送
-                if (!checkBox_DateToBottom.Checked)
+                if ((!checkBox_DateToBottom.Checked)&&(!OnlyRealTimeData))
                     Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, BeginDate, BeginTime, EndDate, EndTime);
-                else if(!Pusher._pusher.IsSynPush)//推送至最新记录
+                else if((!Pusher._pusher.IsSynPush) && (!OnlyRealTimeData))//推送至最新记录
                 {
                         //查询最新写入数据rowid
                         Pusher._pusher.RowidMonitoring();
                         //提取数据到队列
                         Pusher._pusher.getData(RealDBHelper, m_selectedTableList, Instru, Fps);
+
+                    if (!Pusher._pusher.PushingThread.IsAlive)
+                    {
+                        Pusher._pusher.PushingThread.Start();
+                        if (Pusher._pusher.PushingThread.ThreadState == System.Threading.ThreadState.Suspended)
+                            Pusher._pusher.PushingThread.Resume();
+                    }
+                }
+                else if(OnlyRealTimeData)
+                {
+                    //查询最新写入数据rowid
+                    Pusher._pusher.RowidMonitoring();
+                    //提取数据到队列
+                    Pusher._pusher.SynchroData(RealDBHelper, m_selectedTableList, Instru);
+
+                    if (!Pusher._pusher.PushingThread.IsAlive)
+                    {
+                        Pusher._pusher.PushingThread.Start();
+                        if (Pusher._pusher.PushingThread.ThreadState == System.Threading.ThreadState.Suspended)
+                            Pusher._pusher.PushingThread.Resume();
+                    }
+                }
+                if (!Pusher._pusher.PushingThread.IsAlive)
+                {
+                    Pusher._pusher.PushingThread.Start();
+                    if (Pusher._pusher.PushingThread.ThreadState == System.Threading.ThreadState.Suspended)
+                        Pusher._pusher.PushingThread.Resume();
                 }
             }
             catch (System.Exception ex)
@@ -967,7 +1003,7 @@ namespace RealTimeDB
             {
                 Pusher._pusher.IsPushing = false;
                 //推送线程 挂起
-                Pusher._pusher.PushingThread.Suspend();
+                //Pusher._pusher.PushingThread.Suspend();
                 //监控线程 挂起
                 statusThread.Suspend();
                 //计时器
@@ -1000,6 +1036,14 @@ namespace RealTimeDB
                 Properties.Settings.Default.Last_Insert_RowID += elem.Key + "-" + elem.Value.ToString() + ",";
             Properties.Settings.Default.Last_Insert_RowID += "}";
             Pusher._pusher.Dispose();
+        }
+
+        private void checkBox_realtime_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_realtime.Checked)
+                OnlyRealTimeData = true;
+            else if (!checkBox_realtime.Checked)
+                OnlyRealTimeData = false;
         }
     }
 }
